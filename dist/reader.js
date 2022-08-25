@@ -1615,7 +1615,7 @@ eval("/* (ignored) */\n\n//# sourceURL=webpack://vreaderpdf/zlib_(ignored)?");
 /******/ 	
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
-/******/ 		__webpack_require__.p = "https://sean-madu.github.io/PDF_Reader";
+/******/ 		__webpack_require__.p = "https://sean-madu.github.io/PDF_ReaderLib";
 /******/ 	})();
 /******/ 	
 /************************************************************************/
