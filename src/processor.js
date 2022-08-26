@@ -58,7 +58,8 @@ function renderV3DFiles(pageNum, PDFDocument, div) {
       fileStream.bufferLength
     )}];`;
 
-    script.setAttribute("src", "process.js");
+    //script.setAttribute("src", "process.js");
+    script.src = document.getElementById("v3d-process-script").href;
 
     let canvas = document.getElementById(`Page ${pageNum} Canvas`);
 

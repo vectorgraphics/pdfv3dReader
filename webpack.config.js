@@ -7,6 +7,6 @@ module.exports = {
     process: "./src/process.js",
   },
   output: {
-    publicPath: "https://sean-madu.github.io/PDF_ReaderLib",
+    publicPath: "",
   },
 };
