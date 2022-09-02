@@ -1,2022 +1,14345 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./node_modules/base64-js/index.js":
-/*!*****************************************!*\
-  !*** ./node_modules/base64-js/index.js ***!
-  \*****************************************/
+/***/ 9742:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
-eval("\n\nexports.byteLength = byteLength\nexports.toByteArray = toByteArray\nexports.fromByteArray = fromByteArray\n\nvar lookup = []\nvar revLookup = []\nvar Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array\n\nvar code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'\nfor (var i = 0, len = code.length; i < len; ++i) {\n  lookup[i] = code[i]\n  revLookup[code.charCodeAt(i)] = i\n}\n\n// Support decoding URL-safe base64 strings, as Node.js does.\n// See: https://en.wikipedia.org/wiki/Base64#URL_applications\nrevLookup['-'.charCodeAt(0)] = 62\nrevLookup['_'.charCodeAt(0)] = 63\n\nfunction getLens (b64) {\n  var len = b64.length\n\n  if (len % 4 > 0) {\n    throw new Error('Invalid string. Length must be a multiple of 4')\n  }\n\n  // Trim off extra bytes after placeholder bytes are found\n  // See: https://github.com/beatgammit/base64-js/issues/42\n  var validLen = b64.indexOf('=')\n  if (validLen === -1) validLen = len\n\n  var placeHoldersLen = validLen === len\n    ? 0\n    : 4 - (validLen % 4)\n\n  return [validLen, placeHoldersLen]\n}\n\n// base64 is 4/3 + up to two characters of the original data\nfunction byteLength (b64) {\n  var lens = getLens(b64)\n  var validLen = lens[0]\n  var placeHoldersLen = lens[1]\n  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen\n}\n\nfunction _byteLength (b64, validLen, placeHoldersLen) {\n  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen\n}\n\nfunction toByteArray (b64) {\n  var tmp\n  var lens = getLens(b64)\n  var validLen = lens[0]\n  var placeHoldersLen = lens[1]\n\n  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))\n\n  var curByte = 0\n\n  // if there are placeholders, only get up to the last complete 4 chars\n  var len = placeHoldersLen > 0\n    ? validLen - 4\n    : validLen\n\n  var i\n  for (i = 0; i < len; i += 4) {\n    tmp =\n      (revLookup[b64.charCodeAt(i)] << 18) |\n      (revLookup[b64.charCodeAt(i + 1)] << 12) |\n      (revLookup[b64.charCodeAt(i + 2)] << 6) |\n      revLookup[b64.charCodeAt(i + 3)]\n    arr[curByte++] = (tmp >> 16) & 0xFF\n    arr[curByte++] = (tmp >> 8) & 0xFF\n    arr[curByte++] = tmp & 0xFF\n  }\n\n  if (placeHoldersLen === 2) {\n    tmp =\n      (revLookup[b64.charCodeAt(i)] << 2) |\n      (revLookup[b64.charCodeAt(i + 1)] >> 4)\n    arr[curByte++] = tmp & 0xFF\n  }\n\n  if (placeHoldersLen === 1) {\n    tmp =\n      (revLookup[b64.charCodeAt(i)] << 10) |\n      (revLookup[b64.charCodeAt(i + 1)] << 4) |\n      (revLookup[b64.charCodeAt(i + 2)] >> 2)\n    arr[curByte++] = (tmp >> 8) & 0xFF\n    arr[curByte++] = tmp & 0xFF\n  }\n\n  return arr\n}\n\nfunction tripletToBase64 (num) {\n  return lookup[num >> 18 & 0x3F] +\n    lookup[num >> 12 & 0x3F] +\n    lookup[num >> 6 & 0x3F] +\n    lookup[num & 0x3F]\n}\n\nfunction encodeChunk (uint8, start, end) {\n  var tmp\n  var output = []\n  for (var i = start; i < end; i += 3) {\n    tmp =\n      ((uint8[i] << 16) & 0xFF0000) +\n      ((uint8[i + 1] << 8) & 0xFF00) +\n      (uint8[i + 2] & 0xFF)\n    output.push(tripletToBase64(tmp))\n  }\n  return output.join('')\n}\n\nfunction fromByteArray (uint8) {\n  var tmp\n  var len = uint8.length\n  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes\n  var parts = []\n  var maxChunkLength = 16383 // must be multiple of 3\n\n  // go through the array every three bytes, we'll deal with trailing stuff later\n  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {\n    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))\n  }\n\n  // pad the end with zeros, but make sure to not forget the extra bytes\n  if (extraBytes === 1) {\n    tmp = uint8[len - 1]\n    parts.push(\n      lookup[tmp >> 2] +\n      lookup[(tmp << 4) & 0x3F] +\n      '=='\n    )\n  } else if (extraBytes === 2) {\n    tmp = (uint8[len - 2] << 8) + uint8[len - 1]\n    parts.push(\n      lookup[tmp >> 10] +\n      lookup[(tmp >> 4) & 0x3F] +\n      lookup[(tmp << 2) & 0x3F] +\n      '='\n    )\n  }\n\n  return parts.join('')\n}\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/base64-js/index.js?");
+
+
+exports.byteLength = byteLength
+exports.toByteArray = toByteArray
+exports.fromByteArray = fromByteArray
+
+var lookup = []
+var revLookup = []
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
+}
+
+// Support decoding URL-safe base64 strings, as Node.js does.
+// See: https://en.wikipedia.org/wiki/Base64#URL_applications
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
+
+function getLens (b64) {
+  var len = b64.length
+
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
+  }
+
+  // Trim off extra bytes after placeholder bytes are found
+  // See: https://github.com/beatgammit/base64-js/issues/42
+  var validLen = b64.indexOf('=')
+  if (validLen === -1) validLen = len
+
+  var placeHoldersLen = validLen === len
+    ? 0
+    : 4 - (validLen % 4)
+
+  return [validLen, placeHoldersLen]
+}
+
+// base64 is 4/3 + up to two characters of the original data
+function byteLength (b64) {
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function _byteLength (b64, validLen, placeHoldersLen) {
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function toByteArray (b64) {
+  var tmp
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+
+  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
+
+  var curByte = 0
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  var len = placeHoldersLen > 0
+    ? validLen - 4
+    : validLen
+
+  var i
+  for (i = 0; i < len; i += 4) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 18) |
+      (revLookup[b64.charCodeAt(i + 1)] << 12) |
+      (revLookup[b64.charCodeAt(i + 2)] << 6) |
+      revLookup[b64.charCodeAt(i + 3)]
+    arr[curByte++] = (tmp >> 16) & 0xFF
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 2) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 2) |
+      (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 1) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 10) |
+      (revLookup[b64.charCodeAt(i + 1)] << 4) |
+      (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] +
+    lookup[num >> 12 & 0x3F] +
+    lookup[num >> 6 & 0x3F] +
+    lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp
+  var output = []
+  for (var i = start; i < end; i += 3) {
+    tmp =
+      ((uint8[i] << 16) & 0xFF0000) +
+      ((uint8[i + 1] << 8) & 0xFF00) +
+      (uint8[i + 2] & 0xFF)
+    output.push(tripletToBase64(tmp))
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  var tmp
+  var len = uint8.length
+  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var parts = []
+  var maxChunkLength = 16383 // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 2] +
+      lookup[(tmp << 4) & 0x3F] +
+      '=='
+    )
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 10] +
+      lookup[(tmp >> 4) & 0x3F] +
+      lookup[(tmp << 2) & 0x3F] +
+      '='
+    )
+  }
+
+  return parts.join('')
+}
+
 
 /***/ }),
 
-/***/ "./node_modules/buffer/index.js":
-/*!**************************************!*\
-  !*** ./node_modules/buffer/index.js ***!
-  \**************************************/
+/***/ 8764:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("/*!\n * The buffer module from node.js, for the browser.\n *\n * @author   Feross Aboukhadijeh <https://feross.org>\n * @license  MIT\n */\n/* eslint-disable no-proto */\n\n\n\nconst base64 = __webpack_require__(/*! base64-js */ \"./node_modules/base64-js/index.js\")\nconst ieee754 = __webpack_require__(/*! ieee754 */ \"./node_modules/ieee754/index.js\")\nconst customInspectSymbol =\n  (typeof Symbol === 'function' && typeof Symbol['for'] === 'function') // eslint-disable-line dot-notation\n    ? Symbol['for']('nodejs.util.inspect.custom') // eslint-disable-line dot-notation\n    : null\n\nexports.Buffer = Buffer\nexports.SlowBuffer = SlowBuffer\nexports.INSPECT_MAX_BYTES = 50\n\nconst K_MAX_LENGTH = 0x7fffffff\nexports.kMaxLength = K_MAX_LENGTH\n\n/**\n * If `Buffer.TYPED_ARRAY_SUPPORT`:\n *   === true    Use Uint8Array implementation (fastest)\n *   === false   Print warning and recommend using `buffer` v4.x which has an Object\n *               implementation (most compatible, even IE6)\n *\n * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,\n * Opera 11.6+, iOS 4.2+.\n *\n * We report that the browser does not support typed arrays if the are not subclassable\n * using __proto__. Firefox 4-29 lacks support for adding new properties to `Uint8Array`\n * (See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438). IE 10 lacks support\n * for __proto__ and has a buggy typed array implementation.\n */\nBuffer.TYPED_ARRAY_SUPPORT = typedArraySupport()\n\nif (!Buffer.TYPED_ARRAY_SUPPORT && typeof console !== 'undefined' &&\n    typeof console.error === 'function') {\n  console.error(\n    'This browser lacks typed array (Uint8Array) support which is required by ' +\n    '`buffer` v5.x. Use `buffer` v4.x if you require old browser support.'\n  )\n}\n\nfunction typedArraySupport () {\n  // Can typed array instances can be augmented?\n  try {\n    const arr = new Uint8Array(1)\n    const proto = { foo: function () { return 42 } }\n    Object.setPrototypeOf(proto, Uint8Array.prototype)\n    Object.setPrototypeOf(arr, proto)\n    return arr.foo() === 42\n  } catch (e) {\n    return false\n  }\n}\n\nObject.defineProperty(Buffer.prototype, 'parent', {\n  enumerable: true,\n  get: function () {\n    if (!Buffer.isBuffer(this)) return undefined\n    return this.buffer\n  }\n})\n\nObject.defineProperty(Buffer.prototype, 'offset', {\n  enumerable: true,\n  get: function () {\n    if (!Buffer.isBuffer(this)) return undefined\n    return this.byteOffset\n  }\n})\n\nfunction createBuffer (length) {\n  if (length > K_MAX_LENGTH) {\n    throw new RangeError('The value \"' + length + '\" is invalid for option \"size\"')\n  }\n  // Return an augmented `Uint8Array` instance\n  const buf = new Uint8Array(length)\n  Object.setPrototypeOf(buf, Buffer.prototype)\n  return buf\n}\n\n/**\n * The Buffer constructor returns instances of `Uint8Array` that have their\n * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of\n * `Uint8Array`, so the returned instances will have all the node `Buffer` methods\n * and the `Uint8Array` methods. Square bracket notation works as expected -- it\n * returns a single octet.\n *\n * The `Uint8Array` prototype remains unmodified.\n */\n\nfunction Buffer (arg, encodingOrOffset, length) {\n  // Common case.\n  if (typeof arg === 'number') {\n    if (typeof encodingOrOffset === 'string') {\n      throw new TypeError(\n        'The \"string\" argument must be of type string. Received type number'\n      )\n    }\n    return allocUnsafe(arg)\n  }\n  return from(arg, encodingOrOffset, length)\n}\n\nBuffer.poolSize = 8192 // not used by this implementation\n\nfunction from (value, encodingOrOffset, length) {\n  if (typeof value === 'string') {\n    return fromString(value, encodingOrOffset)\n  }\n\n  if (ArrayBuffer.isView(value)) {\n    return fromArrayView(value)\n  }\n\n  if (value == null) {\n    throw new TypeError(\n      'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +\n      'or Array-like Object. Received type ' + (typeof value)\n    )\n  }\n\n  if (isInstance(value, ArrayBuffer) ||\n      (value && isInstance(value.buffer, ArrayBuffer))) {\n    return fromArrayBuffer(value, encodingOrOffset, length)\n  }\n\n  if (typeof SharedArrayBuffer !== 'undefined' &&\n      (isInstance(value, SharedArrayBuffer) ||\n      (value && isInstance(value.buffer, SharedArrayBuffer)))) {\n    return fromArrayBuffer(value, encodingOrOffset, length)\n  }\n\n  if (typeof value === 'number') {\n    throw new TypeError(\n      'The \"value\" argument must not be of type number. Received type number'\n    )\n  }\n\n  const valueOf = value.valueOf && value.valueOf()\n  if (valueOf != null && valueOf !== value) {\n    return Buffer.from(valueOf, encodingOrOffset, length)\n  }\n\n  const b = fromObject(value)\n  if (b) return b\n\n  if (typeof Symbol !== 'undefined' && Symbol.toPrimitive != null &&\n      typeof value[Symbol.toPrimitive] === 'function') {\n    return Buffer.from(value[Symbol.toPrimitive]('string'), encodingOrOffset, length)\n  }\n\n  throw new TypeError(\n    'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +\n    'or Array-like Object. Received type ' + (typeof value)\n  )\n}\n\n/**\n * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError\n * if value is a number.\n * Buffer.from(str[, encoding])\n * Buffer.from(array)\n * Buffer.from(buffer)\n * Buffer.from(arrayBuffer[, byteOffset[, length]])\n **/\nBuffer.from = function (value, encodingOrOffset, length) {\n  return from(value, encodingOrOffset, length)\n}\n\n// Note: Change prototype *after* Buffer.from is defined to workaround Chrome bug:\n// https://github.com/feross/buffer/pull/148\nObject.setPrototypeOf(Buffer.prototype, Uint8Array.prototype)\nObject.setPrototypeOf(Buffer, Uint8Array)\n\nfunction assertSize (size) {\n  if (typeof size !== 'number') {\n    throw new TypeError('\"size\" argument must be of type number')\n  } else if (size < 0) {\n    throw new RangeError('The value \"' + size + '\" is invalid for option \"size\"')\n  }\n}\n\nfunction alloc (size, fill, encoding) {\n  assertSize(size)\n  if (size <= 0) {\n    return createBuffer(size)\n  }\n  if (fill !== undefined) {\n    // Only pay attention to encoding if it's a string. This\n    // prevents accidentally sending in a number that would\n    // be interpreted as a start offset.\n    return typeof encoding === 'string'\n      ? createBuffer(size).fill(fill, encoding)\n      : createBuffer(size).fill(fill)\n  }\n  return createBuffer(size)\n}\n\n/**\n * Creates a new filled Buffer instance.\n * alloc(size[, fill[, encoding]])\n **/\nBuffer.alloc = function (size, fill, encoding) {\n  return alloc(size, fill, encoding)\n}\n\nfunction allocUnsafe (size) {\n  assertSize(size)\n  return createBuffer(size < 0 ? 0 : checked(size) | 0)\n}\n\n/**\n * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.\n * */\nBuffer.allocUnsafe = function (size) {\n  return allocUnsafe(size)\n}\n/**\n * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.\n */\nBuffer.allocUnsafeSlow = function (size) {\n  return allocUnsafe(size)\n}\n\nfunction fromString (string, encoding) {\n  if (typeof encoding !== 'string' || encoding === '') {\n    encoding = 'utf8'\n  }\n\n  if (!Buffer.isEncoding(encoding)) {\n    throw new TypeError('Unknown encoding: ' + encoding)\n  }\n\n  const length = byteLength(string, encoding) | 0\n  let buf = createBuffer(length)\n\n  const actual = buf.write(string, encoding)\n\n  if (actual !== length) {\n    // Writing a hex string, for example, that contains invalid characters will\n    // cause everything after the first invalid character to be ignored. (e.g.\n    // 'abxxcd' will be treated as 'ab')\n    buf = buf.slice(0, actual)\n  }\n\n  return buf\n}\n\nfunction fromArrayLike (array) {\n  const length = array.length < 0 ? 0 : checked(array.length) | 0\n  const buf = createBuffer(length)\n  for (let i = 0; i < length; i += 1) {\n    buf[i] = array[i] & 255\n  }\n  return buf\n}\n\nfunction fromArrayView (arrayView) {\n  if (isInstance(arrayView, Uint8Array)) {\n    const copy = new Uint8Array(arrayView)\n    return fromArrayBuffer(copy.buffer, copy.byteOffset, copy.byteLength)\n  }\n  return fromArrayLike(arrayView)\n}\n\nfunction fromArrayBuffer (array, byteOffset, length) {\n  if (byteOffset < 0 || array.byteLength < byteOffset) {\n    throw new RangeError('\"offset\" is outside of buffer bounds')\n  }\n\n  if (array.byteLength < byteOffset + (length || 0)) {\n    throw new RangeError('\"length\" is outside of buffer bounds')\n  }\n\n  let buf\n  if (byteOffset === undefined && length === undefined) {\n    buf = new Uint8Array(array)\n  } else if (length === undefined) {\n    buf = new Uint8Array(array, byteOffset)\n  } else {\n    buf = new Uint8Array(array, byteOffset, length)\n  }\n\n  // Return an augmented `Uint8Array` instance\n  Object.setPrototypeOf(buf, Buffer.prototype)\n\n  return buf\n}\n\nfunction fromObject (obj) {\n  if (Buffer.isBuffer(obj)) {\n    const len = checked(obj.length) | 0\n    const buf = createBuffer(len)\n\n    if (buf.length === 0) {\n      return buf\n    }\n\n    obj.copy(buf, 0, 0, len)\n    return buf\n  }\n\n  if (obj.length !== undefined) {\n    if (typeof obj.length !== 'number' || numberIsNaN(obj.length)) {\n      return createBuffer(0)\n    }\n    return fromArrayLike(obj)\n  }\n\n  if (obj.type === 'Buffer' && Array.isArray(obj.data)) {\n    return fromArrayLike(obj.data)\n  }\n}\n\nfunction checked (length) {\n  // Note: cannot use `length < K_MAX_LENGTH` here because that fails when\n  // length is NaN (which is otherwise coerced to zero.)\n  if (length >= K_MAX_LENGTH) {\n    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +\n                         'size: 0x' + K_MAX_LENGTH.toString(16) + ' bytes')\n  }\n  return length | 0\n}\n\nfunction SlowBuffer (length) {\n  if (+length != length) { // eslint-disable-line eqeqeq\n    length = 0\n  }\n  return Buffer.alloc(+length)\n}\n\nBuffer.isBuffer = function isBuffer (b) {\n  return b != null && b._isBuffer === true &&\n    b !== Buffer.prototype // so Buffer.isBuffer(Buffer.prototype) will be false\n}\n\nBuffer.compare = function compare (a, b) {\n  if (isInstance(a, Uint8Array)) a = Buffer.from(a, a.offset, a.byteLength)\n  if (isInstance(b, Uint8Array)) b = Buffer.from(b, b.offset, b.byteLength)\n  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {\n    throw new TypeError(\n      'The \"buf1\", \"buf2\" arguments must be one of type Buffer or Uint8Array'\n    )\n  }\n\n  if (a === b) return 0\n\n  let x = a.length\n  let y = b.length\n\n  for (let i = 0, len = Math.min(x, y); i < len; ++i) {\n    if (a[i] !== b[i]) {\n      x = a[i]\n      y = b[i]\n      break\n    }\n  }\n\n  if (x < y) return -1\n  if (y < x) return 1\n  return 0\n}\n\nBuffer.isEncoding = function isEncoding (encoding) {\n  switch (String(encoding).toLowerCase()) {\n    case 'hex':\n    case 'utf8':\n    case 'utf-8':\n    case 'ascii':\n    case 'latin1':\n    case 'binary':\n    case 'base64':\n    case 'ucs2':\n    case 'ucs-2':\n    case 'utf16le':\n    case 'utf-16le':\n      return true\n    default:\n      return false\n  }\n}\n\nBuffer.concat = function concat (list, length) {\n  if (!Array.isArray(list)) {\n    throw new TypeError('\"list\" argument must be an Array of Buffers')\n  }\n\n  if (list.length === 0) {\n    return Buffer.alloc(0)\n  }\n\n  let i\n  if (length === undefined) {\n    length = 0\n    for (i = 0; i < list.length; ++i) {\n      length += list[i].length\n    }\n  }\n\n  const buffer = Buffer.allocUnsafe(length)\n  let pos = 0\n  for (i = 0; i < list.length; ++i) {\n    let buf = list[i]\n    if (isInstance(buf, Uint8Array)) {\n      if (pos + buf.length > buffer.length) {\n        if (!Buffer.isBuffer(buf)) buf = Buffer.from(buf)\n        buf.copy(buffer, pos)\n      } else {\n        Uint8Array.prototype.set.call(\n          buffer,\n          buf,\n          pos\n        )\n      }\n    } else if (!Buffer.isBuffer(buf)) {\n      throw new TypeError('\"list\" argument must be an Array of Buffers')\n    } else {\n      buf.copy(buffer, pos)\n    }\n    pos += buf.length\n  }\n  return buffer\n}\n\nfunction byteLength (string, encoding) {\n  if (Buffer.isBuffer(string)) {\n    return string.length\n  }\n  if (ArrayBuffer.isView(string) || isInstance(string, ArrayBuffer)) {\n    return string.byteLength\n  }\n  if (typeof string !== 'string') {\n    throw new TypeError(\n      'The \"string\" argument must be one of type string, Buffer, or ArrayBuffer. ' +\n      'Received type ' + typeof string\n    )\n  }\n\n  const len = string.length\n  const mustMatch = (arguments.length > 2 && arguments[2] === true)\n  if (!mustMatch && len === 0) return 0\n\n  // Use a for loop to avoid recursion\n  let loweredCase = false\n  for (;;) {\n    switch (encoding) {\n      case 'ascii':\n      case 'latin1':\n      case 'binary':\n        return len\n      case 'utf8':\n      case 'utf-8':\n        return utf8ToBytes(string).length\n      case 'ucs2':\n      case 'ucs-2':\n      case 'utf16le':\n      case 'utf-16le':\n        return len * 2\n      case 'hex':\n        return len >>> 1\n      case 'base64':\n        return base64ToBytes(string).length\n      default:\n        if (loweredCase) {\n          return mustMatch ? -1 : utf8ToBytes(string).length // assume utf8\n        }\n        encoding = ('' + encoding).toLowerCase()\n        loweredCase = true\n    }\n  }\n}\nBuffer.byteLength = byteLength\n\nfunction slowToString (encoding, start, end) {\n  let loweredCase = false\n\n  // No need to verify that \"this.length <= MAX_UINT32\" since it's a read-only\n  // property of a typed array.\n\n  // This behaves neither like String nor Uint8Array in that we set start/end\n  // to their upper/lower bounds if the value passed is out of range.\n  // undefined is handled specially as per ECMA-262 6th Edition,\n  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.\n  if (start === undefined || start < 0) {\n    start = 0\n  }\n  // Return early if start > this.length. Done here to prevent potential uint32\n  // coercion fail below.\n  if (start > this.length) {\n    return ''\n  }\n\n  if (end === undefined || end > this.length) {\n    end = this.length\n  }\n\n  if (end <= 0) {\n    return ''\n  }\n\n  // Force coercion to uint32. This will also coerce falsey/NaN values to 0.\n  end >>>= 0\n  start >>>= 0\n\n  if (end <= start) {\n    return ''\n  }\n\n  if (!encoding) encoding = 'utf8'\n\n  while (true) {\n    switch (encoding) {\n      case 'hex':\n        return hexSlice(this, start, end)\n\n      case 'utf8':\n      case 'utf-8':\n        return utf8Slice(this, start, end)\n\n      case 'ascii':\n        return asciiSlice(this, start, end)\n\n      case 'latin1':\n      case 'binary':\n        return latin1Slice(this, start, end)\n\n      case 'base64':\n        return base64Slice(this, start, end)\n\n      case 'ucs2':\n      case 'ucs-2':\n      case 'utf16le':\n      case 'utf-16le':\n        return utf16leSlice(this, start, end)\n\n      default:\n        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)\n        encoding = (encoding + '').toLowerCase()\n        loweredCase = true\n    }\n  }\n}\n\n// This property is used by `Buffer.isBuffer` (and the `is-buffer` npm package)\n// to detect a Buffer instance. It's not possible to use `instanceof Buffer`\n// reliably in a browserify context because there could be multiple different\n// copies of the 'buffer' package in use. This method works even for Buffer\n// instances that were created from another copy of the `buffer` package.\n// See: https://github.com/feross/buffer/issues/154\nBuffer.prototype._isBuffer = true\n\nfunction swap (b, n, m) {\n  const i = b[n]\n  b[n] = b[m]\n  b[m] = i\n}\n\nBuffer.prototype.swap16 = function swap16 () {\n  const len = this.length\n  if (len % 2 !== 0) {\n    throw new RangeError('Buffer size must be a multiple of 16-bits')\n  }\n  for (let i = 0; i < len; i += 2) {\n    swap(this, i, i + 1)\n  }\n  return this\n}\n\nBuffer.prototype.swap32 = function swap32 () {\n  const len = this.length\n  if (len % 4 !== 0) {\n    throw new RangeError('Buffer size must be a multiple of 32-bits')\n  }\n  for (let i = 0; i < len; i += 4) {\n    swap(this, i, i + 3)\n    swap(this, i + 1, i + 2)\n  }\n  return this\n}\n\nBuffer.prototype.swap64 = function swap64 () {\n  const len = this.length\n  if (len % 8 !== 0) {\n    throw new RangeError('Buffer size must be a multiple of 64-bits')\n  }\n  for (let i = 0; i < len; i += 8) {\n    swap(this, i, i + 7)\n    swap(this, i + 1, i + 6)\n    swap(this, i + 2, i + 5)\n    swap(this, i + 3, i + 4)\n  }\n  return this\n}\n\nBuffer.prototype.toString = function toString () {\n  const length = this.length\n  if (length === 0) return ''\n  if (arguments.length === 0) return utf8Slice(this, 0, length)\n  return slowToString.apply(this, arguments)\n}\n\nBuffer.prototype.toLocaleString = Buffer.prototype.toString\n\nBuffer.prototype.equals = function equals (b) {\n  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')\n  if (this === b) return true\n  return Buffer.compare(this, b) === 0\n}\n\nBuffer.prototype.inspect = function inspect () {\n  let str = ''\n  const max = exports.INSPECT_MAX_BYTES\n  str = this.toString('hex', 0, max).replace(/(.{2})/g, '$1 ').trim()\n  if (this.length > max) str += ' ... '\n  return '<Buffer ' + str + '>'\n}\nif (customInspectSymbol) {\n  Buffer.prototype[customInspectSymbol] = Buffer.prototype.inspect\n}\n\nBuffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {\n  if (isInstance(target, Uint8Array)) {\n    target = Buffer.from(target, target.offset, target.byteLength)\n  }\n  if (!Buffer.isBuffer(target)) {\n    throw new TypeError(\n      'The \"target\" argument must be one of type Buffer or Uint8Array. ' +\n      'Received type ' + (typeof target)\n    )\n  }\n\n  if (start === undefined) {\n    start = 0\n  }\n  if (end === undefined) {\n    end = target ? target.length : 0\n  }\n  if (thisStart === undefined) {\n    thisStart = 0\n  }\n  if (thisEnd === undefined) {\n    thisEnd = this.length\n  }\n\n  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {\n    throw new RangeError('out of range index')\n  }\n\n  if (thisStart >= thisEnd && start >= end) {\n    return 0\n  }\n  if (thisStart >= thisEnd) {\n    return -1\n  }\n  if (start >= end) {\n    return 1\n  }\n\n  start >>>= 0\n  end >>>= 0\n  thisStart >>>= 0\n  thisEnd >>>= 0\n\n  if (this === target) return 0\n\n  let x = thisEnd - thisStart\n  let y = end - start\n  const len = Math.min(x, y)\n\n  const thisCopy = this.slice(thisStart, thisEnd)\n  const targetCopy = target.slice(start, end)\n\n  for (let i = 0; i < len; ++i) {\n    if (thisCopy[i] !== targetCopy[i]) {\n      x = thisCopy[i]\n      y = targetCopy[i]\n      break\n    }\n  }\n\n  if (x < y) return -1\n  if (y < x) return 1\n  return 0\n}\n\n// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,\n// OR the last index of `val` in `buffer` at offset <= `byteOffset`.\n//\n// Arguments:\n// - buffer - a Buffer to search\n// - val - a string, Buffer, or number\n// - byteOffset - an index into `buffer`; will be clamped to an int32\n// - encoding - an optional encoding, relevant is val is a string\n// - dir - true for indexOf, false for lastIndexOf\nfunction bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {\n  // Empty buffer means no match\n  if (buffer.length === 0) return -1\n\n  // Normalize byteOffset\n  if (typeof byteOffset === 'string') {\n    encoding = byteOffset\n    byteOffset = 0\n  } else if (byteOffset > 0x7fffffff) {\n    byteOffset = 0x7fffffff\n  } else if (byteOffset < -0x80000000) {\n    byteOffset = -0x80000000\n  }\n  byteOffset = +byteOffset // Coerce to Number.\n  if (numberIsNaN(byteOffset)) {\n    // byteOffset: it it's undefined, null, NaN, \"foo\", etc, search whole buffer\n    byteOffset = dir ? 0 : (buffer.length - 1)\n  }\n\n  // Normalize byteOffset: negative offsets start from the end of the buffer\n  if (byteOffset < 0) byteOffset = buffer.length + byteOffset\n  if (byteOffset >= buffer.length) {\n    if (dir) return -1\n    else byteOffset = buffer.length - 1\n  } else if (byteOffset < 0) {\n    if (dir) byteOffset = 0\n    else return -1\n  }\n\n  // Normalize val\n  if (typeof val === 'string') {\n    val = Buffer.from(val, encoding)\n  }\n\n  // Finally, search either indexOf (if dir is true) or lastIndexOf\n  if (Buffer.isBuffer(val)) {\n    // Special case: looking for empty string/buffer always fails\n    if (val.length === 0) {\n      return -1\n    }\n    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)\n  } else if (typeof val === 'number') {\n    val = val & 0xFF // Search for a byte value [0-255]\n    if (typeof Uint8Array.prototype.indexOf === 'function') {\n      if (dir) {\n        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)\n      } else {\n        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)\n      }\n    }\n    return arrayIndexOf(buffer, [val], byteOffset, encoding, dir)\n  }\n\n  throw new TypeError('val must be string, number or Buffer')\n}\n\nfunction arrayIndexOf (arr, val, byteOffset, encoding, dir) {\n  let indexSize = 1\n  let arrLength = arr.length\n  let valLength = val.length\n\n  if (encoding !== undefined) {\n    encoding = String(encoding).toLowerCase()\n    if (encoding === 'ucs2' || encoding === 'ucs-2' ||\n        encoding === 'utf16le' || encoding === 'utf-16le') {\n      if (arr.length < 2 || val.length < 2) {\n        return -1\n      }\n      indexSize = 2\n      arrLength /= 2\n      valLength /= 2\n      byteOffset /= 2\n    }\n  }\n\n  function read (buf, i) {\n    if (indexSize === 1) {\n      return buf[i]\n    } else {\n      return buf.readUInt16BE(i * indexSize)\n    }\n  }\n\n  let i\n  if (dir) {\n    let foundIndex = -1\n    for (i = byteOffset; i < arrLength; i++) {\n      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {\n        if (foundIndex === -1) foundIndex = i\n        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize\n      } else {\n        if (foundIndex !== -1) i -= i - foundIndex\n        foundIndex = -1\n      }\n    }\n  } else {\n    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength\n    for (i = byteOffset; i >= 0; i--) {\n      let found = true\n      for (let j = 0; j < valLength; j++) {\n        if (read(arr, i + j) !== read(val, j)) {\n          found = false\n          break\n        }\n      }\n      if (found) return i\n    }\n  }\n\n  return -1\n}\n\nBuffer.prototype.includes = function includes (val, byteOffset, encoding) {\n  return this.indexOf(val, byteOffset, encoding) !== -1\n}\n\nBuffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {\n  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)\n}\n\nBuffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {\n  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)\n}\n\nfunction hexWrite (buf, string, offset, length) {\n  offset = Number(offset) || 0\n  const remaining = buf.length - offset\n  if (!length) {\n    length = remaining\n  } else {\n    length = Number(length)\n    if (length > remaining) {\n      length = remaining\n    }\n  }\n\n  const strLen = string.length\n\n  if (length > strLen / 2) {\n    length = strLen / 2\n  }\n  let i\n  for (i = 0; i < length; ++i) {\n    const parsed = parseInt(string.substr(i * 2, 2), 16)\n    if (numberIsNaN(parsed)) return i\n    buf[offset + i] = parsed\n  }\n  return i\n}\n\nfunction utf8Write (buf, string, offset, length) {\n  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)\n}\n\nfunction asciiWrite (buf, string, offset, length) {\n  return blitBuffer(asciiToBytes(string), buf, offset, length)\n}\n\nfunction base64Write (buf, string, offset, length) {\n  return blitBuffer(base64ToBytes(string), buf, offset, length)\n}\n\nfunction ucs2Write (buf, string, offset, length) {\n  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)\n}\n\nBuffer.prototype.write = function write (string, offset, length, encoding) {\n  // Buffer#write(string)\n  if (offset === undefined) {\n    encoding = 'utf8'\n    length = this.length\n    offset = 0\n  // Buffer#write(string, encoding)\n  } else if (length === undefined && typeof offset === 'string') {\n    encoding = offset\n    length = this.length\n    offset = 0\n  // Buffer#write(string, offset[, length][, encoding])\n  } else if (isFinite(offset)) {\n    offset = offset >>> 0\n    if (isFinite(length)) {\n      length = length >>> 0\n      if (encoding === undefined) encoding = 'utf8'\n    } else {\n      encoding = length\n      length = undefined\n    }\n  } else {\n    throw new Error(\n      'Buffer.write(string, encoding, offset[, length]) is no longer supported'\n    )\n  }\n\n  const remaining = this.length - offset\n  if (length === undefined || length > remaining) length = remaining\n\n  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {\n    throw new RangeError('Attempt to write outside buffer bounds')\n  }\n\n  if (!encoding) encoding = 'utf8'\n\n  let loweredCase = false\n  for (;;) {\n    switch (encoding) {\n      case 'hex':\n        return hexWrite(this, string, offset, length)\n\n      case 'utf8':\n      case 'utf-8':\n        return utf8Write(this, string, offset, length)\n\n      case 'ascii':\n      case 'latin1':\n      case 'binary':\n        return asciiWrite(this, string, offset, length)\n\n      case 'base64':\n        // Warning: maxLength not taken into account in base64Write\n        return base64Write(this, string, offset, length)\n\n      case 'ucs2':\n      case 'ucs-2':\n      case 'utf16le':\n      case 'utf-16le':\n        return ucs2Write(this, string, offset, length)\n\n      default:\n        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)\n        encoding = ('' + encoding).toLowerCase()\n        loweredCase = true\n    }\n  }\n}\n\nBuffer.prototype.toJSON = function toJSON () {\n  return {\n    type: 'Buffer',\n    data: Array.prototype.slice.call(this._arr || this, 0)\n  }\n}\n\nfunction base64Slice (buf, start, end) {\n  if (start === 0 && end === buf.length) {\n    return base64.fromByteArray(buf)\n  } else {\n    return base64.fromByteArray(buf.slice(start, end))\n  }\n}\n\nfunction utf8Slice (buf, start, end) {\n  end = Math.min(buf.length, end)\n  const res = []\n\n  let i = start\n  while (i < end) {\n    const firstByte = buf[i]\n    let codePoint = null\n    let bytesPerSequence = (firstByte > 0xEF)\n      ? 4\n      : (firstByte > 0xDF)\n          ? 3\n          : (firstByte > 0xBF)\n              ? 2\n              : 1\n\n    if (i + bytesPerSequence <= end) {\n      let secondByte, thirdByte, fourthByte, tempCodePoint\n\n      switch (bytesPerSequence) {\n        case 1:\n          if (firstByte < 0x80) {\n            codePoint = firstByte\n          }\n          break\n        case 2:\n          secondByte = buf[i + 1]\n          if ((secondByte & 0xC0) === 0x80) {\n            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)\n            if (tempCodePoint > 0x7F) {\n              codePoint = tempCodePoint\n            }\n          }\n          break\n        case 3:\n          secondByte = buf[i + 1]\n          thirdByte = buf[i + 2]\n          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {\n            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)\n            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {\n              codePoint = tempCodePoint\n            }\n          }\n          break\n        case 4:\n          secondByte = buf[i + 1]\n          thirdByte = buf[i + 2]\n          fourthByte = buf[i + 3]\n          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {\n            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)\n            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {\n              codePoint = tempCodePoint\n            }\n          }\n      }\n    }\n\n    if (codePoint === null) {\n      // we did not generate a valid codePoint so insert a\n      // replacement char (U+FFFD) and advance only 1 byte\n      codePoint = 0xFFFD\n      bytesPerSequence = 1\n    } else if (codePoint > 0xFFFF) {\n      // encode to utf16 (surrogate pair dance)\n      codePoint -= 0x10000\n      res.push(codePoint >>> 10 & 0x3FF | 0xD800)\n      codePoint = 0xDC00 | codePoint & 0x3FF\n    }\n\n    res.push(codePoint)\n    i += bytesPerSequence\n  }\n\n  return decodeCodePointsArray(res)\n}\n\n// Based on http://stackoverflow.com/a/22747272/680742, the browser with\n// the lowest limit is Chrome, with 0x10000 args.\n// We go 1 magnitude less, for safety\nconst MAX_ARGUMENTS_LENGTH = 0x1000\n\nfunction decodeCodePointsArray (codePoints) {\n  const len = codePoints.length\n  if (len <= MAX_ARGUMENTS_LENGTH) {\n    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()\n  }\n\n  // Decode in chunks to avoid \"call stack size exceeded\".\n  let res = ''\n  let i = 0\n  while (i < len) {\n    res += String.fromCharCode.apply(\n      String,\n      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)\n    )\n  }\n  return res\n}\n\nfunction asciiSlice (buf, start, end) {\n  let ret = ''\n  end = Math.min(buf.length, end)\n\n  for (let i = start; i < end; ++i) {\n    ret += String.fromCharCode(buf[i] & 0x7F)\n  }\n  return ret\n}\n\nfunction latin1Slice (buf, start, end) {\n  let ret = ''\n  end = Math.min(buf.length, end)\n\n  for (let i = start; i < end; ++i) {\n    ret += String.fromCharCode(buf[i])\n  }\n  return ret\n}\n\nfunction hexSlice (buf, start, end) {\n  const len = buf.length\n\n  if (!start || start < 0) start = 0\n  if (!end || end < 0 || end > len) end = len\n\n  let out = ''\n  for (let i = start; i < end; ++i) {\n    out += hexSliceLookupTable[buf[i]]\n  }\n  return out\n}\n\nfunction utf16leSlice (buf, start, end) {\n  const bytes = buf.slice(start, end)\n  let res = ''\n  // If bytes.length is odd, the last 8 bits must be ignored (same as node.js)\n  for (let i = 0; i < bytes.length - 1; i += 2) {\n    res += String.fromCharCode(bytes[i] + (bytes[i + 1] * 256))\n  }\n  return res\n}\n\nBuffer.prototype.slice = function slice (start, end) {\n  const len = this.length\n  start = ~~start\n  end = end === undefined ? len : ~~end\n\n  if (start < 0) {\n    start += len\n    if (start < 0) start = 0\n  } else if (start > len) {\n    start = len\n  }\n\n  if (end < 0) {\n    end += len\n    if (end < 0) end = 0\n  } else if (end > len) {\n    end = len\n  }\n\n  if (end < start) end = start\n\n  const newBuf = this.subarray(start, end)\n  // Return an augmented `Uint8Array` instance\n  Object.setPrototypeOf(newBuf, Buffer.prototype)\n\n  return newBuf\n}\n\n/*\n * Need to make sure that buffer isn't trying to write out of bounds.\n */\nfunction checkOffset (offset, ext, length) {\n  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')\n  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')\n}\n\nBuffer.prototype.readUintLE =\nBuffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {\n  offset = offset >>> 0\n  byteLength = byteLength >>> 0\n  if (!noAssert) checkOffset(offset, byteLength, this.length)\n\n  let val = this[offset]\n  let mul = 1\n  let i = 0\n  while (++i < byteLength && (mul *= 0x100)) {\n    val += this[offset + i] * mul\n  }\n\n  return val\n}\n\nBuffer.prototype.readUintBE =\nBuffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {\n  offset = offset >>> 0\n  byteLength = byteLength >>> 0\n  if (!noAssert) {\n    checkOffset(offset, byteLength, this.length)\n  }\n\n  let val = this[offset + --byteLength]\n  let mul = 1\n  while (byteLength > 0 && (mul *= 0x100)) {\n    val += this[offset + --byteLength] * mul\n  }\n\n  return val\n}\n\nBuffer.prototype.readUint8 =\nBuffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 1, this.length)\n  return this[offset]\n}\n\nBuffer.prototype.readUint16LE =\nBuffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 2, this.length)\n  return this[offset] | (this[offset + 1] << 8)\n}\n\nBuffer.prototype.readUint16BE =\nBuffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 2, this.length)\n  return (this[offset] << 8) | this[offset + 1]\n}\n\nBuffer.prototype.readUint32LE =\nBuffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 4, this.length)\n\n  return ((this[offset]) |\n      (this[offset + 1] << 8) |\n      (this[offset + 2] << 16)) +\n      (this[offset + 3] * 0x1000000)\n}\n\nBuffer.prototype.readUint32BE =\nBuffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 4, this.length)\n\n  return (this[offset] * 0x1000000) +\n    ((this[offset + 1] << 16) |\n    (this[offset + 2] << 8) |\n    this[offset + 3])\n}\n\nBuffer.prototype.readBigUInt64LE = defineBigIntMethod(function readBigUInt64LE (offset) {\n  offset = offset >>> 0\n  validateNumber(offset, 'offset')\n  const first = this[offset]\n  const last = this[offset + 7]\n  if (first === undefined || last === undefined) {\n    boundsError(offset, this.length - 8)\n  }\n\n  const lo = first +\n    this[++offset] * 2 ** 8 +\n    this[++offset] * 2 ** 16 +\n    this[++offset] * 2 ** 24\n\n  const hi = this[++offset] +\n    this[++offset] * 2 ** 8 +\n    this[++offset] * 2 ** 16 +\n    last * 2 ** 24\n\n  return BigInt(lo) + (BigInt(hi) << BigInt(32))\n})\n\nBuffer.prototype.readBigUInt64BE = defineBigIntMethod(function readBigUInt64BE (offset) {\n  offset = offset >>> 0\n  validateNumber(offset, 'offset')\n  const first = this[offset]\n  const last = this[offset + 7]\n  if (first === undefined || last === undefined) {\n    boundsError(offset, this.length - 8)\n  }\n\n  const hi = first * 2 ** 24 +\n    this[++offset] * 2 ** 16 +\n    this[++offset] * 2 ** 8 +\n    this[++offset]\n\n  const lo = this[++offset] * 2 ** 24 +\n    this[++offset] * 2 ** 16 +\n    this[++offset] * 2 ** 8 +\n    last\n\n  return (BigInt(hi) << BigInt(32)) + BigInt(lo)\n})\n\nBuffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {\n  offset = offset >>> 0\n  byteLength = byteLength >>> 0\n  if (!noAssert) checkOffset(offset, byteLength, this.length)\n\n  let val = this[offset]\n  let mul = 1\n  let i = 0\n  while (++i < byteLength && (mul *= 0x100)) {\n    val += this[offset + i] * mul\n  }\n  mul *= 0x80\n\n  if (val >= mul) val -= Math.pow(2, 8 * byteLength)\n\n  return val\n}\n\nBuffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {\n  offset = offset >>> 0\n  byteLength = byteLength >>> 0\n  if (!noAssert) checkOffset(offset, byteLength, this.length)\n\n  let i = byteLength\n  let mul = 1\n  let val = this[offset + --i]\n  while (i > 0 && (mul *= 0x100)) {\n    val += this[offset + --i] * mul\n  }\n  mul *= 0x80\n\n  if (val >= mul) val -= Math.pow(2, 8 * byteLength)\n\n  return val\n}\n\nBuffer.prototype.readInt8 = function readInt8 (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 1, this.length)\n  if (!(this[offset] & 0x80)) return (this[offset])\n  return ((0xff - this[offset] + 1) * -1)\n}\n\nBuffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 2, this.length)\n  const val = this[offset] | (this[offset + 1] << 8)\n  return (val & 0x8000) ? val | 0xFFFF0000 : val\n}\n\nBuffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 2, this.length)\n  const val = this[offset + 1] | (this[offset] << 8)\n  return (val & 0x8000) ? val | 0xFFFF0000 : val\n}\n\nBuffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 4, this.length)\n\n  return (this[offset]) |\n    (this[offset + 1] << 8) |\n    (this[offset + 2] << 16) |\n    (this[offset + 3] << 24)\n}\n\nBuffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 4, this.length)\n\n  return (this[offset] << 24) |\n    (this[offset + 1] << 16) |\n    (this[offset + 2] << 8) |\n    (this[offset + 3])\n}\n\nBuffer.prototype.readBigInt64LE = defineBigIntMethod(function readBigInt64LE (offset) {\n  offset = offset >>> 0\n  validateNumber(offset, 'offset')\n  const first = this[offset]\n  const last = this[offset + 7]\n  if (first === undefined || last === undefined) {\n    boundsError(offset, this.length - 8)\n  }\n\n  const val = this[offset + 4] +\n    this[offset + 5] * 2 ** 8 +\n    this[offset + 6] * 2 ** 16 +\n    (last << 24) // Overflow\n\n  return (BigInt(val) << BigInt(32)) +\n    BigInt(first +\n    this[++offset] * 2 ** 8 +\n    this[++offset] * 2 ** 16 +\n    this[++offset] * 2 ** 24)\n})\n\nBuffer.prototype.readBigInt64BE = defineBigIntMethod(function readBigInt64BE (offset) {\n  offset = offset >>> 0\n  validateNumber(offset, 'offset')\n  const first = this[offset]\n  const last = this[offset + 7]\n  if (first === undefined || last === undefined) {\n    boundsError(offset, this.length - 8)\n  }\n\n  const val = (first << 24) + // Overflow\n    this[++offset] * 2 ** 16 +\n    this[++offset] * 2 ** 8 +\n    this[++offset]\n\n  return (BigInt(val) << BigInt(32)) +\n    BigInt(this[++offset] * 2 ** 24 +\n    this[++offset] * 2 ** 16 +\n    this[++offset] * 2 ** 8 +\n    last)\n})\n\nBuffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 4, this.length)\n  return ieee754.read(this, offset, true, 23, 4)\n}\n\nBuffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 4, this.length)\n  return ieee754.read(this, offset, false, 23, 4)\n}\n\nBuffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 8, this.length)\n  return ieee754.read(this, offset, true, 52, 8)\n}\n\nBuffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {\n  offset = offset >>> 0\n  if (!noAssert) checkOffset(offset, 8, this.length)\n  return ieee754.read(this, offset, false, 52, 8)\n}\n\nfunction checkInt (buf, value, offset, ext, max, min) {\n  if (!Buffer.isBuffer(buf)) throw new TypeError('\"buffer\" argument must be a Buffer instance')\n  if (value > max || value < min) throw new RangeError('\"value\" argument is out of bounds')\n  if (offset + ext > buf.length) throw new RangeError('Index out of range')\n}\n\nBuffer.prototype.writeUintLE =\nBuffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  byteLength = byteLength >>> 0\n  if (!noAssert) {\n    const maxBytes = Math.pow(2, 8 * byteLength) - 1\n    checkInt(this, value, offset, byteLength, maxBytes, 0)\n  }\n\n  let mul = 1\n  let i = 0\n  this[offset] = value & 0xFF\n  while (++i < byteLength && (mul *= 0x100)) {\n    this[offset + i] = (value / mul) & 0xFF\n  }\n\n  return offset + byteLength\n}\n\nBuffer.prototype.writeUintBE =\nBuffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  byteLength = byteLength >>> 0\n  if (!noAssert) {\n    const maxBytes = Math.pow(2, 8 * byteLength) - 1\n    checkInt(this, value, offset, byteLength, maxBytes, 0)\n  }\n\n  let i = byteLength - 1\n  let mul = 1\n  this[offset + i] = value & 0xFF\n  while (--i >= 0 && (mul *= 0x100)) {\n    this[offset + i] = (value / mul) & 0xFF\n  }\n\n  return offset + byteLength\n}\n\nBuffer.prototype.writeUint8 =\nBuffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)\n  this[offset] = (value & 0xff)\n  return offset + 1\n}\n\nBuffer.prototype.writeUint16LE =\nBuffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)\n  this[offset] = (value & 0xff)\n  this[offset + 1] = (value >>> 8)\n  return offset + 2\n}\n\nBuffer.prototype.writeUint16BE =\nBuffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)\n  this[offset] = (value >>> 8)\n  this[offset + 1] = (value & 0xff)\n  return offset + 2\n}\n\nBuffer.prototype.writeUint32LE =\nBuffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)\n  this[offset + 3] = (value >>> 24)\n  this[offset + 2] = (value >>> 16)\n  this[offset + 1] = (value >>> 8)\n  this[offset] = (value & 0xff)\n  return offset + 4\n}\n\nBuffer.prototype.writeUint32BE =\nBuffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)\n  this[offset] = (value >>> 24)\n  this[offset + 1] = (value >>> 16)\n  this[offset + 2] = (value >>> 8)\n  this[offset + 3] = (value & 0xff)\n  return offset + 4\n}\n\nfunction wrtBigUInt64LE (buf, value, offset, min, max) {\n  checkIntBI(value, min, max, buf, offset, 7)\n\n  let lo = Number(value & BigInt(0xffffffff))\n  buf[offset++] = lo\n  lo = lo >> 8\n  buf[offset++] = lo\n  lo = lo >> 8\n  buf[offset++] = lo\n  lo = lo >> 8\n  buf[offset++] = lo\n  let hi = Number(value >> BigInt(32) & BigInt(0xffffffff))\n  buf[offset++] = hi\n  hi = hi >> 8\n  buf[offset++] = hi\n  hi = hi >> 8\n  buf[offset++] = hi\n  hi = hi >> 8\n  buf[offset++] = hi\n  return offset\n}\n\nfunction wrtBigUInt64BE (buf, value, offset, min, max) {\n  checkIntBI(value, min, max, buf, offset, 7)\n\n  let lo = Number(value & BigInt(0xffffffff))\n  buf[offset + 7] = lo\n  lo = lo >> 8\n  buf[offset + 6] = lo\n  lo = lo >> 8\n  buf[offset + 5] = lo\n  lo = lo >> 8\n  buf[offset + 4] = lo\n  let hi = Number(value >> BigInt(32) & BigInt(0xffffffff))\n  buf[offset + 3] = hi\n  hi = hi >> 8\n  buf[offset + 2] = hi\n  hi = hi >> 8\n  buf[offset + 1] = hi\n  hi = hi >> 8\n  buf[offset] = hi\n  return offset + 8\n}\n\nBuffer.prototype.writeBigUInt64LE = defineBigIntMethod(function writeBigUInt64LE (value, offset = 0) {\n  return wrtBigUInt64LE(this, value, offset, BigInt(0), BigInt('0xffffffffffffffff'))\n})\n\nBuffer.prototype.writeBigUInt64BE = defineBigIntMethod(function writeBigUInt64BE (value, offset = 0) {\n  return wrtBigUInt64BE(this, value, offset, BigInt(0), BigInt('0xffffffffffffffff'))\n})\n\nBuffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) {\n    const limit = Math.pow(2, (8 * byteLength) - 1)\n\n    checkInt(this, value, offset, byteLength, limit - 1, -limit)\n  }\n\n  let i = 0\n  let mul = 1\n  let sub = 0\n  this[offset] = value & 0xFF\n  while (++i < byteLength && (mul *= 0x100)) {\n    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {\n      sub = 1\n    }\n    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF\n  }\n\n  return offset + byteLength\n}\n\nBuffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) {\n    const limit = Math.pow(2, (8 * byteLength) - 1)\n\n    checkInt(this, value, offset, byteLength, limit - 1, -limit)\n  }\n\n  let i = byteLength - 1\n  let mul = 1\n  let sub = 0\n  this[offset + i] = value & 0xFF\n  while (--i >= 0 && (mul *= 0x100)) {\n    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {\n      sub = 1\n    }\n    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF\n  }\n\n  return offset + byteLength\n}\n\nBuffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)\n  if (value < 0) value = 0xff + value + 1\n  this[offset] = (value & 0xff)\n  return offset + 1\n}\n\nBuffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)\n  this[offset] = (value & 0xff)\n  this[offset + 1] = (value >>> 8)\n  return offset + 2\n}\n\nBuffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)\n  this[offset] = (value >>> 8)\n  this[offset + 1] = (value & 0xff)\n  return offset + 2\n}\n\nBuffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)\n  this[offset] = (value & 0xff)\n  this[offset + 1] = (value >>> 8)\n  this[offset + 2] = (value >>> 16)\n  this[offset + 3] = (value >>> 24)\n  return offset + 4\n}\n\nBuffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)\n  if (value < 0) value = 0xffffffff + value + 1\n  this[offset] = (value >>> 24)\n  this[offset + 1] = (value >>> 16)\n  this[offset + 2] = (value >>> 8)\n  this[offset + 3] = (value & 0xff)\n  return offset + 4\n}\n\nBuffer.prototype.writeBigInt64LE = defineBigIntMethod(function writeBigInt64LE (value, offset = 0) {\n  return wrtBigUInt64LE(this, value, offset, -BigInt('0x8000000000000000'), BigInt('0x7fffffffffffffff'))\n})\n\nBuffer.prototype.writeBigInt64BE = defineBigIntMethod(function writeBigInt64BE (value, offset = 0) {\n  return wrtBigUInt64BE(this, value, offset, -BigInt('0x8000000000000000'), BigInt('0x7fffffffffffffff'))\n})\n\nfunction checkIEEE754 (buf, value, offset, ext, max, min) {\n  if (offset + ext > buf.length) throw new RangeError('Index out of range')\n  if (offset < 0) throw new RangeError('Index out of range')\n}\n\nfunction writeFloat (buf, value, offset, littleEndian, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) {\n    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)\n  }\n  ieee754.write(buf, value, offset, littleEndian, 23, 4)\n  return offset + 4\n}\n\nBuffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {\n  return writeFloat(this, value, offset, true, noAssert)\n}\n\nBuffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {\n  return writeFloat(this, value, offset, false, noAssert)\n}\n\nfunction writeDouble (buf, value, offset, littleEndian, noAssert) {\n  value = +value\n  offset = offset >>> 0\n  if (!noAssert) {\n    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)\n  }\n  ieee754.write(buf, value, offset, littleEndian, 52, 8)\n  return offset + 8\n}\n\nBuffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {\n  return writeDouble(this, value, offset, true, noAssert)\n}\n\nBuffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {\n  return writeDouble(this, value, offset, false, noAssert)\n}\n\n// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)\nBuffer.prototype.copy = function copy (target, targetStart, start, end) {\n  if (!Buffer.isBuffer(target)) throw new TypeError('argument should be a Buffer')\n  if (!start) start = 0\n  if (!end && end !== 0) end = this.length\n  if (targetStart >= target.length) targetStart = target.length\n  if (!targetStart) targetStart = 0\n  if (end > 0 && end < start) end = start\n\n  // Copy 0 bytes; we're done\n  if (end === start) return 0\n  if (target.length === 0 || this.length === 0) return 0\n\n  // Fatal error conditions\n  if (targetStart < 0) {\n    throw new RangeError('targetStart out of bounds')\n  }\n  if (start < 0 || start >= this.length) throw new RangeError('Index out of range')\n  if (end < 0) throw new RangeError('sourceEnd out of bounds')\n\n  // Are we oob?\n  if (end > this.length) end = this.length\n  if (target.length - targetStart < end - start) {\n    end = target.length - targetStart + start\n  }\n\n  const len = end - start\n\n  if (this === target && typeof Uint8Array.prototype.copyWithin === 'function') {\n    // Use built-in when available, missing from IE11\n    this.copyWithin(targetStart, start, end)\n  } else {\n    Uint8Array.prototype.set.call(\n      target,\n      this.subarray(start, end),\n      targetStart\n    )\n  }\n\n  return len\n}\n\n// Usage:\n//    buffer.fill(number[, offset[, end]])\n//    buffer.fill(buffer[, offset[, end]])\n//    buffer.fill(string[, offset[, end]][, encoding])\nBuffer.prototype.fill = function fill (val, start, end, encoding) {\n  // Handle string cases:\n  if (typeof val === 'string') {\n    if (typeof start === 'string') {\n      encoding = start\n      start = 0\n      end = this.length\n    } else if (typeof end === 'string') {\n      encoding = end\n      end = this.length\n    }\n    if (encoding !== undefined && typeof encoding !== 'string') {\n      throw new TypeError('encoding must be a string')\n    }\n    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {\n      throw new TypeError('Unknown encoding: ' + encoding)\n    }\n    if (val.length === 1) {\n      const code = val.charCodeAt(0)\n      if ((encoding === 'utf8' && code < 128) ||\n          encoding === 'latin1') {\n        // Fast path: If `val` fits into a single byte, use that numeric value.\n        val = code\n      }\n    }\n  } else if (typeof val === 'number') {\n    val = val & 255\n  } else if (typeof val === 'boolean') {\n    val = Number(val)\n  }\n\n  // Invalid ranges are not set to a default, so can range check early.\n  if (start < 0 || this.length < start || this.length < end) {\n    throw new RangeError('Out of range index')\n  }\n\n  if (end <= start) {\n    return this\n  }\n\n  start = start >>> 0\n  end = end === undefined ? this.length : end >>> 0\n\n  if (!val) val = 0\n\n  let i\n  if (typeof val === 'number') {\n    for (i = start; i < end; ++i) {\n      this[i] = val\n    }\n  } else {\n    const bytes = Buffer.isBuffer(val)\n      ? val\n      : Buffer.from(val, encoding)\n    const len = bytes.length\n    if (len === 0) {\n      throw new TypeError('The value \"' + val +\n        '\" is invalid for argument \"value\"')\n    }\n    for (i = 0; i < end - start; ++i) {\n      this[i + start] = bytes[i % len]\n    }\n  }\n\n  return this\n}\n\n// CUSTOM ERRORS\n// =============\n\n// Simplified versions from Node, changed for Buffer-only usage\nconst errors = {}\nfunction E (sym, getMessage, Base) {\n  errors[sym] = class NodeError extends Base {\n    constructor () {\n      super()\n\n      Object.defineProperty(this, 'message', {\n        value: getMessage.apply(this, arguments),\n        writable: true,\n        configurable: true\n      })\n\n      // Add the error code to the name to include it in the stack trace.\n      this.name = `${this.name} [${sym}]`\n      // Access the stack to generate the error message including the error code\n      // from the name.\n      this.stack // eslint-disable-line no-unused-expressions\n      // Reset the name to the actual name.\n      delete this.name\n    }\n\n    get code () {\n      return sym\n    }\n\n    set code (value) {\n      Object.defineProperty(this, 'code', {\n        configurable: true,\n        enumerable: true,\n        value,\n        writable: true\n      })\n    }\n\n    toString () {\n      return `${this.name} [${sym}]: ${this.message}`\n    }\n  }\n}\n\nE('ERR_BUFFER_OUT_OF_BOUNDS',\n  function (name) {\n    if (name) {\n      return `${name} is outside of buffer bounds`\n    }\n\n    return 'Attempt to access memory outside buffer bounds'\n  }, RangeError)\nE('ERR_INVALID_ARG_TYPE',\n  function (name, actual) {\n    return `The \"${name}\" argument must be of type number. Received type ${typeof actual}`\n  }, TypeError)\nE('ERR_OUT_OF_RANGE',\n  function (str, range, input) {\n    let msg = `The value of \"${str}\" is out of range.`\n    let received = input\n    if (Number.isInteger(input) && Math.abs(input) > 2 ** 32) {\n      received = addNumericalSeparator(String(input))\n    } else if (typeof input === 'bigint') {\n      received = String(input)\n      if (input > BigInt(2) ** BigInt(32) || input < -(BigInt(2) ** BigInt(32))) {\n        received = addNumericalSeparator(received)\n      }\n      received += 'n'\n    }\n    msg += ` It must be ${range}. Received ${received}`\n    return msg\n  }, RangeError)\n\nfunction addNumericalSeparator (val) {\n  let res = ''\n  let i = val.length\n  const start = val[0] === '-' ? 1 : 0\n  for (; i >= start + 4; i -= 3) {\n    res = `_${val.slice(i - 3, i)}${res}`\n  }\n  return `${val.slice(0, i)}${res}`\n}\n\n// CHECK FUNCTIONS\n// ===============\n\nfunction checkBounds (buf, offset, byteLength) {\n  validateNumber(offset, 'offset')\n  if (buf[offset] === undefined || buf[offset + byteLength] === undefined) {\n    boundsError(offset, buf.length - (byteLength + 1))\n  }\n}\n\nfunction checkIntBI (value, min, max, buf, offset, byteLength) {\n  if (value > max || value < min) {\n    const n = typeof min === 'bigint' ? 'n' : ''\n    let range\n    if (byteLength > 3) {\n      if (min === 0 || min === BigInt(0)) {\n        range = `>= 0${n} and < 2${n} ** ${(byteLength + 1) * 8}${n}`\n      } else {\n        range = `>= -(2${n} ** ${(byteLength + 1) * 8 - 1}${n}) and < 2 ** ` +\n                `${(byteLength + 1) * 8 - 1}${n}`\n      }\n    } else {\n      range = `>= ${min}${n} and <= ${max}${n}`\n    }\n    throw new errors.ERR_OUT_OF_RANGE('value', range, value)\n  }\n  checkBounds(buf, offset, byteLength)\n}\n\nfunction validateNumber (value, name) {\n  if (typeof value !== 'number') {\n    throw new errors.ERR_INVALID_ARG_TYPE(name, 'number', value)\n  }\n}\n\nfunction boundsError (value, length, type) {\n  if (Math.floor(value) !== value) {\n    validateNumber(value, type)\n    throw new errors.ERR_OUT_OF_RANGE(type || 'offset', 'an integer', value)\n  }\n\n  if (length < 0) {\n    throw new errors.ERR_BUFFER_OUT_OF_BOUNDS()\n  }\n\n  throw new errors.ERR_OUT_OF_RANGE(type || 'offset',\n                                    `>= ${type ? 1 : 0} and <= ${length}`,\n                                    value)\n}\n\n// HELPER FUNCTIONS\n// ================\n\nconst INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g\n\nfunction base64clean (str) {\n  // Node takes equal signs as end of the Base64 encoding\n  str = str.split('=')[0]\n  // Node strips out invalid characters like \\n and \\t from the string, base64-js does not\n  str = str.trim().replace(INVALID_BASE64_RE, '')\n  // Node converts strings with length < 2 to ''\n  if (str.length < 2) return ''\n  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not\n  while (str.length % 4 !== 0) {\n    str = str + '='\n  }\n  return str\n}\n\nfunction utf8ToBytes (string, units) {\n  units = units || Infinity\n  let codePoint\n  const length = string.length\n  let leadSurrogate = null\n  const bytes = []\n\n  for (let i = 0; i < length; ++i) {\n    codePoint = string.charCodeAt(i)\n\n    // is surrogate component\n    if (codePoint > 0xD7FF && codePoint < 0xE000) {\n      // last char was a lead\n      if (!leadSurrogate) {\n        // no lead yet\n        if (codePoint > 0xDBFF) {\n          // unexpected trail\n          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)\n          continue\n        } else if (i + 1 === length) {\n          // unpaired lead\n          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)\n          continue\n        }\n\n        // valid lead\n        leadSurrogate = codePoint\n\n        continue\n      }\n\n      // 2 leads in a row\n      if (codePoint < 0xDC00) {\n        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)\n        leadSurrogate = codePoint\n        continue\n      }\n\n      // valid surrogate pair\n      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000\n    } else if (leadSurrogate) {\n      // valid bmp char, but last char was a lead\n      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)\n    }\n\n    leadSurrogate = null\n\n    // encode utf8\n    if (codePoint < 0x80) {\n      if ((units -= 1) < 0) break\n      bytes.push(codePoint)\n    } else if (codePoint < 0x800) {\n      if ((units -= 2) < 0) break\n      bytes.push(\n        codePoint >> 0x6 | 0xC0,\n        codePoint & 0x3F | 0x80\n      )\n    } else if (codePoint < 0x10000) {\n      if ((units -= 3) < 0) break\n      bytes.push(\n        codePoint >> 0xC | 0xE0,\n        codePoint >> 0x6 & 0x3F | 0x80,\n        codePoint & 0x3F | 0x80\n      )\n    } else if (codePoint < 0x110000) {\n      if ((units -= 4) < 0) break\n      bytes.push(\n        codePoint >> 0x12 | 0xF0,\n        codePoint >> 0xC & 0x3F | 0x80,\n        codePoint >> 0x6 & 0x3F | 0x80,\n        codePoint & 0x3F | 0x80\n      )\n    } else {\n      throw new Error('Invalid code point')\n    }\n  }\n\n  return bytes\n}\n\nfunction asciiToBytes (str) {\n  const byteArray = []\n  for (let i = 0; i < str.length; ++i) {\n    // Node's code seems to be doing this and not & 0x7F..\n    byteArray.push(str.charCodeAt(i) & 0xFF)\n  }\n  return byteArray\n}\n\nfunction utf16leToBytes (str, units) {\n  let c, hi, lo\n  const byteArray = []\n  for (let i = 0; i < str.length; ++i) {\n    if ((units -= 2) < 0) break\n\n    c = str.charCodeAt(i)\n    hi = c >> 8\n    lo = c % 256\n    byteArray.push(lo)\n    byteArray.push(hi)\n  }\n\n  return byteArray\n}\n\nfunction base64ToBytes (str) {\n  return base64.toByteArray(base64clean(str))\n}\n\nfunction blitBuffer (src, dst, offset, length) {\n  let i\n  for (i = 0; i < length; ++i) {\n    if ((i + offset >= dst.length) || (i >= src.length)) break\n    dst[i + offset] = src[i]\n  }\n  return i\n}\n\n// ArrayBuffer or Uint8Array objects from other contexts (i.e. iframes) do not pass\n// the `instanceof` check but they should be treated as of that type.\n// See: https://github.com/feross/buffer/issues/166\nfunction isInstance (obj, type) {\n  return obj instanceof type ||\n    (obj != null && obj.constructor != null && obj.constructor.name != null &&\n      obj.constructor.name === type.name)\n}\nfunction numberIsNaN (obj) {\n  // For IE11 support\n  return obj !== obj // eslint-disable-line no-self-compare\n}\n\n// Create lookup table for `toString('hex')`\n// See: https://github.com/feross/buffer/issues/219\nconst hexSliceLookupTable = (function () {\n  const alphabet = '0123456789abcdef'\n  const table = new Array(256)\n  for (let i = 0; i < 16; ++i) {\n    const i16 = i * 16\n    for (let j = 0; j < 16; ++j) {\n      table[i16 + j] = alphabet[i] + alphabet[j]\n    }\n  }\n  return table\n})()\n\n// Return not function with Error if BigInt not supported\nfunction defineBigIntMethod (fn) {\n  return typeof BigInt === 'undefined' ? BufferBigIntNotDefined : fn\n}\n\nfunction BufferBigIntNotDefined () {\n  throw new Error('BigInt not supported')\n}\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/buffer/index.js?");
+var __webpack_unused_export__;
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+/* eslint-disable no-proto */
+
+
+
+const base64 = __webpack_require__(9742)
+const ieee754 = __webpack_require__(645)
+const customInspectSymbol =
+  (typeof Symbol === 'function' && typeof Symbol['for'] === 'function') // eslint-disable-line dot-notation
+    ? Symbol['for']('nodejs.util.inspect.custom') // eslint-disable-line dot-notation
+    : null
+
+exports.lW = Buffer
+__webpack_unused_export__ = SlowBuffer
+exports.h2 = 50
+
+const K_MAX_LENGTH = 0x7fffffff
+__webpack_unused_export__ = K_MAX_LENGTH
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Print warning and recommend using `buffer` v4.x which has an Object
+ *               implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * We report that the browser does not support typed arrays if the are not subclassable
+ * using __proto__. Firefox 4-29 lacks support for adding new properties to `Uint8Array`
+ * (See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438). IE 10 lacks support
+ * for __proto__ and has a buggy typed array implementation.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = typedArraySupport()
+
+if (!Buffer.TYPED_ARRAY_SUPPORT && typeof console !== 'undefined' &&
+    typeof console.error === 'function') {
+  console.error(
+    'This browser lacks typed array (Uint8Array) support which is required by ' +
+    '`buffer` v5.x. Use `buffer` v4.x if you require old browser support.'
+  )
+}
+
+function typedArraySupport () {
+  // Can typed array instances can be augmented?
+  try {
+    const arr = new Uint8Array(1)
+    const proto = { foo: function () { return 42 } }
+    Object.setPrototypeOf(proto, Uint8Array.prototype)
+    Object.setPrototypeOf(arr, proto)
+    return arr.foo() === 42
+  } catch (e) {
+    return false
+  }
+}
+
+Object.defineProperty(Buffer.prototype, 'parent', {
+  enumerable: true,
+  get: function () {
+    if (!Buffer.isBuffer(this)) return undefined
+    return this.buffer
+  }
+})
+
+Object.defineProperty(Buffer.prototype, 'offset', {
+  enumerable: true,
+  get: function () {
+    if (!Buffer.isBuffer(this)) return undefined
+    return this.byteOffset
+  }
+})
+
+function createBuffer (length) {
+  if (length > K_MAX_LENGTH) {
+    throw new RangeError('The value "' + length + '" is invalid for option "size"')
+  }
+  // Return an augmented `Uint8Array` instance
+  const buf = new Uint8Array(length)
+  Object.setPrototypeOf(buf, Buffer.prototype)
+  return buf
+}
+
+/**
+ * The Buffer constructor returns instances of `Uint8Array` that have their
+ * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+ * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+ * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+ * returns a single octet.
+ *
+ * The `Uint8Array` prototype remains unmodified.
+ */
+
+function Buffer (arg, encodingOrOffset, length) {
+  // Common case.
+  if (typeof arg === 'number') {
+    if (typeof encodingOrOffset === 'string') {
+      throw new TypeError(
+        'The "string" argument must be of type string. Received type number'
+      )
+    }
+    return allocUnsafe(arg)
+  }
+  return from(arg, encodingOrOffset, length)
+}
+
+Buffer.poolSize = 8192 // not used by this implementation
+
+function from (value, encodingOrOffset, length) {
+  if (typeof value === 'string') {
+    return fromString(value, encodingOrOffset)
+  }
+
+  if (ArrayBuffer.isView(value)) {
+    return fromArrayView(value)
+  }
+
+  if (value == null) {
+    throw new TypeError(
+      'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
+      'or Array-like Object. Received type ' + (typeof value)
+    )
+  }
+
+  if (isInstance(value, ArrayBuffer) ||
+      (value && isInstance(value.buffer, ArrayBuffer))) {
+    return fromArrayBuffer(value, encodingOrOffset, length)
+  }
+
+  if (typeof SharedArrayBuffer !== 'undefined' &&
+      (isInstance(value, SharedArrayBuffer) ||
+      (value && isInstance(value.buffer, SharedArrayBuffer)))) {
+    return fromArrayBuffer(value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'number') {
+    throw new TypeError(
+      'The "value" argument must not be of type number. Received type number'
+    )
+  }
+
+  const valueOf = value.valueOf && value.valueOf()
+  if (valueOf != null && valueOf !== value) {
+    return Buffer.from(valueOf, encodingOrOffset, length)
+  }
+
+  const b = fromObject(value)
+  if (b) return b
+
+  if (typeof Symbol !== 'undefined' && Symbol.toPrimitive != null &&
+      typeof value[Symbol.toPrimitive] === 'function') {
+    return Buffer.from(value[Symbol.toPrimitive]('string'), encodingOrOffset, length)
+  }
+
+  throw new TypeError(
+    'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
+    'or Array-like Object. Received type ' + (typeof value)
+  )
+}
+
+/**
+ * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+ * if value is a number.
+ * Buffer.from(str[, encoding])
+ * Buffer.from(array)
+ * Buffer.from(buffer)
+ * Buffer.from(arrayBuffer[, byteOffset[, length]])
+ **/
+Buffer.from = function (value, encodingOrOffset, length) {
+  return from(value, encodingOrOffset, length)
+}
+
+// Note: Change prototype *after* Buffer.from is defined to workaround Chrome bug:
+// https://github.com/feross/buffer/pull/148
+Object.setPrototypeOf(Buffer.prototype, Uint8Array.prototype)
+Object.setPrototypeOf(Buffer, Uint8Array)
+
+function assertSize (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('"size" argument must be of type number')
+  } else if (size < 0) {
+    throw new RangeError('The value "' + size + '" is invalid for option "size"')
+  }
+}
+
+function alloc (size, fill, encoding) {
+  assertSize(size)
+  if (size <= 0) {
+    return createBuffer(size)
+  }
+  if (fill !== undefined) {
+    // Only pay attention to encoding if it's a string. This
+    // prevents accidentally sending in a number that would
+    // be interpreted as a start offset.
+    return typeof encoding === 'string'
+      ? createBuffer(size).fill(fill, encoding)
+      : createBuffer(size).fill(fill)
+  }
+  return createBuffer(size)
+}
+
+/**
+ * Creates a new filled Buffer instance.
+ * alloc(size[, fill[, encoding]])
+ **/
+Buffer.alloc = function (size, fill, encoding) {
+  return alloc(size, fill, encoding)
+}
+
+function allocUnsafe (size) {
+  assertSize(size)
+  return createBuffer(size < 0 ? 0 : checked(size) | 0)
+}
+
+/**
+ * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+ * */
+Buffer.allocUnsafe = function (size) {
+  return allocUnsafe(size)
+}
+/**
+ * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+ */
+Buffer.allocUnsafeSlow = function (size) {
+  return allocUnsafe(size)
+}
+
+function fromString (string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8'
+  }
+
+  if (!Buffer.isEncoding(encoding)) {
+    throw new TypeError('Unknown encoding: ' + encoding)
+  }
+
+  const length = byteLength(string, encoding) | 0
+  let buf = createBuffer(length)
+
+  const actual = buf.write(string, encoding)
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    buf = buf.slice(0, actual)
+  }
+
+  return buf
+}
+
+function fromArrayLike (array) {
+  const length = array.length < 0 ? 0 : checked(array.length) | 0
+  const buf = createBuffer(length)
+  for (let i = 0; i < length; i += 1) {
+    buf[i] = array[i] & 255
+  }
+  return buf
+}
+
+function fromArrayView (arrayView) {
+  if (isInstance(arrayView, Uint8Array)) {
+    const copy = new Uint8Array(arrayView)
+    return fromArrayBuffer(copy.buffer, copy.byteOffset, copy.byteLength)
+  }
+  return fromArrayLike(arrayView)
+}
+
+function fromArrayBuffer (array, byteOffset, length) {
+  if (byteOffset < 0 || array.byteLength < byteOffset) {
+    throw new RangeError('"offset" is outside of buffer bounds')
+  }
+
+  if (array.byteLength < byteOffset + (length || 0)) {
+    throw new RangeError('"length" is outside of buffer bounds')
+  }
+
+  let buf
+  if (byteOffset === undefined && length === undefined) {
+    buf = new Uint8Array(array)
+  } else if (length === undefined) {
+    buf = new Uint8Array(array, byteOffset)
+  } else {
+    buf = new Uint8Array(array, byteOffset, length)
+  }
+
+  // Return an augmented `Uint8Array` instance
+  Object.setPrototypeOf(buf, Buffer.prototype)
+
+  return buf
+}
+
+function fromObject (obj) {
+  if (Buffer.isBuffer(obj)) {
+    const len = checked(obj.length) | 0
+    const buf = createBuffer(len)
+
+    if (buf.length === 0) {
+      return buf
+    }
+
+    obj.copy(buf, 0, 0, len)
+    return buf
+  }
+
+  if (obj.length !== undefined) {
+    if (typeof obj.length !== 'number' || numberIsNaN(obj.length)) {
+      return createBuffer(0)
+    }
+    return fromArrayLike(obj)
+  }
+
+  if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
+    return fromArrayLike(obj.data)
+  }
+}
+
+function checked (length) {
+  // Note: cannot use `length < K_MAX_LENGTH` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= K_MAX_LENGTH) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + K_MAX_LENGTH.toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (length) {
+  if (+length != length) { // eslint-disable-line eqeqeq
+    length = 0
+  }
+  return Buffer.alloc(+length)
+}
+
+Buffer.isBuffer = function isBuffer (b) {
+  return b != null && b._isBuffer === true &&
+    b !== Buffer.prototype // so Buffer.isBuffer(Buffer.prototype) will be false
+}
+
+Buffer.compare = function compare (a, b) {
+  if (isInstance(a, Uint8Array)) a = Buffer.from(a, a.offset, a.byteLength)
+  if (isInstance(b, Uint8Array)) b = Buffer.from(b, b.offset, b.byteLength)
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+    throw new TypeError(
+      'The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array'
+    )
+  }
+
+  if (a === b) return 0
+
+  let x = a.length
+  let y = b.length
+
+  for (let i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i]
+      y = b[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function concat (list, length) {
+  if (!Array.isArray(list)) {
+    throw new TypeError('"list" argument must be an Array of Buffers')
+  }
+
+  if (list.length === 0) {
+    return Buffer.alloc(0)
+  }
+
+  let i
+  if (length === undefined) {
+    length = 0
+    for (i = 0; i < list.length; ++i) {
+      length += list[i].length
+    }
+  }
+
+  const buffer = Buffer.allocUnsafe(length)
+  let pos = 0
+  for (i = 0; i < list.length; ++i) {
+    let buf = list[i]
+    if (isInstance(buf, Uint8Array)) {
+      if (pos + buf.length > buffer.length) {
+        if (!Buffer.isBuffer(buf)) buf = Buffer.from(buf)
+        buf.copy(buffer, pos)
+      } else {
+        Uint8Array.prototype.set.call(
+          buffer,
+          buf,
+          pos
+        )
+      }
+    } else if (!Buffer.isBuffer(buf)) {
+      throw new TypeError('"list" argument must be an Array of Buffers')
+    } else {
+      buf.copy(buffer, pos)
+    }
+    pos += buf.length
+  }
+  return buffer
+}
+
+function byteLength (string, encoding) {
+  if (Buffer.isBuffer(string)) {
+    return string.length
+  }
+  if (ArrayBuffer.isView(string) || isInstance(string, ArrayBuffer)) {
+    return string.byteLength
+  }
+  if (typeof string !== 'string') {
+    throw new TypeError(
+      'The "string" argument must be one of type string, Buffer, or ArrayBuffer. ' +
+      'Received type ' + typeof string
+    )
+  }
+
+  const len = string.length
+  const mustMatch = (arguments.length > 2 && arguments[2] === true)
+  if (!mustMatch && len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  let loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return len
+      case 'utf8':
+      case 'utf-8':
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) {
+          return mustMatch ? -1 : utf8ToBytes(string).length // assume utf8
+        }
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+Buffer.byteLength = byteLength
+
+function slowToString (encoding, start, end) {
+  let loweredCase = false
+
+  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+  // property of a typed array.
+
+  // This behaves neither like String nor Uint8Array in that we set start/end
+  // to their upper/lower bounds if the value passed is out of range.
+  // undefined is handled specially as per ECMA-262 6th Edition,
+  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+  if (start === undefined || start < 0) {
+    start = 0
+  }
+  // Return early if start > this.length. Done here to prevent potential uint32
+  // coercion fail below.
+  if (start > this.length) {
+    return ''
+  }
+
+  if (end === undefined || end > this.length) {
+    end = this.length
+  }
+
+  if (end <= 0) {
+    return ''
+  }
+
+  // Force coercion to uint32. This will also coerce falsey/NaN values to 0.
+  end >>>= 0
+  start >>>= 0
+
+  if (end <= start) {
+    return ''
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Slice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+// This property is used by `Buffer.isBuffer` (and the `is-buffer` npm package)
+// to detect a Buffer instance. It's not possible to use `instanceof Buffer`
+// reliably in a browserify context because there could be multiple different
+// copies of the 'buffer' package in use. This method works even for Buffer
+// instances that were created from another copy of the `buffer` package.
+// See: https://github.com/feross/buffer/issues/154
+Buffer.prototype._isBuffer = true
+
+function swap (b, n, m) {
+  const i = b[n]
+  b[n] = b[m]
+  b[m] = i
+}
+
+Buffer.prototype.swap16 = function swap16 () {
+  const len = this.length
+  if (len % 2 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 16-bits')
+  }
+  for (let i = 0; i < len; i += 2) {
+    swap(this, i, i + 1)
+  }
+  return this
+}
+
+Buffer.prototype.swap32 = function swap32 () {
+  const len = this.length
+  if (len % 4 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 32-bits')
+  }
+  for (let i = 0; i < len; i += 4) {
+    swap(this, i, i + 3)
+    swap(this, i + 1, i + 2)
+  }
+  return this
+}
+
+Buffer.prototype.swap64 = function swap64 () {
+  const len = this.length
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (let i = 0; i < len; i += 8) {
+    swap(this, i, i + 7)
+    swap(this, i + 1, i + 6)
+    swap(this, i + 2, i + 5)
+    swap(this, i + 3, i + 4)
+  }
+  return this
+}
+
+Buffer.prototype.toString = function toString () {
+  const length = this.length
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.toLocaleString = Buffer.prototype.toString
+
+Buffer.prototype.equals = function equals (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function inspect () {
+  let str = ''
+  const max = exports.h2
+  str = this.toString('hex', 0, max).replace(/(.{2})/g, '$1 ').trim()
+  if (this.length > max) str += ' ... '
+  return '<Buffer ' + str + '>'
+}
+if (customInspectSymbol) {
+  Buffer.prototype[customInspectSymbol] = Buffer.prototype.inspect
+}
+
+Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (isInstance(target, Uint8Array)) {
+    target = Buffer.from(target, target.offset, target.byteLength)
+  }
+  if (!Buffer.isBuffer(target)) {
+    throw new TypeError(
+      'The "target" argument must be one of type Buffer or Uint8Array. ' +
+      'Received type ' + (typeof target)
+    )
+  }
+
+  if (start === undefined) {
+    start = 0
+  }
+  if (end === undefined) {
+    end = target ? target.length : 0
+  }
+  if (thisStart === undefined) {
+    thisStart = 0
+  }
+  if (thisEnd === undefined) {
+    thisEnd = this.length
+  }
+
+  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+    throw new RangeError('out of range index')
+  }
+
+  if (thisStart >= thisEnd && start >= end) {
+    return 0
+  }
+  if (thisStart >= thisEnd) {
+    return -1
+  }
+  if (start >= end) {
+    return 1
+  }
+
+  start >>>= 0
+  end >>>= 0
+  thisStart >>>= 0
+  thisEnd >>>= 0
+
+  if (this === target) return 0
+
+  let x = thisEnd - thisStart
+  let y = end - start
+  const len = Math.min(x, y)
+
+  const thisCopy = this.slice(thisStart, thisEnd)
+  const targetCopy = target.slice(start, end)
+
+  for (let i = 0; i < len; ++i) {
+    if (thisCopy[i] !== targetCopy[i]) {
+      x = thisCopy[i]
+      y = targetCopy[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff
+  } else if (byteOffset < -0x80000000) {
+    byteOffset = -0x80000000
+  }
+  byteOffset = +byteOffset // Coerce to Number.
+  if (numberIsNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1)
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer.from(val, encoding)
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (Buffer.isBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF // Search for a byte value [0-255]
+    if (typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [val], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+  let indexSize = 1
+  let arrLength = arr.length
+  let valLength = val.length
+
+  if (encoding !== undefined) {
+    encoding = String(encoding).toLowerCase()
+    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+        encoding === 'utf16le' || encoding === 'utf-16le') {
+      if (arr.length < 2 || val.length < 2) {
+        return -1
+      }
+      indexSize = 2
+      arrLength /= 2
+      valLength /= 2
+      byteOffset /= 2
+    }
+  }
+
+  function read (buf, i) {
+    if (indexSize === 1) {
+      return buf[i]
+    } else {
+      return buf.readUInt16BE(i * indexSize)
+    }
+  }
+
+  let i
+  if (dir) {
+    let foundIndex = -1
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+    for (i = byteOffset; i >= 0; i--) {
+      let found = true
+      for (let j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false
+          break
+        }
+      }
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+  return this.indexOf(val, byteOffset, encoding) !== -1
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+}
+
+Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  const remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  const strLen = string.length
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  let i
+  for (i = 0; i < length; ++i) {
+    const parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (numberIsNaN(parsed)) return i
+    buf[offset + i] = parsed
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset >>> 0
+    if (isFinite(length)) {
+      length = length >>> 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
+      encoding = length
+      length = undefined
+    }
+  } else {
+    throw new Error(
+      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+    )
+  }
+
+  const remaining = this.length - offset
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('Attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  let loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return asciiWrite(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end)
+  const res = []
+
+  let i = start
+  while (i < end) {
+    const firstByte = buf[i]
+    let codePoint = null
+    let bytesPerSequence = (firstByte > 0xEF)
+      ? 4
+      : (firstByte > 0xDF)
+          ? 3
+          : (firstByte > 0xBF)
+              ? 2
+              : 1
+
+    if (i + bytesPerSequence <= end) {
+      let secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+const MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  const len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  let res = ''
+  let i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  let ret = ''
+  end = Math.min(buf.length, end)
+
+  for (let i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function latin1Slice (buf, start, end) {
+  let ret = ''
+  end = Math.min(buf.length, end)
+
+  for (let i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  const len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  let out = ''
+  for (let i = start; i < end; ++i) {
+    out += hexSliceLookupTable[buf[i]]
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  const bytes = buf.slice(start, end)
+  let res = ''
+  // If bytes.length is odd, the last 8 bits must be ignored (same as node.js)
+  for (let i = 0; i < bytes.length - 1; i += 2) {
+    res += String.fromCharCode(bytes[i] + (bytes[i + 1] * 256))
+  }
+  return res
+}
+
+Buffer.prototype.slice = function slice (start, end) {
+  const len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len
+    if (start < 0) start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0) end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start) end = start
+
+  const newBuf = this.subarray(start, end)
+  // Return an augmented `Uint8Array` instance
+  Object.setPrototypeOf(newBuf, Buffer.prototype)
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUintLE =
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  let val = this[offset]
+  let mul = 1
+  let i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUintBE =
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length)
+  }
+
+  let val = this[offset + --byteLength]
+  let mul = 1
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUint8 =
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUint16LE =
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUint16BE =
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUint32LE =
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUint32BE =
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+}
+
+Buffer.prototype.readBigUInt64LE = defineBigIntMethod(function readBigUInt64LE (offset) {
+  offset = offset >>> 0
+  validateNumber(offset, 'offset')
+  const first = this[offset]
+  const last = this[offset + 7]
+  if (first === undefined || last === undefined) {
+    boundsError(offset, this.length - 8)
+  }
+
+  const lo = first +
+    this[++offset] * 2 ** 8 +
+    this[++offset] * 2 ** 16 +
+    this[++offset] * 2 ** 24
+
+  const hi = this[++offset] +
+    this[++offset] * 2 ** 8 +
+    this[++offset] * 2 ** 16 +
+    last * 2 ** 24
+
+  return BigInt(lo) + (BigInt(hi) << BigInt(32))
+})
+
+Buffer.prototype.readBigUInt64BE = defineBigIntMethod(function readBigUInt64BE (offset) {
+  offset = offset >>> 0
+  validateNumber(offset, 'offset')
+  const first = this[offset]
+  const last = this[offset + 7]
+  if (first === undefined || last === undefined) {
+    boundsError(offset, this.length - 8)
+  }
+
+  const hi = first * 2 ** 24 +
+    this[++offset] * 2 ** 16 +
+    this[++offset] * 2 ** 8 +
+    this[++offset]
+
+  const lo = this[++offset] * 2 ** 24 +
+    this[++offset] * 2 ** 16 +
+    this[++offset] * 2 ** 8 +
+    last
+
+  return (BigInt(hi) << BigInt(32)) + BigInt(lo)
+})
+
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  let val = this[offset]
+  let mul = 1
+  let i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  let i = byteLength
+  let mul = 1
+  let val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  const val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  const val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+}
+
+Buffer.prototype.readBigInt64LE = defineBigIntMethod(function readBigInt64LE (offset) {
+  offset = offset >>> 0
+  validateNumber(offset, 'offset')
+  const first = this[offset]
+  const last = this[offset + 7]
+  if (first === undefined || last === undefined) {
+    boundsError(offset, this.length - 8)
+  }
+
+  const val = this[offset + 4] +
+    this[offset + 5] * 2 ** 8 +
+    this[offset + 6] * 2 ** 16 +
+    (last << 24) // Overflow
+
+  return (BigInt(val) << BigInt(32)) +
+    BigInt(first +
+    this[++offset] * 2 ** 8 +
+    this[++offset] * 2 ** 16 +
+    this[++offset] * 2 ** 24)
+})
+
+Buffer.prototype.readBigInt64BE = defineBigIntMethod(function readBigInt64BE (offset) {
+  offset = offset >>> 0
+  validateNumber(offset, 'offset')
+  const first = this[offset]
+  const last = this[offset + 7]
+  if (first === undefined || last === undefined) {
+    boundsError(offset, this.length - 8)
+  }
+
+  const val = (first << 24) + // Overflow
+    this[++offset] * 2 ** 16 +
+    this[++offset] * 2 ** 8 +
+    this[++offset]
+
+  return (BigInt(val) << BigInt(32)) +
+    BigInt(this[++offset] * 2 ** 24 +
+    this[++offset] * 2 ** 16 +
+    this[++offset] * 2 ** 8 +
+    last)
+})
+
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  offset = offset >>> 0
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+}
+
+Buffer.prototype.writeUintLE =
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert) {
+    const maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  let mul = 1
+  let i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUintBE =
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert) {
+    const maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  let i = byteLength - 1
+  let mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUint8 =
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeUint16LE =
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  this[offset] = (value & 0xff)
+  this[offset + 1] = (value >>> 8)
+  return offset + 2
+}
+
+Buffer.prototype.writeUint16BE =
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  this[offset] = (value >>> 8)
+  this[offset + 1] = (value & 0xff)
+  return offset + 2
+}
+
+Buffer.prototype.writeUint32LE =
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  this[offset + 3] = (value >>> 24)
+  this[offset + 2] = (value >>> 16)
+  this[offset + 1] = (value >>> 8)
+  this[offset] = (value & 0xff)
+  return offset + 4
+}
+
+Buffer.prototype.writeUint32BE =
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  this[offset] = (value >>> 24)
+  this[offset + 1] = (value >>> 16)
+  this[offset + 2] = (value >>> 8)
+  this[offset + 3] = (value & 0xff)
+  return offset + 4
+}
+
+function wrtBigUInt64LE (buf, value, offset, min, max) {
+  checkIntBI(value, min, max, buf, offset, 7)
+
+  let lo = Number(value & BigInt(0xffffffff))
+  buf[offset++] = lo
+  lo = lo >> 8
+  buf[offset++] = lo
+  lo = lo >> 8
+  buf[offset++] = lo
+  lo = lo >> 8
+  buf[offset++] = lo
+  let hi = Number(value >> BigInt(32) & BigInt(0xffffffff))
+  buf[offset++] = hi
+  hi = hi >> 8
+  buf[offset++] = hi
+  hi = hi >> 8
+  buf[offset++] = hi
+  hi = hi >> 8
+  buf[offset++] = hi
+  return offset
+}
+
+function wrtBigUInt64BE (buf, value, offset, min, max) {
+  checkIntBI(value, min, max, buf, offset, 7)
+
+  let lo = Number(value & BigInt(0xffffffff))
+  buf[offset + 7] = lo
+  lo = lo >> 8
+  buf[offset + 6] = lo
+  lo = lo >> 8
+  buf[offset + 5] = lo
+  lo = lo >> 8
+  buf[offset + 4] = lo
+  let hi = Number(value >> BigInt(32) & BigInt(0xffffffff))
+  buf[offset + 3] = hi
+  hi = hi >> 8
+  buf[offset + 2] = hi
+  hi = hi >> 8
+  buf[offset + 1] = hi
+  hi = hi >> 8
+  buf[offset] = hi
+  return offset + 8
+}
+
+Buffer.prototype.writeBigUInt64LE = defineBigIntMethod(function writeBigUInt64LE (value, offset = 0) {
+  return wrtBigUInt64LE(this, value, offset, BigInt(0), BigInt('0xffffffffffffffff'))
+})
+
+Buffer.prototype.writeBigUInt64BE = defineBigIntMethod(function writeBigUInt64BE (value, offset = 0) {
+  return wrtBigUInt64BE(this, value, offset, BigInt(0), BigInt('0xffffffffffffffff'))
+})
+
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) {
+    const limit = Math.pow(2, (8 * byteLength) - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  let i = 0
+  let mul = 1
+  let sub = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) {
+    const limit = Math.pow(2, (8 * byteLength) - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  let i = byteLength - 1
+  let mul = 1
+  let sub = 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  this[offset] = (value & 0xff)
+  this[offset + 1] = (value >>> 8)
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  this[offset] = (value >>> 8)
+  this[offset + 1] = (value & 0xff)
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  this[offset] = (value & 0xff)
+  this[offset + 1] = (value >>> 8)
+  this[offset + 2] = (value >>> 16)
+  this[offset + 3] = (value >>> 24)
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  this[offset] = (value >>> 24)
+  this[offset + 1] = (value >>> 16)
+  this[offset + 2] = (value >>> 8)
+  this[offset + 3] = (value & 0xff)
+  return offset + 4
+}
+
+Buffer.prototype.writeBigInt64LE = defineBigIntMethod(function writeBigInt64LE (value, offset = 0) {
+  return wrtBigUInt64LE(this, value, offset, -BigInt('0x8000000000000000'), BigInt('0x7fffffffffffffff'))
+})
+
+Buffer.prototype.writeBigInt64BE = defineBigIntMethod(function writeBigInt64BE (value, offset = 0) {
+  return wrtBigUInt64BE(this, value, offset, -BigInt('0x8000000000000000'), BigInt('0x7fffffffffffffff'))
+})
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+  if (offset < 0) throw new RangeError('Index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!Buffer.isBuffer(target)) throw new TypeError('argument should be a Buffer')
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('Index out of range')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
+
+  const len = end - start
+
+  if (this === target && typeof Uint8Array.prototype.copyWithin === 'function') {
+    // Use built-in when available, missing from IE11
+    this.copyWithin(targetStart, start, end)
+  } else {
+    Uint8Array.prototype.set.call(
+      target,
+      this.subarray(start, end),
+      targetStart
+    )
+  }
+
+  return len
+}
+
+// Usage:
+//    buffer.fill(number[, offset[, end]])
+//    buffer.fill(buffer[, offset[, end]])
+//    buffer.fill(string[, offset[, end]][, encoding])
+Buffer.prototype.fill = function fill (val, start, end, encoding) {
+  // Handle string cases:
+  if (typeof val === 'string') {
+    if (typeof start === 'string') {
+      encoding = start
+      start = 0
+      end = this.length
+    } else if (typeof end === 'string') {
+      encoding = end
+      end = this.length
+    }
+    if (encoding !== undefined && typeof encoding !== 'string') {
+      throw new TypeError('encoding must be a string')
+    }
+    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+      throw new TypeError('Unknown encoding: ' + encoding)
+    }
+    if (val.length === 1) {
+      const code = val.charCodeAt(0)
+      if ((encoding === 'utf8' && code < 128) ||
+          encoding === 'latin1') {
+        // Fast path: If `val` fits into a single byte, use that numeric value.
+        val = code
+      }
+    }
+  } else if (typeof val === 'number') {
+    val = val & 255
+  } else if (typeof val === 'boolean') {
+    val = Number(val)
+  }
+
+  // Invalid ranges are not set to a default, so can range check early.
+  if (start < 0 || this.length < start || this.length < end) {
+    throw new RangeError('Out of range index')
+  }
+
+  if (end <= start) {
+    return this
+  }
+
+  start = start >>> 0
+  end = end === undefined ? this.length : end >>> 0
+
+  if (!val) val = 0
+
+  let i
+  if (typeof val === 'number') {
+    for (i = start; i < end; ++i) {
+      this[i] = val
+    }
+  } else {
+    const bytes = Buffer.isBuffer(val)
+      ? val
+      : Buffer.from(val, encoding)
+    const len = bytes.length
+    if (len === 0) {
+      throw new TypeError('The value "' + val +
+        '" is invalid for argument "value"')
+    }
+    for (i = 0; i < end - start; ++i) {
+      this[i + start] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+// CUSTOM ERRORS
+// =============
+
+// Simplified versions from Node, changed for Buffer-only usage
+const errors = {}
+function E (sym, getMessage, Base) {
+  errors[sym] = class NodeError extends Base {
+    constructor () {
+      super()
+
+      Object.defineProperty(this, 'message', {
+        value: getMessage.apply(this, arguments),
+        writable: true,
+        configurable: true
+      })
+
+      // Add the error code to the name to include it in the stack trace.
+      this.name = `${this.name} [${sym}]`
+      // Access the stack to generate the error message including the error code
+      // from the name.
+      this.stack // eslint-disable-line no-unused-expressions
+      // Reset the name to the actual name.
+      delete this.name
+    }
+
+    get code () {
+      return sym
+    }
+
+    set code (value) {
+      Object.defineProperty(this, 'code', {
+        configurable: true,
+        enumerable: true,
+        value,
+        writable: true
+      })
+    }
+
+    toString () {
+      return `${this.name} [${sym}]: ${this.message}`
+    }
+  }
+}
+
+E('ERR_BUFFER_OUT_OF_BOUNDS',
+  function (name) {
+    if (name) {
+      return `${name} is outside of buffer bounds`
+    }
+
+    return 'Attempt to access memory outside buffer bounds'
+  }, RangeError)
+E('ERR_INVALID_ARG_TYPE',
+  function (name, actual) {
+    return `The "${name}" argument must be of type number. Received type ${typeof actual}`
+  }, TypeError)
+E('ERR_OUT_OF_RANGE',
+  function (str, range, input) {
+    let msg = `The value of "${str}" is out of range.`
+    let received = input
+    if (Number.isInteger(input) && Math.abs(input) > 2 ** 32) {
+      received = addNumericalSeparator(String(input))
+    } else if (typeof input === 'bigint') {
+      received = String(input)
+      if (input > BigInt(2) ** BigInt(32) || input < -(BigInt(2) ** BigInt(32))) {
+        received = addNumericalSeparator(received)
+      }
+      received += 'n'
+    }
+    msg += ` It must be ${range}. Received ${received}`
+    return msg
+  }, RangeError)
+
+function addNumericalSeparator (val) {
+  let res = ''
+  let i = val.length
+  const start = val[0] === '-' ? 1 : 0
+  for (; i >= start + 4; i -= 3) {
+    res = `_${val.slice(i - 3, i)}${res}`
+  }
+  return `${val.slice(0, i)}${res}`
+}
+
+// CHECK FUNCTIONS
+// ===============
+
+function checkBounds (buf, offset, byteLength) {
+  validateNumber(offset, 'offset')
+  if (buf[offset] === undefined || buf[offset + byteLength] === undefined) {
+    boundsError(offset, buf.length - (byteLength + 1))
+  }
+}
+
+function checkIntBI (value, min, max, buf, offset, byteLength) {
+  if (value > max || value < min) {
+    const n = typeof min === 'bigint' ? 'n' : ''
+    let range
+    if (byteLength > 3) {
+      if (min === 0 || min === BigInt(0)) {
+        range = `>= 0${n} and < 2${n} ** ${(byteLength + 1) * 8}${n}`
+      } else {
+        range = `>= -(2${n} ** ${(byteLength + 1) * 8 - 1}${n}) and < 2 ** ` +
+                `${(byteLength + 1) * 8 - 1}${n}`
+      }
+    } else {
+      range = `>= ${min}${n} and <= ${max}${n}`
+    }
+    throw new errors.ERR_OUT_OF_RANGE('value', range, value)
+  }
+  checkBounds(buf, offset, byteLength)
+}
+
+function validateNumber (value, name) {
+  if (typeof value !== 'number') {
+    throw new errors.ERR_INVALID_ARG_TYPE(name, 'number', value)
+  }
+}
+
+function boundsError (value, length, type) {
+  if (Math.floor(value) !== value) {
+    validateNumber(value, type)
+    throw new errors.ERR_OUT_OF_RANGE(type || 'offset', 'an integer', value)
+  }
+
+  if (length < 0) {
+    throw new errors.ERR_BUFFER_OUT_OF_BOUNDS()
+  }
+
+  throw new errors.ERR_OUT_OF_RANGE(type || 'offset',
+                                    `>= ${type ? 1 : 0} and <= ${length}`,
+                                    value)
+}
+
+// HELPER FUNCTIONS
+// ================
+
+const INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g
+
+function base64clean (str) {
+  // Node takes equal signs as end of the Base64 encoding
+  str = str.split('=')[0]
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = str.trim().replace(INVALID_BASE64_RE, '')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity
+  let codePoint
+  const length = string.length
+  let leadSurrogate = null
+  const bytes = []
+
+  for (let i = 0; i < length; ++i) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+    }
+
+    leadSurrogate = null
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  const byteArray = []
+  for (let i = 0; i < str.length; ++i) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  let c, hi, lo
+  const byteArray = []
+  for (let i = 0; i < str.length; ++i) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  let i
+  for (i = 0; i < length; ++i) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+// ArrayBuffer or Uint8Array objects from other contexts (i.e. iframes) do not pass
+// the `instanceof` check but they should be treated as of that type.
+// See: https://github.com/feross/buffer/issues/166
+function isInstance (obj, type) {
+  return obj instanceof type ||
+    (obj != null && obj.constructor != null && obj.constructor.name != null &&
+      obj.constructor.name === type.name)
+}
+function numberIsNaN (obj) {
+  // For IE11 support
+  return obj !== obj // eslint-disable-line no-self-compare
+}
+
+// Create lookup table for `toString('hex')`
+// See: https://github.com/feross/buffer/issues/219
+const hexSliceLookupTable = (function () {
+  const alphabet = '0123456789abcdef'
+  const table = new Array(256)
+  for (let i = 0; i < 16; ++i) {
+    const i16 = i * 16
+    for (let j = 0; j < 16; ++j) {
+      table[i16 + j] = alphabet[i] + alphabet[j]
+    }
+  }
+  return table
+})()
+
+// Return not function with Error if BigInt not supported
+function defineBigIntMethod (fn) {
+  return typeof BigInt === 'undefined' ? BufferBigIntNotDefined : fn
+}
+
+function BufferBigIntNotDefined () {
+  throw new Error('BigInt not supported')
+}
+
 
 /***/ }),
 
-/***/ "./node_modules/crc32/lib/crc32.js":
-/*!*****************************************!*\
-  !*** ./node_modules/crc32/lib/crc32.js ***!
-  \*****************************************/
+/***/ 3793:
 /***/ ((module) => {
 
-eval("(function () {\n\t'use strict';\n\n\tvar table = [],\n\t\tpoly = 0xEDB88320; // reverse polynomial\n\n\t// build the table\n\tfunction makeTable() {\n\t\tvar c, n, k;\n\n\t\tfor (n = 0; n < 256; n += 1) {\n\t\t\tc = n;\n\t\t\tfor (k = 0; k < 8; k += 1) {\n\t\t\t\tif (c & 1) {\n\t\t\t\t\tc = poly ^ (c >>> 1);\n\t\t\t\t} else {\n\t\t\t\t\tc = c >>> 1;\n\t\t\t\t}\n\t\t\t}\n\t\t\ttable[n] = c >>> 0;\n\t\t}\n\t}\n\n\tfunction strToArr(str) {\n\t\t// sweet hack to turn string into a 'byte' array\n\t\treturn Array.prototype.map.call(str, function (c) {\n\t\t\treturn c.charCodeAt(0);\n\t\t});\n\t}\n\n\t/*\n\t * Compute CRC of array directly.\n\t *\n\t * This is slower for repeated calls, so append mode is not supported.\n\t */\n\tfunction crcDirect(arr) {\n\t\tvar crc = -1, // initial contents of LFBSR\n\t\t\ti, j, l, temp;\n\n\t\tfor (i = 0, l = arr.length; i < l; i += 1) {\n\t\t\ttemp = (crc ^ arr[i]) & 0xff;\n\n\t\t\t// read 8 bits one at a time\n\t\t\tfor (j = 0; j < 8; j += 1) {\n\t\t\t\tif ((temp & 1) === 1) {\n\t\t\t\t\ttemp = (temp >>> 1) ^ poly;\n\t\t\t\t} else {\n\t\t\t\t\ttemp = (temp >>> 1);\n\t\t\t\t}\n\t\t\t}\n\t\t\tcrc = (crc >>> 8) ^ temp;\n\t\t}\n\n\t\t// flip bits\n\t\treturn crc ^ -1;\n\t}\n\n\t/*\n\t * Compute CRC with the help of a pre-calculated table.\n\t *\n\t * This supports append mode, if the second parameter is set.\n\t */\n\tfunction crcTable(arr, append) {\n\t\tvar crc, i, l;\n\n\t\t// if we're in append mode, don't reset crc\n\t\t// if arr is null or undefined, reset table and return\n\t\tif (typeof crcTable.crc === 'undefined' || !append || !arr) {\n\t\t\tcrcTable.crc = 0 ^ -1;\n\n\t\t\tif (!arr) {\n\t\t\t\treturn;\n\t\t\t}\n\t\t}\n\n\t\t// store in temp variable for minor speed gain\n\t\tcrc = crcTable.crc;\n\n\t\tfor (i = 0, l = arr.length; i < l; i += 1) {\n\t\t\tcrc = (crc >>> 8) ^ table[(crc ^ arr[i]) & 0xff];\n\t\t}\n\n\t\tcrcTable.crc = crc;\n\n\t\treturn crc ^ -1;\n\t}\n\n\t// build the table\n\t// this isn't that costly, and most uses will be for table assisted mode\n\tmakeTable();\n\n\tmodule.exports = function (val, direct) {\n\t\tvar val = (typeof val === 'string') ? strToArr(val) : val,\n\t\t\tret = direct ? crcDirect(val) : crcTable(val);\n\n\t\t// convert to 2's complement hex\n\t\treturn (ret >>> 0).toString(16);\n\t};\n\tmodule.exports.direct = crcDirect;\n\tmodule.exports.table = crcTable;\n}());\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/crc32/lib/crc32.js?");
+(function () {
+	'use strict';
+
+	var table = [],
+		poly = 0xEDB88320; // reverse polynomial
+
+	// build the table
+	function makeTable() {
+		var c, n, k;
+
+		for (n = 0; n < 256; n += 1) {
+			c = n;
+			for (k = 0; k < 8; k += 1) {
+				if (c & 1) {
+					c = poly ^ (c >>> 1);
+				} else {
+					c = c >>> 1;
+				}
+			}
+			table[n] = c >>> 0;
+		}
+	}
+
+	function strToArr(str) {
+		// sweet hack to turn string into a 'byte' array
+		return Array.prototype.map.call(str, function (c) {
+			return c.charCodeAt(0);
+		});
+	}
+
+	/*
+	 * Compute CRC of array directly.
+	 *
+	 * This is slower for repeated calls, so append mode is not supported.
+	 */
+	function crcDirect(arr) {
+		var crc = -1, // initial contents of LFBSR
+			i, j, l, temp;
+
+		for (i = 0, l = arr.length; i < l; i += 1) {
+			temp = (crc ^ arr[i]) & 0xff;
+
+			// read 8 bits one at a time
+			for (j = 0; j < 8; j += 1) {
+				if ((temp & 1) === 1) {
+					temp = (temp >>> 1) ^ poly;
+				} else {
+					temp = (temp >>> 1);
+				}
+			}
+			crc = (crc >>> 8) ^ temp;
+		}
+
+		// flip bits
+		return crc ^ -1;
+	}
+
+	/*
+	 * Compute CRC with the help of a pre-calculated table.
+	 *
+	 * This supports append mode, if the second parameter is set.
+	 */
+	function crcTable(arr, append) {
+		var crc, i, l;
+
+		// if we're in append mode, don't reset crc
+		// if arr is null or undefined, reset table and return
+		if (typeof crcTable.crc === 'undefined' || !append || !arr) {
+			crcTable.crc = 0 ^ -1;
+
+			if (!arr) {
+				return;
+			}
+		}
+
+		// store in temp variable for minor speed gain
+		crc = crcTable.crc;
+
+		for (i = 0, l = arr.length; i < l; i += 1) {
+			crc = (crc >>> 8) ^ table[(crc ^ arr[i]) & 0xff];
+		}
+
+		crcTable.crc = crc;
+
+		return crc ^ -1;
+	}
+
+	// build the table
+	// this isn't that costly, and most uses will be for table assisted mode
+	makeTable();
+
+	module.exports = function (val, direct) {
+		var val = (typeof val === 'string') ? strToArr(val) : val,
+			ret = direct ? crcDirect(val) : crcTable(val);
+
+		// convert to 2's complement hex
+		return (ret >>> 0).toString(16);
+	};
+	module.exports.direct = crcDirect;
+	module.exports.table = crcTable;
+}());
+
 
 /***/ }),
 
-/***/ "./node_modules/deflate-js/index.js":
-/*!******************************************!*\
-  !*** ./node_modules/deflate-js/index.js ***!
-  \******************************************/
+/***/ 9762:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("(function () {\n\t'use strict';\n\n\tmodule.exports = {\n\t\t'inflate': __webpack_require__(/*! ./lib/rawinflate.js */ \"./node_modules/deflate-js/lib/rawinflate.js\"),\n\t\t'deflate': __webpack_require__(/*! ./lib/rawdeflate.js */ \"./node_modules/deflate-js/lib/rawdeflate.js\")\n\t};\n}());\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/deflate-js/index.js?");
+(function () {
+	'use strict';
+
+	module.exports = {
+		'inflate': __webpack_require__(689),
+		'deflate': __webpack_require__(8881)
+	};
+}());
+
 
 /***/ }),
 
-/***/ "./node_modules/deflate-js/lib/rawdeflate.js":
-/*!***************************************************!*\
-  !*** ./node_modules/deflate-js/lib/rawdeflate.js ***!
-  \***************************************************/
+/***/ 8881:
 /***/ ((module) => {
 
-eval("/*\n * $Id: rawdeflate.js,v 0.3 2009/03/01 19:05:05 dankogai Exp dankogai $\n *\n * Original:\n *   http://www.onicos.com/staff/iz/amuse/javascript/expert/deflate.txt\n */\n\n/* Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>\n * Version: 1.0.1\n * LastModified: Dec 25 1999\n */\n\n/* Interface:\n * data = deflate(src);\n */\n\n(function () {\n\t/* constant parameters */\n\tvar WSIZE = 32768, // Sliding Window size\n\t\tSTORED_BLOCK = 0,\n\t\tSTATIC_TREES = 1,\n\t\tDYN_TREES = 2,\n\n\t/* for deflate */\n\t\tDEFAULT_LEVEL = 6,\n\t\tFULL_SEARCH = false,\n\t\tINBUFSIZ = 32768, // Input buffer size\n\t\t//INBUF_EXTRA = 64, // Extra buffer\n\t\tOUTBUFSIZ = 1024 * 8,\n\t\twindow_size = 2 * WSIZE,\n\t\tMIN_MATCH = 3,\n\t\tMAX_MATCH = 258,\n\t\tBITS = 16,\n\t// for SMALL_MEM\n\t\tLIT_BUFSIZE = 0x2000,\n//\t\tHASH_BITS = 13,\n\t//for MEDIUM_MEM\n\t//\tLIT_BUFSIZE = 0x4000,\n\t//\tHASH_BITS = 14,\n\t// for BIG_MEM\n\t//\tLIT_BUFSIZE = 0x8000,\n\t\tHASH_BITS = 15,\n\t\tDIST_BUFSIZE = LIT_BUFSIZE,\n\t\tHASH_SIZE = 1 << HASH_BITS,\n\t\tHASH_MASK = HASH_SIZE - 1,\n\t\tWMASK = WSIZE - 1,\n\t\tNIL = 0, // Tail of hash chains\n\t\tTOO_FAR = 4096,\n\t\tMIN_LOOKAHEAD = MAX_MATCH + MIN_MATCH + 1,\n\t\tMAX_DIST = WSIZE - MIN_LOOKAHEAD,\n\t\tSMALLEST = 1,\n\t\tMAX_BITS = 15,\n\t\tMAX_BL_BITS = 7,\n\t\tLENGTH_CODES = 29,\n\t\tLITERALS = 256,\n\t\tEND_BLOCK = 256,\n\t\tL_CODES = LITERALS + 1 + LENGTH_CODES,\n\t\tD_CODES = 30,\n\t\tBL_CODES = 19,\n\t\tREP_3_6 = 16,\n\t\tREPZ_3_10 = 17,\n\t\tREPZ_11_138 = 18,\n\t\tHEAP_SIZE = 2 * L_CODES + 1,\n\t\tH_SHIFT = parseInt((HASH_BITS + MIN_MATCH - 1) / MIN_MATCH, 10),\n\n\t/* variables */\n\t\tfree_queue,\n\t\tqhead,\n\t\tqtail,\n\t\tinitflag,\n\t\toutbuf = null,\n\t\toutcnt,\n\t\toutoff,\n\t\tcomplete,\n\t\twindow,\n\t\td_buf,\n\t\tl_buf,\n\t\tprev,\n\t\tbi_buf,\n\t\tbi_valid,\n\t\tblock_start,\n\t\tins_h,\n\t\thash_head,\n\t\tprev_match,\n\t\tmatch_available,\n\t\tmatch_length,\n\t\tprev_length,\n\t\tstrstart,\n\t\tmatch_start,\n\t\teofile,\n\t\tlookahead,\n\t\tmax_chain_length,\n\t\tmax_lazy_match,\n\t\tcompr_level,\n\t\tgood_match,\n\t\tnice_match,\n\t\tdyn_ltree,\n\t\tdyn_dtree,\n\t\tstatic_ltree,\n\t\tstatic_dtree,\n\t\tbl_tree,\n\t\tl_desc,\n\t\td_desc,\n\t\tbl_desc,\n\t\tbl_count,\n\t\theap,\n\t\theap_len,\n\t\theap_max,\n\t\tdepth,\n\t\tlength_code,\n\t\tdist_code,\n\t\tbase_length,\n\t\tbase_dist,\n\t\tflag_buf,\n\t\tlast_lit,\n\t\tlast_dist,\n\t\tlast_flags,\n\t\tflags,\n\t\tflag_bit,\n\t\topt_len,\n\t\tstatic_len,\n\t\tdeflate_data,\n\t\tdeflate_pos;\n\n\tif (LIT_BUFSIZE > INBUFSIZ) {\n\t\tconsole.error(\"error: INBUFSIZ is too small\");\n\t}\n\tif ((WSIZE << 1) > (1 << BITS)) {\n\t\tconsole.error(\"error: WSIZE is too large\");\n\t}\n\tif (HASH_BITS > BITS - 1) {\n\t\tconsole.error(\"error: HASH_BITS is too large\");\n\t}\n\tif (HASH_BITS < 8 || MAX_MATCH !== 258) {\n\t\tconsole.error(\"error: Code too clever\");\n\t}\n\n\t/* objects (deflate) */\n\n\tfunction DeflateCT() {\n\t\tthis.fc = 0; // frequency count or bit string\n\t\tthis.dl = 0; // father node in Huffman tree or length of bit string\n\t}\n\n\tfunction DeflateTreeDesc() {\n\t\tthis.dyn_tree = null; // the dynamic tree\n\t\tthis.static_tree = null; // corresponding static tree or NULL\n\t\tthis.extra_bits = null; // extra bits for each code or NULL\n\t\tthis.extra_base = 0; // base index for extra_bits\n\t\tthis.elems = 0; // max number of elements in the tree\n\t\tthis.max_length = 0; // max bit length for the codes\n\t\tthis.max_code = 0; // largest code with non zero frequency\n\t}\n\n\t/* Values for max_lazy_match, good_match and max_chain_length, depending on\n\t * the desired pack level (0..9). The values given below have been tuned to\n\t * exclude worst case performance for pathological files. Better values may be\n\t * found for specific files.\n\t */\n\tfunction DeflateConfiguration(a, b, c, d) {\n\t\tthis.good_length = a; // reduce lazy search above this match length\n\t\tthis.max_lazy = b; // do not perform lazy search above this match length\n\t\tthis.nice_length = c; // quit search above this match length\n\t\tthis.max_chain = d;\n\t}\n\n\tfunction DeflateBuffer() {\n\t\tthis.next = null;\n\t\tthis.len = 0;\n\t\tthis.ptr = []; // new Array(OUTBUFSIZ); // ptr.length is never read\n\t\tthis.off = 0;\n\t}\n\n\t/* constant tables */\n\tvar extra_lbits = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0];\n\tvar extra_dbits = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13];\n\tvar extra_blbits = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7];\n\tvar bl_order = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];\n\tvar configuration_table = [\n\t\tnew DeflateConfiguration(0, 0, 0, 0),\n\t\tnew DeflateConfiguration(4, 4, 8, 4),\n\t\tnew DeflateConfiguration(4, 5, 16, 8),\n\t\tnew DeflateConfiguration(4, 6, 32, 32),\n\t\tnew DeflateConfiguration(4, 4, 16, 16),\n\t\tnew DeflateConfiguration(8, 16, 32, 32),\n\t\tnew DeflateConfiguration(8, 16, 128, 128),\n\t\tnew DeflateConfiguration(8, 32, 128, 256),\n\t\tnew DeflateConfiguration(32, 128, 258, 1024),\n\t\tnew DeflateConfiguration(32, 258, 258, 4096)\n\t];\n\n\n\t/* routines (deflate) */\n\n\tfunction deflate_start(level) {\n\t\tvar i;\n\n\t\tif (!level) {\n\t\t\tlevel = DEFAULT_LEVEL;\n\t\t} else if (level < 1) {\n\t\t\tlevel = 1;\n\t\t} else if (level > 9) {\n\t\t\tlevel = 9;\n\t\t}\n\n\t\tcompr_level = level;\n\t\tinitflag = false;\n\t\teofile = false;\n\t\tif (outbuf !== null) {\n\t\t\treturn;\n\t\t}\n\n\t\tfree_queue = qhead = qtail = null;\n\t\toutbuf = []; // new Array(OUTBUFSIZ); // outbuf.length never called\n\t\twindow = []; // new Array(window_size); // window.length never called\n\t\td_buf = []; // new Array(DIST_BUFSIZE); // d_buf.length never called\n\t\tl_buf = []; // new Array(INBUFSIZ + INBUF_EXTRA); // l_buf.length never called\n\t\tprev = []; // new Array(1 << BITS); // prev.length never called\n\n\t\tdyn_ltree = [];\n\t\tfor (i = 0; i < HEAP_SIZE; i++) {\n\t\t\tdyn_ltree[i] = new DeflateCT();\n\t\t}\n\t\tdyn_dtree = [];\n\t\tfor (i = 0; i < 2 * D_CODES + 1; i++) {\n\t\t\tdyn_dtree[i] = new DeflateCT();\n\t\t}\n\t\tstatic_ltree = [];\n\t\tfor (i = 0; i < L_CODES + 2; i++) {\n\t\t\tstatic_ltree[i] = new DeflateCT();\n\t\t}\n\t\tstatic_dtree = [];\n\t\tfor (i = 0; i < D_CODES; i++) {\n\t\t\tstatic_dtree[i] = new DeflateCT();\n\t\t}\n\t\tbl_tree = [];\n\t\tfor (i = 0; i < 2 * BL_CODES + 1; i++) {\n\t\t\tbl_tree[i] = new DeflateCT();\n\t\t}\n\t\tl_desc = new DeflateTreeDesc();\n\t\td_desc = new DeflateTreeDesc();\n\t\tbl_desc = new DeflateTreeDesc();\n\t\tbl_count = []; // new Array(MAX_BITS+1); // bl_count.length never called\n\t\theap = []; // new Array(2*L_CODES+1); // heap.length never called\n\t\tdepth = []; // new Array(2*L_CODES+1); // depth.length never called\n\t\tlength_code = []; // new Array(MAX_MATCH-MIN_MATCH+1); // length_code.length never called\n\t\tdist_code = []; // new Array(512); // dist_code.length never called\n\t\tbase_length = []; // new Array(LENGTH_CODES); // base_length.length never called\n\t\tbase_dist = []; // new Array(D_CODES); // base_dist.length never called\n\t\tflag_buf = []; // new Array(parseInt(LIT_BUFSIZE / 8, 10)); // flag_buf.length never called\n\t}\n\n\tfunction deflate_end() {\n\t\tfree_queue = qhead = qtail = null;\n\t\toutbuf = null;\n\t\twindow = null;\n\t\td_buf = null;\n\t\tl_buf = null;\n\t\tprev = null;\n\t\tdyn_ltree = null;\n\t\tdyn_dtree = null;\n\t\tstatic_ltree = null;\n\t\tstatic_dtree = null;\n\t\tbl_tree = null;\n\t\tl_desc = null;\n\t\td_desc = null;\n\t\tbl_desc = null;\n\t\tbl_count = null;\n\t\theap = null;\n\t\tdepth = null;\n\t\tlength_code = null;\n\t\tdist_code = null;\n\t\tbase_length = null;\n\t\tbase_dist = null;\n\t\tflag_buf = null;\n\t}\n\n\tfunction reuse_queue(p) {\n\t\tp.next = free_queue;\n\t\tfree_queue = p;\n\t}\n\n\tfunction new_queue() {\n\t\tvar p;\n\n\t\tif (free_queue !== null) {\n\t\t\tp = free_queue;\n\t\t\tfree_queue = free_queue.next;\n\t\t} else {\n\t\t\tp = new DeflateBuffer();\n\t\t}\n\t\tp.next = null;\n\t\tp.len = p.off = 0;\n\n\t\treturn p;\n\t}\n\n\tfunction head1(i) {\n\t\treturn prev[WSIZE + i];\n\t}\n\n\tfunction head2(i, val) {\n\t\treturn (prev[WSIZE + i] = val);\n\t}\n\n\t/* put_byte is used for the compressed output, put_ubyte for the\n\t * uncompressed output. However unlzw() uses window for its\n\t * suffix table instead of its output buffer, so it does not use put_ubyte\n\t * (to be cleaned up).\n\t */\n\tfunction put_byte(c) {\n\t\toutbuf[outoff + outcnt++] = c;\n\t\tif (outoff + outcnt === OUTBUFSIZ) {\n\t\t\tqoutbuf();\n\t\t}\n\t}\n\n\t/* Output a 16 bit value, lsb first */\n\tfunction put_short(w) {\n\t\tw &= 0xffff;\n\t\tif (outoff + outcnt < OUTBUFSIZ - 2) {\n\t\t\toutbuf[outoff + outcnt++] = (w & 0xff);\n\t\t\toutbuf[outoff + outcnt++] = (w >>> 8);\n\t\t} else {\n\t\t\tput_byte(w & 0xff);\n\t\t\tput_byte(w >>> 8);\n\t\t}\n\t}\n\n\t/* ==========================================================================\n\t * Insert string s in the dictionary and set match_head to the previous head\n\t * of the hash chain (the most recent string with same hash key). Return\n\t * the previous length of the hash chain.\n\t * IN  assertion: all calls to to INSERT_STRING are made with consecutive\n\t *    input characters and the first MIN_MATCH bytes of s are valid\n\t *    (except for the last MIN_MATCH-1 bytes of the input file).\n\t */\n\tfunction INSERT_STRING() {\n\t\tins_h = ((ins_h << H_SHIFT) ^ (window[strstart + MIN_MATCH - 1] & 0xff)) & HASH_MASK;\n\t\thash_head = head1(ins_h);\n\t\tprev[strstart & WMASK] = hash_head;\n\t\thead2(ins_h, strstart);\n\t}\n\n\t/* Send a code of the given tree. c and tree must not have side effects */\n\tfunction SEND_CODE(c, tree) {\n\t\tsend_bits(tree[c].fc, tree[c].dl);\n\t}\n\n\t/* Mapping from a distance to a distance code. dist is the distance - 1 and\n\t * must not have side effects. dist_code[256] and dist_code[257] are never\n\t * used.\n\t */\n\tfunction D_CODE(dist) {\n\t\treturn (dist < 256 ? dist_code[dist] : dist_code[256 + (dist >> 7)]) & 0xff;\n\t}\n\n\t/* ==========================================================================\n\t * Compares to subtrees, using the tree depth as tie breaker when\n\t * the subtrees have equal frequency. This minimizes the worst case length.\n\t */\n\tfunction SMALLER(tree, n, m) {\n\t\treturn tree[n].fc < tree[m].fc || (tree[n].fc === tree[m].fc && depth[n] <= depth[m]);\n\t}\n\n\t/* ==========================================================================\n\t * read string data\n\t */\n\tfunction read_buff(buff, offset, n) {\n\t\tvar i;\n\t\tfor (i = 0; i < n && deflate_pos < deflate_data.length; i++) {\n\t\t\tbuff[offset + i] = deflate_data[deflate_pos++] & 0xff;\n\t\t}\n\t\treturn i;\n\t}\n\n\t/* ==========================================================================\n\t * Initialize the \"longest match\" routines for a new file\n\t */\n\tfunction lm_init() {\n\t\tvar j;\n\n\t\t// Initialize the hash table. */\n\t\tfor (j = 0; j < HASH_SIZE; j++) {\n\t\t\t// head2(j, NIL);\n\t\t\tprev[WSIZE + j] = 0;\n\t\t}\n\t\t// prev will be initialized on the fly */\n\n\t\t// Set the default configuration parameters:\n\t\tmax_lazy_match = configuration_table[compr_level].max_lazy;\n\t\tgood_match = configuration_table[compr_level].good_length;\n\t\tif (!FULL_SEARCH) {\n\t\t\tnice_match = configuration_table[compr_level].nice_length;\n\t\t}\n\t\tmax_chain_length = configuration_table[compr_level].max_chain;\n\n\t\tstrstart = 0;\n\t\tblock_start = 0;\n\n\t\tlookahead = read_buff(window, 0, 2 * WSIZE);\n\t\tif (lookahead <= 0) {\n\t\t\teofile = true;\n\t\t\tlookahead = 0;\n\t\t\treturn;\n\t\t}\n\t\teofile = false;\n\t\t// Make sure that we always have enough lookahead. This is important\n\t\t// if input comes from a device such as a tty.\n\t\twhile (lookahead < MIN_LOOKAHEAD && !eofile) {\n\t\t\tfill_window();\n\t\t}\n\n\t\t// If lookahead < MIN_MATCH, ins_h is garbage, but this is\n\t\t// not important since only literal bytes will be emitted.\n\t\tins_h = 0;\n\t\tfor (j = 0; j < MIN_MATCH - 1; j++) {\n\t\t\t// UPDATE_HASH(ins_h, window[j]);\n\t\t\tins_h = ((ins_h << H_SHIFT) ^ (window[j] & 0xff)) & HASH_MASK;\n\t\t}\n\t}\n\n\t/* ==========================================================================\n\t * Set match_start to the longest match starting at the given string and\n\t * return its length. Matches shorter or equal to prev_length are discarded,\n\t * in which case the result is equal to prev_length and match_start is\n\t * garbage.\n\t * IN assertions: cur_match is the head of the hash chain for the current\n\t *   string (strstart) and its distance is <= MAX_DIST, and prev_length >= 1\n\t */\n\tfunction longest_match(cur_match) {\n\t\tvar chain_length = max_chain_length; // max hash chain length\n\t\tvar scanp = strstart; // current string\n\t\tvar matchp; // matched string\n\t\tvar len; // length of current match\n\t\tvar best_len = prev_length; // best match length so far\n\n\t\t// Stop when cur_match becomes <= limit. To simplify the code,\n\t\t// we prevent matches with the string of window index 0.\n\t\tvar limit = (strstart > MAX_DIST ? strstart - MAX_DIST : NIL);\n\n\t\tvar strendp = strstart + MAX_MATCH;\n\t\tvar scan_end1 = window[scanp + best_len - 1];\n\t\tvar scan_end = window[scanp + best_len];\n\n\t\tvar i, broke;\n\n\t\t// Do not waste too much time if we already have a good match: */\n\t\tif (prev_length >= good_match) {\n\t\t\tchain_length >>= 2;\n\t\t}\n\n\t\t// Assert(encoder->strstart <= window_size-MIN_LOOKAHEAD, \"insufficient lookahead\");\n\n\t\tdo {\n\t\t\t// Assert(cur_match < encoder->strstart, \"no future\");\n\t\t\tmatchp = cur_match;\n\n\t\t\t// Skip to next match if the match length cannot increase\n\t\t\t// or if the match length is less than 2:\n\t\t\tif (window[matchp + best_len] !== scan_end  ||\n\t\t\t\t\twindow[matchp + best_len - 1] !== scan_end1 ||\n\t\t\t\t\twindow[matchp] !== window[scanp] ||\n\t\t\t\t\twindow[++matchp] !== window[scanp + 1]) {\n\t\t\t\tcontinue;\n\t\t\t}\n\n\t\t\t// The check at best_len-1 can be removed because it will be made\n\t\t\t// again later. (This heuristic is not always a win.)\n\t\t\t// It is not necessary to compare scan[2] and match[2] since they\n\t\t\t// are always equal when the other bytes match, given that\n\t\t\t// the hash keys are equal and that HASH_BITS >= 8.\n\t\t\tscanp += 2;\n\t\t\tmatchp++;\n\n\t\t\t// We check for insufficient lookahead only every 8th comparison;\n\t\t\t// the 256th check will be made at strstart+258.\n\t\t\twhile (scanp < strendp) {\n\t\t\t\tbroke = false;\n\t\t\t\tfor (i = 0; i < 8; i += 1) {\n\t\t\t\t\tscanp += 1;\n\t\t\t\t\tmatchp += 1;\n\t\t\t\t\tif (window[scanp] !== window[matchp]) {\n\t\t\t\t\t\tbroke = true;\n\t\t\t\t\t\tbreak;\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (broke) {\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t}\n\n\t\t\tlen = MAX_MATCH - (strendp - scanp);\n\t\t\tscanp = strendp - MAX_MATCH;\n\n\t\t\tif (len > best_len) {\n\t\t\t\tmatch_start = cur_match;\n\t\t\t\tbest_len = len;\n\t\t\t\tif (FULL_SEARCH) {\n\t\t\t\t\tif (len >= MAX_MATCH) {\n\t\t\t\t\t\tbreak;\n\t\t\t\t\t}\n\t\t\t\t} else {\n\t\t\t\t\tif (len >= nice_match) {\n\t\t\t\t\t\tbreak;\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tscan_end1 = window[scanp + best_len - 1];\n\t\t\t\tscan_end = window[scanp + best_len];\n\t\t\t}\n\t\t} while ((cur_match = prev[cur_match & WMASK]) > limit && --chain_length !== 0);\n\n\t\treturn best_len;\n\t}\n\n\t/* ==========================================================================\n\t * Fill the window when the lookahead becomes insufficient.\n\t * Updates strstart and lookahead, and sets eofile if end of input file.\n\t * IN assertion: lookahead < MIN_LOOKAHEAD && strstart + lookahead > 0\n\t * OUT assertions: at least one byte has been read, or eofile is set;\n\t *    file reads are performed for at least two bytes (required for the\n\t *    translate_eol option).\n\t */\n\tfunction fill_window() {\n\t\tvar n, m;\n\n\t // Amount of free space at the end of the window.\n\t\tvar more = window_size - lookahead - strstart;\n\n\t\t// If the window is almost full and there is insufficient lookahead,\n\t\t// move the upper half to the lower one to make room in the upper half.\n\t\tif (more === -1) {\n\t\t\t// Very unlikely, but possible on 16 bit machine if strstart == 0\n\t\t\t// and lookahead == 1 (input done one byte at time)\n\t\t\tmore--;\n\t\t} else if (strstart >= WSIZE + MAX_DIST) {\n\t\t\t// By the IN assertion, the window is not empty so we can't confuse\n\t\t\t// more == 0 with more == 64K on a 16 bit machine.\n\t\t\t// Assert(window_size == (ulg)2*WSIZE, \"no sliding with BIG_MEM\");\n\n\t\t\t// System.arraycopy(window, WSIZE, window, 0, WSIZE);\n\t\t\tfor (n = 0; n < WSIZE; n++) {\n\t\t\t\twindow[n] = window[n + WSIZE];\n\t\t\t}\n\n\t\t\tmatch_start -= WSIZE;\n\t\t\tstrstart    -= WSIZE; /* we now have strstart >= MAX_DIST: */\n\t\t\tblock_start -= WSIZE;\n\n\t\t\tfor (n = 0; n < HASH_SIZE; n++) {\n\t\t\t\tm = head1(n);\n\t\t\t\thead2(n, m >= WSIZE ? m - WSIZE : NIL);\n\t\t\t}\n\t\t\tfor (n = 0; n < WSIZE; n++) {\n\t\t\t// If n is not on any hash chain, prev[n] is garbage but\n\t\t\t// its value will never be used.\n\t\t\t\tm = prev[n];\n\t\t\t\tprev[n] = (m >= WSIZE ? m - WSIZE : NIL);\n\t\t\t}\n\t\t\tmore += WSIZE;\n\t\t}\n\t\t// At this point, more >= 2\n\t\tif (!eofile) {\n\t\t\tn = read_buff(window, strstart + lookahead, more);\n\t\t\tif (n <= 0) {\n\t\t\t\teofile = true;\n\t\t\t} else {\n\t\t\t\tlookahead += n;\n\t\t\t}\n\t\t}\n\t}\n\n\t/* ==========================================================================\n\t * Processes a new input file and return its compressed length. This\n\t * function does not perform lazy evaluationof matches and inserts\n\t * new strings in the dictionary only for unmatched strings or for short\n\t * matches. It is used only for the fast compression options.\n\t */\n\tfunction deflate_fast() {\n\t\twhile (lookahead !== 0 && qhead === null) {\n\t\t\tvar flush; // set if current block must be flushed\n\n\t\t\t// Insert the string window[strstart .. strstart+2] in the\n\t\t\t// dictionary, and set hash_head to the head of the hash chain:\n\t\t\tINSERT_STRING();\n\n\t\t\t// Find the longest match, discarding those <= prev_length.\n\t\t\t// At this point we have always match_length < MIN_MATCH\n\t\t\tif (hash_head !== NIL && strstart - hash_head <= MAX_DIST) {\n\t\t\t\t// To simplify the code, we prevent matches with the string\n\t\t\t\t// of window index 0 (in particular we have to avoid a match\n\t\t\t\t// of the string with itself at the start of the input file).\n\t\t\t\tmatch_length = longest_match(hash_head);\n\t\t\t\t// longest_match() sets match_start */\n\t\t\t\tif (match_length > lookahead) {\n\t\t\t\t\tmatch_length = lookahead;\n\t\t\t\t}\n\t\t\t}\n\t\t\tif (match_length >= MIN_MATCH) {\n\t\t\t\t// check_match(strstart, match_start, match_length);\n\n\t\t\t\tflush = ct_tally(strstart - match_start, match_length - MIN_MATCH);\n\t\t\t\tlookahead -= match_length;\n\n\t\t\t\t// Insert new strings in the hash table only if the match length\n\t\t\t\t// is not too large. This saves time but degrades compression.\n\t\t\t\tif (match_length <= max_lazy_match) {\n\t\t\t\t\tmatch_length--; // string at strstart already in hash table\n\t\t\t\t\tdo {\n\t\t\t\t\t\tstrstart++;\n\t\t\t\t\t\tINSERT_STRING();\n\t\t\t\t\t\t// strstart never exceeds WSIZE-MAX_MATCH, so there are\n\t\t\t\t\t\t// always MIN_MATCH bytes ahead. If lookahead < MIN_MATCH\n\t\t\t\t\t\t// these bytes are garbage, but it does not matter since\n\t\t\t\t\t\t// the next lookahead bytes will be emitted as literals.\n\t\t\t\t\t} while (--match_length !== 0);\n\t\t\t\t\tstrstart++;\n\t\t\t\t} else {\n\t\t\t\t\tstrstart += match_length;\n\t\t\t\t\tmatch_length = 0;\n\t\t\t\t\tins_h = window[strstart] & 0xff;\n\t\t\t\t\t// UPDATE_HASH(ins_h, window[strstart + 1]);\n\t\t\t\t\tins_h = ((ins_h << H_SHIFT) ^ (window[strstart + 1] & 0xff)) & HASH_MASK;\n\n\t\t\t\t//#if MIN_MATCH !== 3\n\t\t\t\t//\t\tCall UPDATE_HASH() MIN_MATCH-3 more times\n\t\t\t\t//#endif\n\n\t\t\t\t}\n\t\t\t} else {\n\t\t\t\t// No match, output a literal byte */\n\t\t\t\tflush = ct_tally(0, window[strstart] & 0xff);\n\t\t\t\tlookahead--;\n\t\t\t\tstrstart++;\n\t\t\t}\n\t\t\tif (flush) {\n\t\t\t\tflush_block(0);\n\t\t\t\tblock_start = strstart;\n\t\t\t}\n\n\t\t\t// Make sure that we always have enough lookahead, except\n\t\t\t// at the end of the input file. We need MAX_MATCH bytes\n\t\t\t// for the next match, plus MIN_MATCH bytes to insert the\n\t\t\t// string following the next match.\n\t\t\twhile (lookahead < MIN_LOOKAHEAD && !eofile) {\n\t\t\t\tfill_window();\n\t\t\t}\n\t\t}\n\t}\n\n\tfunction deflate_better() {\n\t\t// Process the input block. */\n\t\twhile (lookahead !== 0 && qhead === null) {\n\t\t\t// Insert the string window[strstart .. strstart+2] in the\n\t\t\t// dictionary, and set hash_head to the head of the hash chain:\n\t\t\tINSERT_STRING();\n\n\t\t\t// Find the longest match, discarding those <= prev_length.\n\t\t\tprev_length = match_length;\n\t\t\tprev_match = match_start;\n\t\t\tmatch_length = MIN_MATCH - 1;\n\n\t\t\tif (hash_head !== NIL && prev_length < max_lazy_match && strstart - hash_head <= MAX_DIST) {\n\t\t\t\t// To simplify the code, we prevent matches with the string\n\t\t\t\t// of window index 0 (in particular we have to avoid a match\n\t\t\t\t// of the string with itself at the start of the input file).\n\t\t\t\tmatch_length = longest_match(hash_head);\n\t\t\t\t// longest_match() sets match_start */\n\t\t\t\tif (match_length > lookahead) {\n\t\t\t\t\tmatch_length = lookahead;\n\t\t\t\t}\n\n\t\t\t\t// Ignore a length 3 match if it is too distant: */\n\t\t\t\tif (match_length === MIN_MATCH && strstart - match_start > TOO_FAR) {\n\t\t\t\t\t// If prev_match is also MIN_MATCH, match_start is garbage\n\t\t\t\t\t// but we will ignore the current match anyway.\n\t\t\t\t\tmatch_length--;\n\t\t\t\t}\n\t\t\t}\n\t\t\t// If there was a match at the previous step and the current\n\t\t\t// match is not better, output the previous match:\n\t\t\tif (prev_length >= MIN_MATCH && match_length <= prev_length) {\n\t\t\t\tvar flush; // set if current block must be flushed\n\n\t\t\t\t// check_match(strstart - 1, prev_match, prev_length);\n\t\t\t\tflush = ct_tally(strstart - 1 - prev_match, prev_length - MIN_MATCH);\n\n\t\t\t\t// Insert in hash table all strings up to the end of the match.\n\t\t\t\t// strstart-1 and strstart are already inserted.\n\t\t\t\tlookahead -= prev_length - 1;\n\t\t\t\tprev_length -= 2;\n\t\t\t\tdo {\n\t\t\t\t\tstrstart++;\n\t\t\t\t\tINSERT_STRING();\n\t\t\t\t\t// strstart never exceeds WSIZE-MAX_MATCH, so there are\n\t\t\t\t\t// always MIN_MATCH bytes ahead. If lookahead < MIN_MATCH\n\t\t\t\t\t// these bytes are garbage, but it does not matter since the\n\t\t\t\t\t// next lookahead bytes will always be emitted as literals.\n\t\t\t\t} while (--prev_length !== 0);\n\t\t\t\tmatch_available = false;\n\t\t\t\tmatch_length = MIN_MATCH - 1;\n\t\t\t\tstrstart++;\n\t\t\t\tif (flush) {\n\t\t\t\t\tflush_block(0);\n\t\t\t\t\tblock_start = strstart;\n\t\t\t\t}\n\t\t\t} else if (match_available) {\n\t\t\t\t// If there was no match at the previous position, output a\n\t\t\t\t// single literal. If there was a match but the current match\n\t\t\t\t// is longer, truncate the previous match to a single literal.\n\t\t\t\tif (ct_tally(0, window[strstart - 1] & 0xff)) {\n\t\t\t\t\tflush_block(0);\n\t\t\t\t\tblock_start = strstart;\n\t\t\t\t}\n\t\t\t\tstrstart++;\n\t\t\t\tlookahead--;\n\t\t\t} else {\n\t\t\t\t// There is no previous match to compare with, wait for\n\t\t\t\t// the next step to decide.\n\t\t\t\tmatch_available = true;\n\t\t\t\tstrstart++;\n\t\t\t\tlookahead--;\n\t\t\t}\n\n\t\t\t// Make sure that we always have enough lookahead, except\n\t\t\t// at the end of the input file. We need MAX_MATCH bytes\n\t\t\t// for the next match, plus MIN_MATCH bytes to insert the\n\t\t\t// string following the next match.\n\t\t\twhile (lookahead < MIN_LOOKAHEAD && !eofile) {\n\t\t\t\tfill_window();\n\t\t\t}\n\t\t}\n\t}\n\n\tfunction init_deflate() {\n\t\tif (eofile) {\n\t\t\treturn;\n\t\t}\n\t\tbi_buf = 0;\n\t\tbi_valid = 0;\n\t\tct_init();\n\t\tlm_init();\n\n\t\tqhead = null;\n\t\toutcnt = 0;\n\t\toutoff = 0;\n\n\t\tif (compr_level <= 3) {\n\t\t\tprev_length = MIN_MATCH - 1;\n\t\t\tmatch_length = 0;\n\t\t} else {\n\t\t\tmatch_length = MIN_MATCH - 1;\n\t\t\tmatch_available = false;\n\t\t}\n\n\t\tcomplete = false;\n\t}\n\n\t/* ==========================================================================\n\t * Same as above, but achieves better compression. We use a lazy\n\t * evaluation for matches: a match is finally adopted only if there is\n\t * no better match at the next window position.\n\t */\n\tfunction deflate_internal(buff, off, buff_size) {\n\t\tvar n;\n\n\t\tif (!initflag) {\n\t\t\tinit_deflate();\n\t\t\tinitflag = true;\n\t\t\tif (lookahead === 0) { // empty\n\t\t\t\tcomplete = true;\n\t\t\t\treturn 0;\n\t\t\t}\n\t\t}\n\n\t\tn = qcopy(buff, off, buff_size);\n\t\tif (n === buff_size) {\n\t\t\treturn buff_size;\n\t\t}\n\n\t\tif (complete) {\n\t\t\treturn n;\n\t\t}\n\n\t\tif (compr_level <= 3) {\n\t\t\t// optimized for speed\n\t\t\tdeflate_fast();\n\t\t} else {\n\t\t\tdeflate_better();\n\t\t}\n\n\t\tif (lookahead === 0) {\n\t\t\tif (match_available) {\n\t\t\t\tct_tally(0, window[strstart - 1] & 0xff);\n\t\t\t}\n\t\t\tflush_block(1);\n\t\t\tcomplete = true;\n\t\t}\n\n\t\treturn n + qcopy(buff, n + off, buff_size - n);\n\t}\n\n\tfunction qcopy(buff, off, buff_size) {\n\t\tvar n, i, j;\n\n\t\tn = 0;\n\t\twhile (qhead !== null && n < buff_size) {\n\t\t\ti = buff_size - n;\n\t\t\tif (i > qhead.len) {\n\t\t\t\ti = qhead.len;\n\t\t\t}\n\t\t\t// System.arraycopy(qhead.ptr, qhead.off, buff, off + n, i);\n\t\t\tfor (j = 0; j < i; j++) {\n\t\t\t\tbuff[off + n + j] = qhead.ptr[qhead.off + j];\n\t\t\t}\n\n\t\t\tqhead.off += i;\n\t\t\tqhead.len -= i;\n\t\t\tn += i;\n\t\t\tif (qhead.len === 0) {\n\t\t\t\tvar p;\n\t\t\t\tp = qhead;\n\t\t\t\tqhead = qhead.next;\n\t\t\t\treuse_queue(p);\n\t\t\t}\n\t\t}\n\n\t\tif (n === buff_size) {\n\t\t\treturn n;\n\t\t}\n\n\t\tif (outoff < outcnt) {\n\t\t\ti = buff_size - n;\n\t\t\tif (i > outcnt - outoff) {\n\t\t\t\ti = outcnt - outoff;\n\t\t\t}\n\t\t\t// System.arraycopy(outbuf, outoff, buff, off + n, i);\n\t\t\tfor (j = 0; j < i; j++) {\n\t\t\t\tbuff[off + n + j] = outbuf[outoff + j];\n\t\t\t}\n\t\t\toutoff += i;\n\t\t\tn += i;\n\t\t\tif (outcnt === outoff) {\n\t\t\t\toutcnt = outoff = 0;\n\t\t\t}\n\t\t}\n\t\treturn n;\n\t}\n\n\t/* ==========================================================================\n\t * Allocate the match buffer, initialize the various tables and save the\n\t * location of the internal file attribute (ascii/binary) and method\n\t * (DEFLATE/STORE).\n\t */\n\tfunction ct_init() {\n\t\tvar n; // iterates over tree elements\n\t\tvar bits; // bit counter\n\t\tvar length; // length value\n\t\tvar code; // code value\n\t\tvar dist; // distance index\n\n\t\tif (static_dtree[0].dl !== 0) {\n\t\t\treturn; // ct_init already called\n\t\t}\n\n\t\tl_desc.dyn_tree = dyn_ltree;\n\t\tl_desc.static_tree = static_ltree;\n\t\tl_desc.extra_bits = extra_lbits;\n\t\tl_desc.extra_base = LITERALS + 1;\n\t\tl_desc.elems = L_CODES;\n\t\tl_desc.max_length = MAX_BITS;\n\t\tl_desc.max_code = 0;\n\n\t\td_desc.dyn_tree = dyn_dtree;\n\t\td_desc.static_tree = static_dtree;\n\t\td_desc.extra_bits = extra_dbits;\n\t\td_desc.extra_base = 0;\n\t\td_desc.elems = D_CODES;\n\t\td_desc.max_length = MAX_BITS;\n\t\td_desc.max_code = 0;\n\n\t\tbl_desc.dyn_tree = bl_tree;\n\t\tbl_desc.static_tree = null;\n\t\tbl_desc.extra_bits = extra_blbits;\n\t\tbl_desc.extra_base = 0;\n\t\tbl_desc.elems = BL_CODES;\n\t\tbl_desc.max_length = MAX_BL_BITS;\n\t\tbl_desc.max_code = 0;\n\n\t // Initialize the mapping length (0..255) -> length code (0..28)\n\t\tlength = 0;\n\t\tfor (code = 0; code < LENGTH_CODES - 1; code++) {\n\t\t\tbase_length[code] = length;\n\t\t\tfor (n = 0; n < (1 << extra_lbits[code]); n++) {\n\t\t\t\tlength_code[length++] = code;\n\t\t\t}\n\t\t}\n\t // Assert (length === 256, \"ct_init: length !== 256\");\n\n\t\t// Note that the length 255 (match length 258) can be represented\n\t\t// in two different ways: code 284 + 5 bits or code 285, so we\n\t\t// overwrite length_code[255] to use the best encoding:\n\t\tlength_code[length - 1] = code;\n\n\t\t// Initialize the mapping dist (0..32K) -> dist code (0..29) */\n\t\tdist = 0;\n\t\tfor (code = 0; code < 16; code++) {\n\t\t\tbase_dist[code] = dist;\n\t\t\tfor (n = 0; n < (1 << extra_dbits[code]); n++) {\n\t\t\t\tdist_code[dist++] = code;\n\t\t\t}\n\t\t}\n\t\t// Assert (dist === 256, \"ct_init: dist !== 256\");\n\t\t// from now on, all distances are divided by 128\n\t\tfor (dist >>= 7; code < D_CODES; code++) {\n\t\t\tbase_dist[code] = dist << 7;\n\t\t\tfor (n = 0; n < (1 << (extra_dbits[code] - 7)); n++) {\n\t\t\t\tdist_code[256 + dist++] = code;\n\t\t\t}\n\t\t}\n\t\t// Assert (dist === 256, \"ct_init: 256+dist !== 512\");\n\n\t\t// Construct the codes of the static literal tree\n\t\tfor (bits = 0; bits <= MAX_BITS; bits++) {\n\t\t\tbl_count[bits] = 0;\n\t\t}\n\t\tn = 0;\n\t\twhile (n <= 143) {\n\t\t\tstatic_ltree[n++].dl = 8;\n\t\t\tbl_count[8]++;\n\t\t}\n\t\twhile (n <= 255) {\n\t\t\tstatic_ltree[n++].dl = 9;\n\t\t\tbl_count[9]++;\n\t\t}\n\t\twhile (n <= 279) {\n\t\t\tstatic_ltree[n++].dl = 7;\n\t\t\tbl_count[7]++;\n\t\t}\n\t\twhile (n <= 287) {\n\t\t\tstatic_ltree[n++].dl = 8;\n\t\t\tbl_count[8]++;\n\t\t}\n\t\t// Codes 286 and 287 do not exist, but we must include them in the\n\t\t// tree construction to get a canonical Huffman tree (longest code\n\t\t// all ones)\n\t\tgen_codes(static_ltree, L_CODES + 1);\n\n\t\t// The static distance tree is trivial: */\n\t\tfor (n = 0; n < D_CODES; n++) {\n\t\t\tstatic_dtree[n].dl = 5;\n\t\t\tstatic_dtree[n].fc = bi_reverse(n, 5);\n\t\t}\n\n\t\t// Initialize the first block of the first file:\n\t\tinit_block();\n\t}\n\n\t/* ==========================================================================\n\t * Initialize a new block.\n\t */\n\tfunction init_block() {\n\t\tvar n; // iterates over tree elements\n\n\t\t// Initialize the trees.\n\t\tfor (n = 0; n < L_CODES;  n++) {\n\t\t\tdyn_ltree[n].fc = 0;\n\t\t}\n\t\tfor (n = 0; n < D_CODES;  n++) {\n\t\t\tdyn_dtree[n].fc = 0;\n\t\t}\n\t\tfor (n = 0; n < BL_CODES; n++) {\n\t\t\tbl_tree[n].fc = 0;\n\t\t}\n\n\t\tdyn_ltree[END_BLOCK].fc = 1;\n\t\topt_len = static_len = 0;\n\t\tlast_lit = last_dist = last_flags = 0;\n\t\tflags = 0;\n\t\tflag_bit = 1;\n\t}\n\n\t/* ==========================================================================\n\t * Restore the heap property by moving down the tree starting at node k,\n\t * exchanging a node with the smallest of its two sons if necessary, stopping\n\t * when the heap property is re-established (each father smaller than its\n\t * two sons).\n\t *\n\t * @param tree- tree to restore\n\t * @param k- node to move down\n\t */\n\tfunction pqdownheap(tree, k) {\n\t\tvar v = heap[k],\n\t\t\tj = k << 1; // left son of k\n\n\t\twhile (j <= heap_len) {\n\t\t\t// Set j to the smallest of the two sons:\n\t\t\tif (j < heap_len && SMALLER(tree, heap[j + 1], heap[j])) {\n\t\t\t\tj++;\n\t\t\t}\n\n\t\t\t// Exit if v is smaller than both sons\n\t\t\tif (SMALLER(tree, v, heap[j])) {\n\t\t\t\tbreak;\n\t\t\t}\n\n\t\t\t// Exchange v with the smallest son\n\t\t\theap[k] = heap[j];\n\t\t\tk = j;\n\n\t\t\t// And continue down the tree, setting j to the left son of k\n\t\t\tj <<= 1;\n\t\t}\n\t\theap[k] = v;\n\t}\n\n\t/* ==========================================================================\n\t * Compute the optimal bit lengths for a tree and update the total bit length\n\t * for the current block.\n\t * IN assertion: the fields freq and dad are set, heap[heap_max] and\n\t *    above are the tree nodes sorted by increasing frequency.\n\t * OUT assertions: the field len is set to the optimal bit length, the\n\t *     array bl_count contains the frequencies for each bit length.\n\t *     The length opt_len is updated; static_len is also updated if stree is\n\t *     not null.\n\t */\n\tfunction gen_bitlen(desc) { // the tree descriptor\n\t\tvar tree = desc.dyn_tree;\n\t\tvar extra = desc.extra_bits;\n\t\tvar base = desc.extra_base;\n\t\tvar max_code = desc.max_code;\n\t\tvar max_length = desc.max_length;\n\t\tvar stree = desc.static_tree;\n\t\tvar h; // heap index\n\t\tvar n, m; // iterate over the tree elements\n\t\tvar bits; // bit length\n\t\tvar xbits; // extra bits\n\t\tvar f; // frequency\n\t\tvar overflow = 0; // number of elements with bit length too large\n\n\t\tfor (bits = 0; bits <= MAX_BITS; bits++) {\n\t\t\tbl_count[bits] = 0;\n\t\t}\n\n\t\t// In a first pass, compute the optimal bit lengths (which may\n\t\t// overflow in the case of the bit length tree).\n\t\ttree[heap[heap_max]].dl = 0; // root of the heap\n\n\t\tfor (h = heap_max + 1; h < HEAP_SIZE; h++) {\n\t\t\tn = heap[h];\n\t\t\tbits = tree[tree[n].dl].dl + 1;\n\t\t\tif (bits > max_length) {\n\t\t\t\tbits = max_length;\n\t\t\t\toverflow++;\n\t\t\t}\n\t\t\ttree[n].dl = bits;\n\t\t\t// We overwrite tree[n].dl which is no longer needed\n\n\t\t\tif (n > max_code) {\n\t\t\t\tcontinue; // not a leaf node\n\t\t\t}\n\n\t\t\tbl_count[bits]++;\n\t\t\txbits = 0;\n\t\t\tif (n >= base) {\n\t\t\t\txbits = extra[n - base];\n\t\t\t}\n\t\t\tf = tree[n].fc;\n\t\t\topt_len += f * (bits + xbits);\n\t\t\tif (stree !== null) {\n\t\t\t\tstatic_len += f * (stree[n].dl + xbits);\n\t\t\t}\n\t\t}\n\t\tif (overflow === 0) {\n\t\t\treturn;\n\t\t}\n\n\t\t// This happens for example on obj2 and pic of the Calgary corpus\n\n\t\t// Find the first bit length which could increase:\n\t\tdo {\n\t\t\tbits = max_length - 1;\n\t\t\twhile (bl_count[bits] === 0) {\n\t\t\t\tbits--;\n\t\t\t}\n\t\t\tbl_count[bits]--; // move one leaf down the tree\n\t\t\tbl_count[bits + 1] += 2; // move one overflow item as its brother\n\t\t\tbl_count[max_length]--;\n\t\t\t// The brother of the overflow item also moves one step up,\n\t\t\t// but this does not affect bl_count[max_length]\n\t\t\toverflow -= 2;\n\t\t} while (overflow > 0);\n\n\t\t// Now recompute all bit lengths, scanning in increasing frequency.\n\t\t// h is still equal to HEAP_SIZE. (It is simpler to reconstruct all\n\t\t// lengths instead of fixing only the wrong ones. This idea is taken\n\t\t// from 'ar' written by Haruhiko Okumura.)\n\t\tfor (bits = max_length; bits !== 0; bits--) {\n\t\t\tn = bl_count[bits];\n\t\t\twhile (n !== 0) {\n\t\t\t\tm = heap[--h];\n\t\t\t\tif (m > max_code) {\n\t\t\t\t\tcontinue;\n\t\t\t\t}\n\t\t\t\tif (tree[m].dl !== bits) {\n\t\t\t\t\topt_len += (bits - tree[m].dl) * tree[m].fc;\n\t\t\t\t\ttree[m].fc = bits;\n\t\t\t\t}\n\t\t\t\tn--;\n\t\t\t}\n\t\t}\n\t}\n\n\t  /* ==========================================================================\n\t   * Generate the codes for a given tree and bit counts (which need not be\n\t   * optimal).\n\t   * IN assertion: the array bl_count contains the bit length statistics for\n\t   * the given tree and the field len is set for all tree elements.\n\t   * OUT assertion: the field code is set for all tree elements of non\n\t   *     zero code length.\n\t   * @param tree- the tree to decorate\n\t   * @param max_code- largest code with non-zero frequency\n\t   */\n\tfunction gen_codes(tree, max_code) {\n\t\tvar next_code = []; // new Array(MAX_BITS + 1); // next code value for each bit length\n\t\tvar code = 0; // running code value\n\t\tvar bits; // bit index\n\t\tvar n; // code index\n\n\t\t// The distribution counts are first used to generate the code values\n\t\t// without bit reversal.\n\t\tfor (bits = 1; bits <= MAX_BITS; bits++) {\n\t\t\tcode = ((code + bl_count[bits - 1]) << 1);\n\t\t\tnext_code[bits] = code;\n\t\t}\n\n\t\t// Check that the bit counts in bl_count are consistent. The last code\n\t\t// must be all ones.\n\t\t// Assert (code + encoder->bl_count[MAX_BITS]-1 === (1<<MAX_BITS)-1, \"inconsistent bit counts\");\n\t\t// Tracev((stderr,\"\\ngen_codes: max_code %d \", max_code));\n\n\t\tfor (n = 0; n <= max_code; n++) {\n\t\t\tvar len = tree[n].dl;\n\t\t\tif (len === 0) {\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\t// Now reverse the bits\n\t\t\ttree[n].fc = bi_reverse(next_code[len]++, len);\n\n\t\t\t// Tracec(tree !== static_ltree, (stderr,\"\\nn %3d %c l %2d c %4x (%x) \", n, (isgraph(n) ? n : ' '), len, tree[n].fc, next_code[len]-1));\n\t\t}\n\t}\n\n\t/* ==========================================================================\n\t * Construct one Huffman tree and assigns the code bit strings and lengths.\n\t * Update the total bit length for the current block.\n\t * IN assertion: the field freq is set for all tree elements.\n\t * OUT assertions: the fields len and code are set to the optimal bit length\n\t *     and corresponding code. The length opt_len is updated; static_len is\n\t *     also updated if stree is not null. The field max_code is set.\n\t */\n\tfunction build_tree(desc) { // the tree descriptor\n\t\tvar tree = desc.dyn_tree;\n\t\tvar stree = desc.static_tree;\n\t\tvar elems = desc.elems;\n\t\tvar n, m; // iterate over heap elements\n\t\tvar max_code = -1; // largest code with non zero frequency\n\t\tvar node = elems; // next internal node of the tree\n\n\t\t// Construct the initial heap, with least frequent element in\n\t\t// heap[SMALLEST]. The sons of heap[n] are heap[2*n] and heap[2*n+1].\n\t\t// heap[0] is not used.\n\t\theap_len = 0;\n\t\theap_max = HEAP_SIZE;\n\n\t\tfor (n = 0; n < elems; n++) {\n\t\t\tif (tree[n].fc !== 0) {\n\t\t\t\theap[++heap_len] = max_code = n;\n\t\t\t\tdepth[n] = 0;\n\t\t\t} else {\n\t\t\t\ttree[n].dl = 0;\n\t\t\t}\n\t\t}\n\n\t\t// The pkzip format requires that at least one distance code exists,\n\t\t// and that at least one bit should be sent even if there is only one\n\t\t// possible code. So to avoid special checks later on we force at least\n\t\t// two codes of non zero frequency.\n\t\twhile (heap_len < 2) {\n\t\t\tvar xnew = heap[++heap_len] = (max_code < 2 ? ++max_code : 0);\n\t\t\ttree[xnew].fc = 1;\n\t\t\tdepth[xnew] = 0;\n\t\t\topt_len--;\n\t\t\tif (stree !== null) {\n\t\t\t\tstatic_len -= stree[xnew].dl;\n\t\t\t}\n\t\t\t// new is 0 or 1 so it does not have extra bits\n\t\t}\n\t\tdesc.max_code = max_code;\n\n\t\t// The elements heap[heap_len/2+1 .. heap_len] are leaves of the tree,\n\t\t// establish sub-heaps of increasing lengths:\n\t\tfor (n = heap_len >> 1; n >= 1; n--) {\n\t\t\tpqdownheap(tree, n);\n\t\t}\n\n\t\t// Construct the Huffman tree by repeatedly combining the least two\n\t\t// frequent nodes.\n\t\tdo {\n\t\t\tn = heap[SMALLEST];\n\t\t\theap[SMALLEST] = heap[heap_len--];\n\t\t\tpqdownheap(tree, SMALLEST);\n\n\t\t\tm = heap[SMALLEST]; // m = node of next least frequency\n\n\t\t\t// keep the nodes sorted by frequency\n\t\t\theap[--heap_max] = n;\n\t\t\theap[--heap_max] = m;\n\n\t\t\t// Create a new node father of n and m\n\t\t\ttree[node].fc = tree[n].fc + tree[m].fc;\n\t\t\t//\tdepth[node] = (char)(MAX(depth[n], depth[m]) + 1);\n\t\t\tif (depth[n] > depth[m] + 1) {\n\t\t\t\tdepth[node] = depth[n];\n\t\t\t} else {\n\t\t\t\tdepth[node] = depth[m] + 1;\n\t\t\t}\n\t\t\ttree[n].dl = tree[m].dl = node;\n\n\t\t\t// and insert the new node in the heap\n\t\t\theap[SMALLEST] = node++;\n\t\t\tpqdownheap(tree, SMALLEST);\n\n\t\t} while (heap_len >= 2);\n\n\t\theap[--heap_max] = heap[SMALLEST];\n\n\t\t// At this point, the fields freq and dad are set. We can now\n\t\t// generate the bit lengths.\n\t\tgen_bitlen(desc);\n\n\t\t// The field len is now set, we can generate the bit codes\n\t\tgen_codes(tree, max_code);\n\t}\n\n\t/* ==========================================================================\n\t * Scan a literal or distance tree to determine the frequencies of the codes\n\t * in the bit length tree. Updates opt_len to take into account the repeat\n\t * counts. (The contribution of the bit length codes will be added later\n\t * during the construction of bl_tree.)\n\t *\n\t * @param tree- the tree to be scanned\n\t * @param max_code- and its largest code of non zero frequency\n\t */\n\tfunction scan_tree(tree, max_code) {\n\t\tvar n, // iterates over all tree elements\n\t\t\tprevlen = -1, // last emitted length\n\t\t\tcurlen, // length of current code\n\t\t\tnextlen = tree[0].dl, // length of next code\n\t\t\tcount = 0, // repeat count of the current code\n\t\t\tmax_count = 7, // max repeat count\n\t\t\tmin_count = 4; // min repeat count\n\n\t\tif (nextlen === 0) {\n\t\t\tmax_count = 138;\n\t\t\tmin_count = 3;\n\t\t}\n\t\ttree[max_code + 1].dl = 0xffff; // guard\n\n\t\tfor (n = 0; n <= max_code; n++) {\n\t\t\tcurlen = nextlen;\n\t\t\tnextlen = tree[n + 1].dl;\n\t\t\tif (++count < max_count && curlen === nextlen) {\n\t\t\t\tcontinue;\n\t\t\t} else if (count < min_count) {\n\t\t\t\tbl_tree[curlen].fc += count;\n\t\t\t} else if (curlen !== 0) {\n\t\t\t\tif (curlen !== prevlen) {\n\t\t\t\t\tbl_tree[curlen].fc++;\n\t\t\t\t}\n\t\t\t\tbl_tree[REP_3_6].fc++;\n\t\t\t} else if (count <= 10) {\n\t\t\t\tbl_tree[REPZ_3_10].fc++;\n\t\t\t} else {\n\t\t\t\tbl_tree[REPZ_11_138].fc++;\n\t\t\t}\n\t\t\tcount = 0; prevlen = curlen;\n\t\t\tif (nextlen === 0) {\n\t\t\t\tmax_count = 138;\n\t\t\t\tmin_count = 3;\n\t\t\t} else if (curlen === nextlen) {\n\t\t\t\tmax_count = 6;\n\t\t\t\tmin_count = 3;\n\t\t\t} else {\n\t\t\t\tmax_count = 7;\n\t\t\t\tmin_count = 4;\n\t\t\t}\n\t\t}\n\t}\n\n\t/* ==========================================================================\n\t * Send a literal or distance tree in compressed form, using the codes in\n\t * bl_tree.\n\t *\n\t * @param tree- the tree to be scanned\n\t * @param max_code- and its largest code of non zero frequency\n\t */\n\tfunction send_tree(tree, max_code) {\n\t\tvar n; // iterates over all tree elements\n\t\tvar prevlen = -1; // last emitted length\n\t\tvar curlen; // length of current code\n\t\tvar nextlen = tree[0].dl; // length of next code\n\t\tvar count = 0; // repeat count of the current code\n\t\tvar max_count = 7; // max repeat count\n\t\tvar min_count = 4; // min repeat count\n\n\t\t// tree[max_code+1].dl = -1; */  /* guard already set */\n\t\tif (nextlen === 0) {\n\t\t\tmax_count = 138;\n\t\t\tmin_count = 3;\n\t\t}\n\n\t\tfor (n = 0; n <= max_code; n++) {\n\t\t\tcurlen = nextlen;\n\t\t\tnextlen = tree[n + 1].dl;\n\t\t\tif (++count < max_count && curlen === nextlen) {\n\t\t\t\tcontinue;\n\t\t\t} else if (count < min_count) {\n\t\t\t\tdo {\n\t\t\t\t\tSEND_CODE(curlen, bl_tree);\n\t\t\t\t} while (--count !== 0);\n\t\t\t} else if (curlen !== 0) {\n\t\t\t\tif (curlen !== prevlen) {\n\t\t\t\t\tSEND_CODE(curlen, bl_tree);\n\t\t\t\t\tcount--;\n\t\t\t\t}\n\t\t\t// Assert(count >= 3 && count <= 6, \" 3_6?\");\n\t\t\t\tSEND_CODE(REP_3_6, bl_tree);\n\t\t\t\tsend_bits(count - 3, 2);\n\t\t\t} else if (count <= 10) {\n\t\t\t\tSEND_CODE(REPZ_3_10, bl_tree);\n\t\t\t\tsend_bits(count - 3, 3);\n\t\t\t} else {\n\t\t\t\tSEND_CODE(REPZ_11_138, bl_tree);\n\t\t\t\tsend_bits(count - 11, 7);\n\t\t\t}\n\t\t\tcount = 0;\n\t\t\tprevlen = curlen;\n\t\t\tif (nextlen === 0) {\n\t\t\t\tmax_count = 138;\n\t\t\t\tmin_count = 3;\n\t\t\t} else if (curlen === nextlen) {\n\t\t\t\tmax_count = 6;\n\t\t\t\tmin_count = 3;\n\t\t\t} else {\n\t\t\t\tmax_count = 7;\n\t\t\t\tmin_count = 4;\n\t\t\t}\n\t\t}\n\t}\n\n\t/* ==========================================================================\n\t * Construct the Huffman tree for the bit lengths and return the index in\n\t * bl_order of the last bit length code to send.\n\t */\n\tfunction build_bl_tree() {\n\t\tvar max_blindex; // index of last bit length code of non zero freq\n\n\t\t// Determine the bit length frequencies for literal and distance trees\n\t\tscan_tree(dyn_ltree, l_desc.max_code);\n\t\tscan_tree(dyn_dtree, d_desc.max_code);\n\n\t\t// Build the bit length tree:\n\t\tbuild_tree(bl_desc);\n\t\t// opt_len now includes the length of the tree representations, except\n\t\t// the lengths of the bit lengths codes and the 5+5+4 bits for the counts.\n\n\t\t// Determine the number of bit length codes to send. The pkzip format\n\t\t// requires that at least 4 bit length codes be sent. (appnote.txt says\n\t\t// 3 but the actual value used is 4.)\n\t\tfor (max_blindex = BL_CODES - 1; max_blindex >= 3; max_blindex--) {\n\t\t\tif (bl_tree[bl_order[max_blindex]].dl !== 0) {\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\t// Update opt_len to include the bit length tree and counts */\n\t\topt_len += 3 * (max_blindex + 1) + 5 + 5 + 4;\n\t\t// Tracev((stderr, \"\\ndyn trees: dyn %ld, stat %ld\",\n\t\t// encoder->opt_len, encoder->static_len));\n\n\t\treturn max_blindex;\n\t}\n\n\t/* ==========================================================================\n\t * Send the header for a block using dynamic Huffman trees: the counts, the\n\t * lengths of the bit length codes, the literal tree and the distance tree.\n\t * IN assertion: lcodes >= 257, dcodes >= 1, blcodes >= 4.\n\t */\n\tfunction send_all_trees(lcodes, dcodes, blcodes) { // number of codes for each tree\n\t\tvar rank; // index in bl_order\n\n\t\t// Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, \"not enough codes\");\n\t\t// Assert (lcodes <= L_CODES && dcodes <= D_CODES && blcodes <= BL_CODES, \"too many codes\");\n\t\t// Tracev((stderr, \"\\nbl counts: \"));\n\t\tsend_bits(lcodes - 257, 5); // not +255 as stated in appnote.txt\n\t\tsend_bits(dcodes - 1,   5);\n\t\tsend_bits(blcodes - 4,  4); // not -3 as stated in appnote.txt\n\t\tfor (rank = 0; rank < blcodes; rank++) {\n\t\t\t// Tracev((stderr, \"\\nbl code %2d \", bl_order[rank]));\n\t\t\tsend_bits(bl_tree[bl_order[rank]].dl, 3);\n\t\t}\n\n\t\t// send the literal tree\n\t\tsend_tree(dyn_ltree, lcodes - 1);\n\n\t\t// send the distance tree\n\t\tsend_tree(dyn_dtree, dcodes - 1);\n\t}\n\n\t/* ==========================================================================\n\t * Determine the best encoding for the current block: dynamic trees, static\n\t * trees or store, and output the encoded block to the zip file.\n\t */\n\tfunction flush_block(eof) { // true if this is the last block for a file\n\t\tvar opt_lenb, static_lenb, // opt_len and static_len in bytes\n\t\t\tmax_blindex, // index of last bit length code of non zero freq\n\t\t\tstored_len, // length of input block\n\t\t\ti;\n\n\t\tstored_len = strstart - block_start;\n\t\tflag_buf[last_flags] = flags; // Save the flags for the last 8 items\n\n\t\t// Construct the literal and distance trees\n\t\tbuild_tree(l_desc);\n\t\t// Tracev((stderr, \"\\nlit data: dyn %ld, stat %ld\",\n\t\t// encoder->opt_len, encoder->static_len));\n\n\t\tbuild_tree(d_desc);\n\t\t// Tracev((stderr, \"\\ndist data: dyn %ld, stat %ld\",\n\t\t// encoder->opt_len, encoder->static_len));\n\t\t// At this point, opt_len and static_len are the total bit lengths of\n\t\t// the compressed block data, excluding the tree representations.\n\n\t\t// Build the bit length tree for the above two trees, and get the index\n\t\t// in bl_order of the last bit length code to send.\n\t\tmax_blindex = build_bl_tree();\n\n\t // Determine the best encoding. Compute first the block length in bytes\n\t\topt_lenb = (opt_len + 3 + 7) >> 3;\n\t\tstatic_lenb = (static_len + 3 + 7) >> 3;\n\n\t//  Trace((stderr, \"\\nopt %lu(%lu) stat %lu(%lu) stored %lu lit %u dist %u \", opt_lenb, encoder->opt_len, static_lenb, encoder->static_len, stored_len, encoder->last_lit, encoder->last_dist));\n\n\t\tif (static_lenb <= opt_lenb) {\n\t\t\topt_lenb = static_lenb;\n\t\t}\n\t\tif (stored_len + 4 <= opt_lenb && block_start >= 0) { // 4: two words for the lengths\n\t\t\t// The test buf !== NULL is only necessary if LIT_BUFSIZE > WSIZE.\n\t\t\t// Otherwise we can't have processed more than WSIZE input bytes since\n\t\t\t// the last block flush, because compression would have been\n\t\t\t// successful. If LIT_BUFSIZE <= WSIZE, it is never too late to\n\t\t\t// transform a block into a stored block.\n\t\t\tsend_bits((STORED_BLOCK << 1) + eof, 3);  /* send block type */\n\t\t\tbi_windup();         /* align on byte boundary */\n\t\t\tput_short(stored_len);\n\t\t\tput_short(~stored_len);\n\n\t\t\t// copy block\n\t\t\t/*\n\t\t\t\tp = &window[block_start];\n\t\t\t\tfor (i = 0; i < stored_len; i++) {\n\t\t\t\t\tput_byte(p[i]);\n\t\t\t\t}\n\t\t\t*/\n\t\t\tfor (i = 0; i < stored_len; i++) {\n\t\t\t\tput_byte(window[block_start + i]);\n\t\t\t}\n\t\t} else if (static_lenb === opt_lenb) {\n\t\t\tsend_bits((STATIC_TREES << 1) + eof, 3);\n\t\t\tcompress_block(static_ltree, static_dtree);\n\t\t} else {\n\t\t\tsend_bits((DYN_TREES << 1) + eof, 3);\n\t\t\tsend_all_trees(l_desc.max_code + 1, d_desc.max_code + 1, max_blindex + 1);\n\t\t\tcompress_block(dyn_ltree, dyn_dtree);\n\t\t}\n\n\t\tinit_block();\n\n\t\tif (eof !== 0) {\n\t\t\tbi_windup();\n\t\t}\n\t}\n\n\t/* ==========================================================================\n\t * Save the match info and tally the frequency counts. Return true if\n\t * the current block must be flushed.\n\t *\n\t * @param dist- distance of matched string\n\t * @param lc- (match length - MIN_MATCH) or unmatched char (if dist === 0)\n\t */\n\tfunction ct_tally(dist, lc) {\n\t\tl_buf[last_lit++] = lc;\n\t\tif (dist === 0) {\n\t\t\t// lc is the unmatched char\n\t\t\tdyn_ltree[lc].fc++;\n\t\t} else {\n\t\t\t// Here, lc is the match length - MIN_MATCH\n\t\t\tdist--; // dist = match distance - 1\n\t\t\t// Assert((ush)dist < (ush)MAX_DIST && (ush)lc <= (ush)(MAX_MATCH-MIN_MATCH) && (ush)D_CODE(dist) < (ush)D_CODES,  \"ct_tally: bad match\");\n\n\t\t\tdyn_ltree[length_code[lc] + LITERALS + 1].fc++;\n\t\t\tdyn_dtree[D_CODE(dist)].fc++;\n\n\t\t\td_buf[last_dist++] = dist;\n\t\t\tflags |= flag_bit;\n\t\t}\n\t\tflag_bit <<= 1;\n\n\t\t// Output the flags if they fill a byte\n\t\tif ((last_lit & 7) === 0) {\n\t\t\tflag_buf[last_flags++] = flags;\n\t\t\tflags = 0;\n\t\t\tflag_bit = 1;\n\t\t}\n\t\t// Try to guess if it is profitable to stop the current block here\n\t\tif (compr_level > 2 && (last_lit & 0xfff) === 0) {\n\t\t\t// Compute an upper bound for the compressed length\n\t\t\tvar out_length = last_lit * 8;\n\t\t\tvar in_length = strstart - block_start;\n\t\t\tvar dcode;\n\n\t\t\tfor (dcode = 0; dcode < D_CODES; dcode++) {\n\t\t\t\tout_length += dyn_dtree[dcode].fc * (5 + extra_dbits[dcode]);\n\t\t\t}\n\t\t\tout_length >>= 3;\n\t\t\t// Trace((stderr,\"\\nlast_lit %u, last_dist %u, in %ld, out ~%ld(%ld%%) \", encoder->last_lit, encoder->last_dist, in_length, out_length, 100L - out_length*100L/in_length));\n\t\t\tif (last_dist < parseInt(last_lit / 2, 10) && out_length < parseInt(in_length / 2, 10)) {\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\treturn (last_lit === LIT_BUFSIZE - 1 || last_dist === DIST_BUFSIZE);\n\t\t// We avoid equality with LIT_BUFSIZE because of wraparound at 64K\n\t\t// on 16 bit machines and because stored blocks are restricted to\n\t\t// 64K-1 bytes.\n\t}\n\n\t  /* ==========================================================================\n\t   * Send the block data compressed using the given Huffman trees\n\t   *\n\t   * @param ltree- literal tree\n\t   * @param dtree- distance tree\n\t   */\n\tfunction compress_block(ltree, dtree) {\n\t\tvar dist; // distance of matched string\n\t\tvar lc; // match length or unmatched char (if dist === 0)\n\t\tvar lx = 0; // running index in l_buf\n\t\tvar dx = 0; // running index in d_buf\n\t\tvar fx = 0; // running index in flag_buf\n\t\tvar flag = 0; // current flags\n\t\tvar code; // the code to send\n\t\tvar extra; // number of extra bits to send\n\n\t\tif (last_lit !== 0) {\n\t\t\tdo {\n\t\t\t\tif ((lx & 7) === 0) {\n\t\t\t\t\tflag = flag_buf[fx++];\n\t\t\t\t}\n\t\t\t\tlc = l_buf[lx++] & 0xff;\n\t\t\t\tif ((flag & 1) === 0) {\n\t\t\t\t\tSEND_CODE(lc, ltree); /* send a literal byte */\n\t\t\t\t\t//\tTracecv(isgraph(lc), (stderr,\" '%c' \", lc));\n\t\t\t\t} else {\n\t\t\t\t\t// Here, lc is the match length - MIN_MATCH\n\t\t\t\t\tcode = length_code[lc];\n\t\t\t\t\tSEND_CODE(code + LITERALS + 1, ltree); // send the length code\n\t\t\t\t\textra = extra_lbits[code];\n\t\t\t\t\tif (extra !== 0) {\n\t\t\t\t\t\tlc -= base_length[code];\n\t\t\t\t\t\tsend_bits(lc, extra); // send the extra length bits\n\t\t\t\t\t}\n\t\t\t\t\tdist = d_buf[dx++];\n\t\t\t\t\t// Here, dist is the match distance - 1\n\t\t\t\t\tcode = D_CODE(dist);\n\t\t\t\t\t//\tAssert (code < D_CODES, \"bad d_code\");\n\n\t\t\t\t\tSEND_CODE(code, dtree); // send the distance code\n\t\t\t\t\textra = extra_dbits[code];\n\t\t\t\t\tif (extra !== 0) {\n\t\t\t\t\t\tdist -= base_dist[code];\n\t\t\t\t\t\tsend_bits(dist, extra); // send the extra distance bits\n\t\t\t\t\t}\n\t\t\t\t} // literal or match pair ?\n\t\t\t\tflag >>= 1;\n\t\t\t} while (lx < last_lit);\n\t\t}\n\n\t\tSEND_CODE(END_BLOCK, ltree);\n\t}\n\n\t/* ==========================================================================\n\t * Send a value on a given number of bits.\n\t * IN assertion: length <= 16 and value fits in length bits.\n\t *\n\t * @param value- value to send\n\t * @param length- number of bits\n\t */\n\tvar Buf_size = 16; // bit size of bi_buf\n\tfunction send_bits(value, length) {\n\t\t// If not enough room in bi_buf, use (valid) bits from bi_buf and\n\t\t// (16 - bi_valid) bits from value, leaving (width - (16-bi_valid))\n\t\t// unused bits in value.\n\t\tif (bi_valid > Buf_size - length) {\n\t\t\tbi_buf |= (value << bi_valid);\n\t\t\tput_short(bi_buf);\n\t\t\tbi_buf = (value >> (Buf_size - bi_valid));\n\t\t\tbi_valid += length - Buf_size;\n\t\t} else {\n\t\t\tbi_buf |= value << bi_valid;\n\t\t\tbi_valid += length;\n\t\t}\n\t}\n\n\t/* ==========================================================================\n\t * Reverse the first len bits of a code, using straightforward code (a faster\n\t * method would use a table)\n\t * IN assertion: 1 <= len <= 15\n\t *\n\t * @param code- the value to invert\n\t * @param len- its bit length\n\t */\n\tfunction bi_reverse(code, len) {\n\t\tvar res = 0;\n\t\tdo {\n\t\t\tres |= code & 1;\n\t\t\tcode >>= 1;\n\t\t\tres <<= 1;\n\t\t} while (--len > 0);\n\t\treturn res >> 1;\n\t}\n\n\t/* ==========================================================================\n\t * Write out any remaining bits in an incomplete byte.\n\t */\n\tfunction bi_windup() {\n\t\tif (bi_valid > 8) {\n\t\t\tput_short(bi_buf);\n\t\t} else if (bi_valid > 0) {\n\t\t\tput_byte(bi_buf);\n\t\t}\n\t\tbi_buf = 0;\n\t\tbi_valid = 0;\n\t}\n\n\tfunction qoutbuf() {\n\t\tvar q, i;\n\t\tif (outcnt !== 0) {\n\t\t\tq = new_queue();\n\t\t\tif (qhead === null) {\n\t\t\t\tqhead = qtail = q;\n\t\t\t} else {\n\t\t\t\tqtail = qtail.next = q;\n\t\t\t}\n\t\t\tq.len = outcnt - outoff;\n\t\t\t// System.arraycopy(outbuf, outoff, q.ptr, 0, q.len);\n\t\t\tfor (i = 0; i < q.len; i++) {\n\t\t\t\tq.ptr[i] = outbuf[outoff + i];\n\t\t\t}\n\t\t\toutcnt = outoff = 0;\n\t\t}\n\t}\n\n\tfunction deflate(arr, level) {\n\t\tvar i, j, buff;\n\n\t\tdeflate_data = arr;\n\t\tdeflate_pos = 0;\n\t\tif (typeof level === \"undefined\") {\n\t\t\tlevel = DEFAULT_LEVEL;\n\t\t}\n\t\tdeflate_start(level);\n\n\t\tbuff = [];\n\n\t\tdo {\n\t\t\ti = deflate_internal(buff, buff.length, 1024);\n\t\t} while (i > 0);\n\n\t\tdeflate_data = null; // G.C.\n\t\treturn buff;\n\t}\n\n\tmodule.exports = deflate;\n\tmodule.exports.DEFAULT_LEVEL = DEFAULT_LEVEL;\n}());\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/deflate-js/lib/rawdeflate.js?");
+/*
+ * $Id: rawdeflate.js,v 0.3 2009/03/01 19:05:05 dankogai Exp dankogai $
+ *
+ * Original:
+ *   http://www.onicos.com/staff/iz/amuse/javascript/expert/deflate.txt
+ */
+
+/* Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
+ * Version: 1.0.1
+ * LastModified: Dec 25 1999
+ */
+
+/* Interface:
+ * data = deflate(src);
+ */
+
+(function () {
+	/* constant parameters */
+	var WSIZE = 32768, // Sliding Window size
+		STORED_BLOCK = 0,
+		STATIC_TREES = 1,
+		DYN_TREES = 2,
+
+	/* for deflate */
+		DEFAULT_LEVEL = 6,
+		FULL_SEARCH = false,
+		INBUFSIZ = 32768, // Input buffer size
+		//INBUF_EXTRA = 64, // Extra buffer
+		OUTBUFSIZ = 1024 * 8,
+		window_size = 2 * WSIZE,
+		MIN_MATCH = 3,
+		MAX_MATCH = 258,
+		BITS = 16,
+	// for SMALL_MEM
+		LIT_BUFSIZE = 0x2000,
+//		HASH_BITS = 13,
+	//for MEDIUM_MEM
+	//	LIT_BUFSIZE = 0x4000,
+	//	HASH_BITS = 14,
+	// for BIG_MEM
+	//	LIT_BUFSIZE = 0x8000,
+		HASH_BITS = 15,
+		DIST_BUFSIZE = LIT_BUFSIZE,
+		HASH_SIZE = 1 << HASH_BITS,
+		HASH_MASK = HASH_SIZE - 1,
+		WMASK = WSIZE - 1,
+		NIL = 0, // Tail of hash chains
+		TOO_FAR = 4096,
+		MIN_LOOKAHEAD = MAX_MATCH + MIN_MATCH + 1,
+		MAX_DIST = WSIZE - MIN_LOOKAHEAD,
+		SMALLEST = 1,
+		MAX_BITS = 15,
+		MAX_BL_BITS = 7,
+		LENGTH_CODES = 29,
+		LITERALS = 256,
+		END_BLOCK = 256,
+		L_CODES = LITERALS + 1 + LENGTH_CODES,
+		D_CODES = 30,
+		BL_CODES = 19,
+		REP_3_6 = 16,
+		REPZ_3_10 = 17,
+		REPZ_11_138 = 18,
+		HEAP_SIZE = 2 * L_CODES + 1,
+		H_SHIFT = parseInt((HASH_BITS + MIN_MATCH - 1) / MIN_MATCH, 10),
+
+	/* variables */
+		free_queue,
+		qhead,
+		qtail,
+		initflag,
+		outbuf = null,
+		outcnt,
+		outoff,
+		complete,
+		window,
+		d_buf,
+		l_buf,
+		prev,
+		bi_buf,
+		bi_valid,
+		block_start,
+		ins_h,
+		hash_head,
+		prev_match,
+		match_available,
+		match_length,
+		prev_length,
+		strstart,
+		match_start,
+		eofile,
+		lookahead,
+		max_chain_length,
+		max_lazy_match,
+		compr_level,
+		good_match,
+		nice_match,
+		dyn_ltree,
+		dyn_dtree,
+		static_ltree,
+		static_dtree,
+		bl_tree,
+		l_desc,
+		d_desc,
+		bl_desc,
+		bl_count,
+		heap,
+		heap_len,
+		heap_max,
+		depth,
+		length_code,
+		dist_code,
+		base_length,
+		base_dist,
+		flag_buf,
+		last_lit,
+		last_dist,
+		last_flags,
+		flags,
+		flag_bit,
+		opt_len,
+		static_len,
+		deflate_data,
+		deflate_pos;
+
+	if (LIT_BUFSIZE > INBUFSIZ) {
+		console.error("error: INBUFSIZ is too small");
+	}
+	if ((WSIZE << 1) > (1 << BITS)) {
+		console.error("error: WSIZE is too large");
+	}
+	if (HASH_BITS > BITS - 1) {
+		console.error("error: HASH_BITS is too large");
+	}
+	if (HASH_BITS < 8 || MAX_MATCH !== 258) {
+		console.error("error: Code too clever");
+	}
+
+	/* objects (deflate) */
+
+	function DeflateCT() {
+		this.fc = 0; // frequency count or bit string
+		this.dl = 0; // father node in Huffman tree or length of bit string
+	}
+
+	function DeflateTreeDesc() {
+		this.dyn_tree = null; // the dynamic tree
+		this.static_tree = null; // corresponding static tree or NULL
+		this.extra_bits = null; // extra bits for each code or NULL
+		this.extra_base = 0; // base index for extra_bits
+		this.elems = 0; // max number of elements in the tree
+		this.max_length = 0; // max bit length for the codes
+		this.max_code = 0; // largest code with non zero frequency
+	}
+
+	/* Values for max_lazy_match, good_match and max_chain_length, depending on
+	 * the desired pack level (0..9). The values given below have been tuned to
+	 * exclude worst case performance for pathological files. Better values may be
+	 * found for specific files.
+	 */
+	function DeflateConfiguration(a, b, c, d) {
+		this.good_length = a; // reduce lazy search above this match length
+		this.max_lazy = b; // do not perform lazy search above this match length
+		this.nice_length = c; // quit search above this match length
+		this.max_chain = d;
+	}
+
+	function DeflateBuffer() {
+		this.next = null;
+		this.len = 0;
+		this.ptr = []; // new Array(OUTBUFSIZ); // ptr.length is never read
+		this.off = 0;
+	}
+
+	/* constant tables */
+	var extra_lbits = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0];
+	var extra_dbits = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13];
+	var extra_blbits = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7];
+	var bl_order = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+	var configuration_table = [
+		new DeflateConfiguration(0, 0, 0, 0),
+		new DeflateConfiguration(4, 4, 8, 4),
+		new DeflateConfiguration(4, 5, 16, 8),
+		new DeflateConfiguration(4, 6, 32, 32),
+		new DeflateConfiguration(4, 4, 16, 16),
+		new DeflateConfiguration(8, 16, 32, 32),
+		new DeflateConfiguration(8, 16, 128, 128),
+		new DeflateConfiguration(8, 32, 128, 256),
+		new DeflateConfiguration(32, 128, 258, 1024),
+		new DeflateConfiguration(32, 258, 258, 4096)
+	];
+
+
+	/* routines (deflate) */
+
+	function deflate_start(level) {
+		var i;
+
+		if (!level) {
+			level = DEFAULT_LEVEL;
+		} else if (level < 1) {
+			level = 1;
+		} else if (level > 9) {
+			level = 9;
+		}
+
+		compr_level = level;
+		initflag = false;
+		eofile = false;
+		if (outbuf !== null) {
+			return;
+		}
+
+		free_queue = qhead = qtail = null;
+		outbuf = []; // new Array(OUTBUFSIZ); // outbuf.length never called
+		window = []; // new Array(window_size); // window.length never called
+		d_buf = []; // new Array(DIST_BUFSIZE); // d_buf.length never called
+		l_buf = []; // new Array(INBUFSIZ + INBUF_EXTRA); // l_buf.length never called
+		prev = []; // new Array(1 << BITS); // prev.length never called
+
+		dyn_ltree = [];
+		for (i = 0; i < HEAP_SIZE; i++) {
+			dyn_ltree[i] = new DeflateCT();
+		}
+		dyn_dtree = [];
+		for (i = 0; i < 2 * D_CODES + 1; i++) {
+			dyn_dtree[i] = new DeflateCT();
+		}
+		static_ltree = [];
+		for (i = 0; i < L_CODES + 2; i++) {
+			static_ltree[i] = new DeflateCT();
+		}
+		static_dtree = [];
+		for (i = 0; i < D_CODES; i++) {
+			static_dtree[i] = new DeflateCT();
+		}
+		bl_tree = [];
+		for (i = 0; i < 2 * BL_CODES + 1; i++) {
+			bl_tree[i] = new DeflateCT();
+		}
+		l_desc = new DeflateTreeDesc();
+		d_desc = new DeflateTreeDesc();
+		bl_desc = new DeflateTreeDesc();
+		bl_count = []; // new Array(MAX_BITS+1); // bl_count.length never called
+		heap = []; // new Array(2*L_CODES+1); // heap.length never called
+		depth = []; // new Array(2*L_CODES+1); // depth.length never called
+		length_code = []; // new Array(MAX_MATCH-MIN_MATCH+1); // length_code.length never called
+		dist_code = []; // new Array(512); // dist_code.length never called
+		base_length = []; // new Array(LENGTH_CODES); // base_length.length never called
+		base_dist = []; // new Array(D_CODES); // base_dist.length never called
+		flag_buf = []; // new Array(parseInt(LIT_BUFSIZE / 8, 10)); // flag_buf.length never called
+	}
+
+	function deflate_end() {
+		free_queue = qhead = qtail = null;
+		outbuf = null;
+		window = null;
+		d_buf = null;
+		l_buf = null;
+		prev = null;
+		dyn_ltree = null;
+		dyn_dtree = null;
+		static_ltree = null;
+		static_dtree = null;
+		bl_tree = null;
+		l_desc = null;
+		d_desc = null;
+		bl_desc = null;
+		bl_count = null;
+		heap = null;
+		depth = null;
+		length_code = null;
+		dist_code = null;
+		base_length = null;
+		base_dist = null;
+		flag_buf = null;
+	}
+
+	function reuse_queue(p) {
+		p.next = free_queue;
+		free_queue = p;
+	}
+
+	function new_queue() {
+		var p;
+
+		if (free_queue !== null) {
+			p = free_queue;
+			free_queue = free_queue.next;
+		} else {
+			p = new DeflateBuffer();
+		}
+		p.next = null;
+		p.len = p.off = 0;
+
+		return p;
+	}
+
+	function head1(i) {
+		return prev[WSIZE + i];
+	}
+
+	function head2(i, val) {
+		return (prev[WSIZE + i] = val);
+	}
+
+	/* put_byte is used for the compressed output, put_ubyte for the
+	 * uncompressed output. However unlzw() uses window for its
+	 * suffix table instead of its output buffer, so it does not use put_ubyte
+	 * (to be cleaned up).
+	 */
+	function put_byte(c) {
+		outbuf[outoff + outcnt++] = c;
+		if (outoff + outcnt === OUTBUFSIZ) {
+			qoutbuf();
+		}
+	}
+
+	/* Output a 16 bit value, lsb first */
+	function put_short(w) {
+		w &= 0xffff;
+		if (outoff + outcnt < OUTBUFSIZ - 2) {
+			outbuf[outoff + outcnt++] = (w & 0xff);
+			outbuf[outoff + outcnt++] = (w >>> 8);
+		} else {
+			put_byte(w & 0xff);
+			put_byte(w >>> 8);
+		}
+	}
+
+	/* ==========================================================================
+	 * Insert string s in the dictionary and set match_head to the previous head
+	 * of the hash chain (the most recent string with same hash key). Return
+	 * the previous length of the hash chain.
+	 * IN  assertion: all calls to to INSERT_STRING are made with consecutive
+	 *    input characters and the first MIN_MATCH bytes of s are valid
+	 *    (except for the last MIN_MATCH-1 bytes of the input file).
+	 */
+	function INSERT_STRING() {
+		ins_h = ((ins_h << H_SHIFT) ^ (window[strstart + MIN_MATCH - 1] & 0xff)) & HASH_MASK;
+		hash_head = head1(ins_h);
+		prev[strstart & WMASK] = hash_head;
+		head2(ins_h, strstart);
+	}
+
+	/* Send a code of the given tree. c and tree must not have side effects */
+	function SEND_CODE(c, tree) {
+		send_bits(tree[c].fc, tree[c].dl);
+	}
+
+	/* Mapping from a distance to a distance code. dist is the distance - 1 and
+	 * must not have side effects. dist_code[256] and dist_code[257] are never
+	 * used.
+	 */
+	function D_CODE(dist) {
+		return (dist < 256 ? dist_code[dist] : dist_code[256 + (dist >> 7)]) & 0xff;
+	}
+
+	/* ==========================================================================
+	 * Compares to subtrees, using the tree depth as tie breaker when
+	 * the subtrees have equal frequency. This minimizes the worst case length.
+	 */
+	function SMALLER(tree, n, m) {
+		return tree[n].fc < tree[m].fc || (tree[n].fc === tree[m].fc && depth[n] <= depth[m]);
+	}
+
+	/* ==========================================================================
+	 * read string data
+	 */
+	function read_buff(buff, offset, n) {
+		var i;
+		for (i = 0; i < n && deflate_pos < deflate_data.length; i++) {
+			buff[offset + i] = deflate_data[deflate_pos++] & 0xff;
+		}
+		return i;
+	}
+
+	/* ==========================================================================
+	 * Initialize the "longest match" routines for a new file
+	 */
+	function lm_init() {
+		var j;
+
+		// Initialize the hash table. */
+		for (j = 0; j < HASH_SIZE; j++) {
+			// head2(j, NIL);
+			prev[WSIZE + j] = 0;
+		}
+		// prev will be initialized on the fly */
+
+		// Set the default configuration parameters:
+		max_lazy_match = configuration_table[compr_level].max_lazy;
+		good_match = configuration_table[compr_level].good_length;
+		if (!FULL_SEARCH) {
+			nice_match = configuration_table[compr_level].nice_length;
+		}
+		max_chain_length = configuration_table[compr_level].max_chain;
+
+		strstart = 0;
+		block_start = 0;
+
+		lookahead = read_buff(window, 0, 2 * WSIZE);
+		if (lookahead <= 0) {
+			eofile = true;
+			lookahead = 0;
+			return;
+		}
+		eofile = false;
+		// Make sure that we always have enough lookahead. This is important
+		// if input comes from a device such as a tty.
+		while (lookahead < MIN_LOOKAHEAD && !eofile) {
+			fill_window();
+		}
+
+		// If lookahead < MIN_MATCH, ins_h is garbage, but this is
+		// not important since only literal bytes will be emitted.
+		ins_h = 0;
+		for (j = 0; j < MIN_MATCH - 1; j++) {
+			// UPDATE_HASH(ins_h, window[j]);
+			ins_h = ((ins_h << H_SHIFT) ^ (window[j] & 0xff)) & HASH_MASK;
+		}
+	}
+
+	/* ==========================================================================
+	 * Set match_start to the longest match starting at the given string and
+	 * return its length. Matches shorter or equal to prev_length are discarded,
+	 * in which case the result is equal to prev_length and match_start is
+	 * garbage.
+	 * IN assertions: cur_match is the head of the hash chain for the current
+	 *   string (strstart) and its distance is <= MAX_DIST, and prev_length >= 1
+	 */
+	function longest_match(cur_match) {
+		var chain_length = max_chain_length; // max hash chain length
+		var scanp = strstart; // current string
+		var matchp; // matched string
+		var len; // length of current match
+		var best_len = prev_length; // best match length so far
+
+		// Stop when cur_match becomes <= limit. To simplify the code,
+		// we prevent matches with the string of window index 0.
+		var limit = (strstart > MAX_DIST ? strstart - MAX_DIST : NIL);
+
+		var strendp = strstart + MAX_MATCH;
+		var scan_end1 = window[scanp + best_len - 1];
+		var scan_end = window[scanp + best_len];
+
+		var i, broke;
+
+		// Do not waste too much time if we already have a good match: */
+		if (prev_length >= good_match) {
+			chain_length >>= 2;
+		}
+
+		// Assert(encoder->strstart <= window_size-MIN_LOOKAHEAD, "insufficient lookahead");
+
+		do {
+			// Assert(cur_match < encoder->strstart, "no future");
+			matchp = cur_match;
+
+			// Skip to next match if the match length cannot increase
+			// or if the match length is less than 2:
+			if (window[matchp + best_len] !== scan_end  ||
+					window[matchp + best_len - 1] !== scan_end1 ||
+					window[matchp] !== window[scanp] ||
+					window[++matchp] !== window[scanp + 1]) {
+				continue;
+			}
+
+			// The check at best_len-1 can be removed because it will be made
+			// again later. (This heuristic is not always a win.)
+			// It is not necessary to compare scan[2] and match[2] since they
+			// are always equal when the other bytes match, given that
+			// the hash keys are equal and that HASH_BITS >= 8.
+			scanp += 2;
+			matchp++;
+
+			// We check for insufficient lookahead only every 8th comparison;
+			// the 256th check will be made at strstart+258.
+			while (scanp < strendp) {
+				broke = false;
+				for (i = 0; i < 8; i += 1) {
+					scanp += 1;
+					matchp += 1;
+					if (window[scanp] !== window[matchp]) {
+						broke = true;
+						break;
+					}
+				}
+
+				if (broke) {
+					break;
+				}
+			}
+
+			len = MAX_MATCH - (strendp - scanp);
+			scanp = strendp - MAX_MATCH;
+
+			if (len > best_len) {
+				match_start = cur_match;
+				best_len = len;
+				if (FULL_SEARCH) {
+					if (len >= MAX_MATCH) {
+						break;
+					}
+				} else {
+					if (len >= nice_match) {
+						break;
+					}
+				}
+
+				scan_end1 = window[scanp + best_len - 1];
+				scan_end = window[scanp + best_len];
+			}
+		} while ((cur_match = prev[cur_match & WMASK]) > limit && --chain_length !== 0);
+
+		return best_len;
+	}
+
+	/* ==========================================================================
+	 * Fill the window when the lookahead becomes insufficient.
+	 * Updates strstart and lookahead, and sets eofile if end of input file.
+	 * IN assertion: lookahead < MIN_LOOKAHEAD && strstart + lookahead > 0
+	 * OUT assertions: at least one byte has been read, or eofile is set;
+	 *    file reads are performed for at least two bytes (required for the
+	 *    translate_eol option).
+	 */
+	function fill_window() {
+		var n, m;
+
+	 // Amount of free space at the end of the window.
+		var more = window_size - lookahead - strstart;
+
+		// If the window is almost full and there is insufficient lookahead,
+		// move the upper half to the lower one to make room in the upper half.
+		if (more === -1) {
+			// Very unlikely, but possible on 16 bit machine if strstart == 0
+			// and lookahead == 1 (input done one byte at time)
+			more--;
+		} else if (strstart >= WSIZE + MAX_DIST) {
+			// By the IN assertion, the window is not empty so we can't confuse
+			// more == 0 with more == 64K on a 16 bit machine.
+			// Assert(window_size == (ulg)2*WSIZE, "no sliding with BIG_MEM");
+
+			// System.arraycopy(window, WSIZE, window, 0, WSIZE);
+			for (n = 0; n < WSIZE; n++) {
+				window[n] = window[n + WSIZE];
+			}
+
+			match_start -= WSIZE;
+			strstart    -= WSIZE; /* we now have strstart >= MAX_DIST: */
+			block_start -= WSIZE;
+
+			for (n = 0; n < HASH_SIZE; n++) {
+				m = head1(n);
+				head2(n, m >= WSIZE ? m - WSIZE : NIL);
+			}
+			for (n = 0; n < WSIZE; n++) {
+			// If n is not on any hash chain, prev[n] is garbage but
+			// its value will never be used.
+				m = prev[n];
+				prev[n] = (m >= WSIZE ? m - WSIZE : NIL);
+			}
+			more += WSIZE;
+		}
+		// At this point, more >= 2
+		if (!eofile) {
+			n = read_buff(window, strstart + lookahead, more);
+			if (n <= 0) {
+				eofile = true;
+			} else {
+				lookahead += n;
+			}
+		}
+	}
+
+	/* ==========================================================================
+	 * Processes a new input file and return its compressed length. This
+	 * function does not perform lazy evaluationof matches and inserts
+	 * new strings in the dictionary only for unmatched strings or for short
+	 * matches. It is used only for the fast compression options.
+	 */
+	function deflate_fast() {
+		while (lookahead !== 0 && qhead === null) {
+			var flush; // set if current block must be flushed
+
+			// Insert the string window[strstart .. strstart+2] in the
+			// dictionary, and set hash_head to the head of the hash chain:
+			INSERT_STRING();
+
+			// Find the longest match, discarding those <= prev_length.
+			// At this point we have always match_length < MIN_MATCH
+			if (hash_head !== NIL && strstart - hash_head <= MAX_DIST) {
+				// To simplify the code, we prevent matches with the string
+				// of window index 0 (in particular we have to avoid a match
+				// of the string with itself at the start of the input file).
+				match_length = longest_match(hash_head);
+				// longest_match() sets match_start */
+				if (match_length > lookahead) {
+					match_length = lookahead;
+				}
+			}
+			if (match_length >= MIN_MATCH) {
+				// check_match(strstart, match_start, match_length);
+
+				flush = ct_tally(strstart - match_start, match_length - MIN_MATCH);
+				lookahead -= match_length;
+
+				// Insert new strings in the hash table only if the match length
+				// is not too large. This saves time but degrades compression.
+				if (match_length <= max_lazy_match) {
+					match_length--; // string at strstart already in hash table
+					do {
+						strstart++;
+						INSERT_STRING();
+						// strstart never exceeds WSIZE-MAX_MATCH, so there are
+						// always MIN_MATCH bytes ahead. If lookahead < MIN_MATCH
+						// these bytes are garbage, but it does not matter since
+						// the next lookahead bytes will be emitted as literals.
+					} while (--match_length !== 0);
+					strstart++;
+				} else {
+					strstart += match_length;
+					match_length = 0;
+					ins_h = window[strstart] & 0xff;
+					// UPDATE_HASH(ins_h, window[strstart + 1]);
+					ins_h = ((ins_h << H_SHIFT) ^ (window[strstart + 1] & 0xff)) & HASH_MASK;
+
+				//#if MIN_MATCH !== 3
+				//		Call UPDATE_HASH() MIN_MATCH-3 more times
+				//#endif
+
+				}
+			} else {
+				// No match, output a literal byte */
+				flush = ct_tally(0, window[strstart] & 0xff);
+				lookahead--;
+				strstart++;
+			}
+			if (flush) {
+				flush_block(0);
+				block_start = strstart;
+			}
+
+			// Make sure that we always have enough lookahead, except
+			// at the end of the input file. We need MAX_MATCH bytes
+			// for the next match, plus MIN_MATCH bytes to insert the
+			// string following the next match.
+			while (lookahead < MIN_LOOKAHEAD && !eofile) {
+				fill_window();
+			}
+		}
+	}
+
+	function deflate_better() {
+		// Process the input block. */
+		while (lookahead !== 0 && qhead === null) {
+			// Insert the string window[strstart .. strstart+2] in the
+			// dictionary, and set hash_head to the head of the hash chain:
+			INSERT_STRING();
+
+			// Find the longest match, discarding those <= prev_length.
+			prev_length = match_length;
+			prev_match = match_start;
+			match_length = MIN_MATCH - 1;
+
+			if (hash_head !== NIL && prev_length < max_lazy_match && strstart - hash_head <= MAX_DIST) {
+				// To simplify the code, we prevent matches with the string
+				// of window index 0 (in particular we have to avoid a match
+				// of the string with itself at the start of the input file).
+				match_length = longest_match(hash_head);
+				// longest_match() sets match_start */
+				if (match_length > lookahead) {
+					match_length = lookahead;
+				}
+
+				// Ignore a length 3 match if it is too distant: */
+				if (match_length === MIN_MATCH && strstart - match_start > TOO_FAR) {
+					// If prev_match is also MIN_MATCH, match_start is garbage
+					// but we will ignore the current match anyway.
+					match_length--;
+				}
+			}
+			// If there was a match at the previous step and the current
+			// match is not better, output the previous match:
+			if (prev_length >= MIN_MATCH && match_length <= prev_length) {
+				var flush; // set if current block must be flushed
+
+				// check_match(strstart - 1, prev_match, prev_length);
+				flush = ct_tally(strstart - 1 - prev_match, prev_length - MIN_MATCH);
+
+				// Insert in hash table all strings up to the end of the match.
+				// strstart-1 and strstart are already inserted.
+				lookahead -= prev_length - 1;
+				prev_length -= 2;
+				do {
+					strstart++;
+					INSERT_STRING();
+					// strstart never exceeds WSIZE-MAX_MATCH, so there are
+					// always MIN_MATCH bytes ahead. If lookahead < MIN_MATCH
+					// these bytes are garbage, but it does not matter since the
+					// next lookahead bytes will always be emitted as literals.
+				} while (--prev_length !== 0);
+				match_available = false;
+				match_length = MIN_MATCH - 1;
+				strstart++;
+				if (flush) {
+					flush_block(0);
+					block_start = strstart;
+				}
+			} else if (match_available) {
+				// If there was no match at the previous position, output a
+				// single literal. If there was a match but the current match
+				// is longer, truncate the previous match to a single literal.
+				if (ct_tally(0, window[strstart - 1] & 0xff)) {
+					flush_block(0);
+					block_start = strstart;
+				}
+				strstart++;
+				lookahead--;
+			} else {
+				// There is no previous match to compare with, wait for
+				// the next step to decide.
+				match_available = true;
+				strstart++;
+				lookahead--;
+			}
+
+			// Make sure that we always have enough lookahead, except
+			// at the end of the input file. We need MAX_MATCH bytes
+			// for the next match, plus MIN_MATCH bytes to insert the
+			// string following the next match.
+			while (lookahead < MIN_LOOKAHEAD && !eofile) {
+				fill_window();
+			}
+		}
+	}
+
+	function init_deflate() {
+		if (eofile) {
+			return;
+		}
+		bi_buf = 0;
+		bi_valid = 0;
+		ct_init();
+		lm_init();
+
+		qhead = null;
+		outcnt = 0;
+		outoff = 0;
+
+		if (compr_level <= 3) {
+			prev_length = MIN_MATCH - 1;
+			match_length = 0;
+		} else {
+			match_length = MIN_MATCH - 1;
+			match_available = false;
+		}
+
+		complete = false;
+	}
+
+	/* ==========================================================================
+	 * Same as above, but achieves better compression. We use a lazy
+	 * evaluation for matches: a match is finally adopted only if there is
+	 * no better match at the next window position.
+	 */
+	function deflate_internal(buff, off, buff_size) {
+		var n;
+
+		if (!initflag) {
+			init_deflate();
+			initflag = true;
+			if (lookahead === 0) { // empty
+				complete = true;
+				return 0;
+			}
+		}
+
+		n = qcopy(buff, off, buff_size);
+		if (n === buff_size) {
+			return buff_size;
+		}
+
+		if (complete) {
+			return n;
+		}
+
+		if (compr_level <= 3) {
+			// optimized for speed
+			deflate_fast();
+		} else {
+			deflate_better();
+		}
+
+		if (lookahead === 0) {
+			if (match_available) {
+				ct_tally(0, window[strstart - 1] & 0xff);
+			}
+			flush_block(1);
+			complete = true;
+		}
+
+		return n + qcopy(buff, n + off, buff_size - n);
+	}
+
+	function qcopy(buff, off, buff_size) {
+		var n, i, j;
+
+		n = 0;
+		while (qhead !== null && n < buff_size) {
+			i = buff_size - n;
+			if (i > qhead.len) {
+				i = qhead.len;
+			}
+			// System.arraycopy(qhead.ptr, qhead.off, buff, off + n, i);
+			for (j = 0; j < i; j++) {
+				buff[off + n + j] = qhead.ptr[qhead.off + j];
+			}
+
+			qhead.off += i;
+			qhead.len -= i;
+			n += i;
+			if (qhead.len === 0) {
+				var p;
+				p = qhead;
+				qhead = qhead.next;
+				reuse_queue(p);
+			}
+		}
+
+		if (n === buff_size) {
+			return n;
+		}
+
+		if (outoff < outcnt) {
+			i = buff_size - n;
+			if (i > outcnt - outoff) {
+				i = outcnt - outoff;
+			}
+			// System.arraycopy(outbuf, outoff, buff, off + n, i);
+			for (j = 0; j < i; j++) {
+				buff[off + n + j] = outbuf[outoff + j];
+			}
+			outoff += i;
+			n += i;
+			if (outcnt === outoff) {
+				outcnt = outoff = 0;
+			}
+		}
+		return n;
+	}
+
+	/* ==========================================================================
+	 * Allocate the match buffer, initialize the various tables and save the
+	 * location of the internal file attribute (ascii/binary) and method
+	 * (DEFLATE/STORE).
+	 */
+	function ct_init() {
+		var n; // iterates over tree elements
+		var bits; // bit counter
+		var length; // length value
+		var code; // code value
+		var dist; // distance index
+
+		if (static_dtree[0].dl !== 0) {
+			return; // ct_init already called
+		}
+
+		l_desc.dyn_tree = dyn_ltree;
+		l_desc.static_tree = static_ltree;
+		l_desc.extra_bits = extra_lbits;
+		l_desc.extra_base = LITERALS + 1;
+		l_desc.elems = L_CODES;
+		l_desc.max_length = MAX_BITS;
+		l_desc.max_code = 0;
+
+		d_desc.dyn_tree = dyn_dtree;
+		d_desc.static_tree = static_dtree;
+		d_desc.extra_bits = extra_dbits;
+		d_desc.extra_base = 0;
+		d_desc.elems = D_CODES;
+		d_desc.max_length = MAX_BITS;
+		d_desc.max_code = 0;
+
+		bl_desc.dyn_tree = bl_tree;
+		bl_desc.static_tree = null;
+		bl_desc.extra_bits = extra_blbits;
+		bl_desc.extra_base = 0;
+		bl_desc.elems = BL_CODES;
+		bl_desc.max_length = MAX_BL_BITS;
+		bl_desc.max_code = 0;
+
+	 // Initialize the mapping length (0..255) -> length code (0..28)
+		length = 0;
+		for (code = 0; code < LENGTH_CODES - 1; code++) {
+			base_length[code] = length;
+			for (n = 0; n < (1 << extra_lbits[code]); n++) {
+				length_code[length++] = code;
+			}
+		}
+	 // Assert (length === 256, "ct_init: length !== 256");
+
+		// Note that the length 255 (match length 258) can be represented
+		// in two different ways: code 284 + 5 bits or code 285, so we
+		// overwrite length_code[255] to use the best encoding:
+		length_code[length - 1] = code;
+
+		// Initialize the mapping dist (0..32K) -> dist code (0..29) */
+		dist = 0;
+		for (code = 0; code < 16; code++) {
+			base_dist[code] = dist;
+			for (n = 0; n < (1 << extra_dbits[code]); n++) {
+				dist_code[dist++] = code;
+			}
+		}
+		// Assert (dist === 256, "ct_init: dist !== 256");
+		// from now on, all distances are divided by 128
+		for (dist >>= 7; code < D_CODES; code++) {
+			base_dist[code] = dist << 7;
+			for (n = 0; n < (1 << (extra_dbits[code] - 7)); n++) {
+				dist_code[256 + dist++] = code;
+			}
+		}
+		// Assert (dist === 256, "ct_init: 256+dist !== 512");
+
+		// Construct the codes of the static literal tree
+		for (bits = 0; bits <= MAX_BITS; bits++) {
+			bl_count[bits] = 0;
+		}
+		n = 0;
+		while (n <= 143) {
+			static_ltree[n++].dl = 8;
+			bl_count[8]++;
+		}
+		while (n <= 255) {
+			static_ltree[n++].dl = 9;
+			bl_count[9]++;
+		}
+		while (n <= 279) {
+			static_ltree[n++].dl = 7;
+			bl_count[7]++;
+		}
+		while (n <= 287) {
+			static_ltree[n++].dl = 8;
+			bl_count[8]++;
+		}
+		// Codes 286 and 287 do not exist, but we must include them in the
+		// tree construction to get a canonical Huffman tree (longest code
+		// all ones)
+		gen_codes(static_ltree, L_CODES + 1);
+
+		// The static distance tree is trivial: */
+		for (n = 0; n < D_CODES; n++) {
+			static_dtree[n].dl = 5;
+			static_dtree[n].fc = bi_reverse(n, 5);
+		}
+
+		// Initialize the first block of the first file:
+		init_block();
+	}
+
+	/* ==========================================================================
+	 * Initialize a new block.
+	 */
+	function init_block() {
+		var n; // iterates over tree elements
+
+		// Initialize the trees.
+		for (n = 0; n < L_CODES;  n++) {
+			dyn_ltree[n].fc = 0;
+		}
+		for (n = 0; n < D_CODES;  n++) {
+			dyn_dtree[n].fc = 0;
+		}
+		for (n = 0; n < BL_CODES; n++) {
+			bl_tree[n].fc = 0;
+		}
+
+		dyn_ltree[END_BLOCK].fc = 1;
+		opt_len = static_len = 0;
+		last_lit = last_dist = last_flags = 0;
+		flags = 0;
+		flag_bit = 1;
+	}
+
+	/* ==========================================================================
+	 * Restore the heap property by moving down the tree starting at node k,
+	 * exchanging a node with the smallest of its two sons if necessary, stopping
+	 * when the heap property is re-established (each father smaller than its
+	 * two sons).
+	 *
+	 * @param tree- tree to restore
+	 * @param k- node to move down
+	 */
+	function pqdownheap(tree, k) {
+		var v = heap[k],
+			j = k << 1; // left son of k
+
+		while (j <= heap_len) {
+			// Set j to the smallest of the two sons:
+			if (j < heap_len && SMALLER(tree, heap[j + 1], heap[j])) {
+				j++;
+			}
+
+			// Exit if v is smaller than both sons
+			if (SMALLER(tree, v, heap[j])) {
+				break;
+			}
+
+			// Exchange v with the smallest son
+			heap[k] = heap[j];
+			k = j;
+
+			// And continue down the tree, setting j to the left son of k
+			j <<= 1;
+		}
+		heap[k] = v;
+	}
+
+	/* ==========================================================================
+	 * Compute the optimal bit lengths for a tree and update the total bit length
+	 * for the current block.
+	 * IN assertion: the fields freq and dad are set, heap[heap_max] and
+	 *    above are the tree nodes sorted by increasing frequency.
+	 * OUT assertions: the field len is set to the optimal bit length, the
+	 *     array bl_count contains the frequencies for each bit length.
+	 *     The length opt_len is updated; static_len is also updated if stree is
+	 *     not null.
+	 */
+	function gen_bitlen(desc) { // the tree descriptor
+		var tree = desc.dyn_tree;
+		var extra = desc.extra_bits;
+		var base = desc.extra_base;
+		var max_code = desc.max_code;
+		var max_length = desc.max_length;
+		var stree = desc.static_tree;
+		var h; // heap index
+		var n, m; // iterate over the tree elements
+		var bits; // bit length
+		var xbits; // extra bits
+		var f; // frequency
+		var overflow = 0; // number of elements with bit length too large
+
+		for (bits = 0; bits <= MAX_BITS; bits++) {
+			bl_count[bits] = 0;
+		}
+
+		// In a first pass, compute the optimal bit lengths (which may
+		// overflow in the case of the bit length tree).
+		tree[heap[heap_max]].dl = 0; // root of the heap
+
+		for (h = heap_max + 1; h < HEAP_SIZE; h++) {
+			n = heap[h];
+			bits = tree[tree[n].dl].dl + 1;
+			if (bits > max_length) {
+				bits = max_length;
+				overflow++;
+			}
+			tree[n].dl = bits;
+			// We overwrite tree[n].dl which is no longer needed
+
+			if (n > max_code) {
+				continue; // not a leaf node
+			}
+
+			bl_count[bits]++;
+			xbits = 0;
+			if (n >= base) {
+				xbits = extra[n - base];
+			}
+			f = tree[n].fc;
+			opt_len += f * (bits + xbits);
+			if (stree !== null) {
+				static_len += f * (stree[n].dl + xbits);
+			}
+		}
+		if (overflow === 0) {
+			return;
+		}
+
+		// This happens for example on obj2 and pic of the Calgary corpus
+
+		// Find the first bit length which could increase:
+		do {
+			bits = max_length - 1;
+			while (bl_count[bits] === 0) {
+				bits--;
+			}
+			bl_count[bits]--; // move one leaf down the tree
+			bl_count[bits + 1] += 2; // move one overflow item as its brother
+			bl_count[max_length]--;
+			// The brother of the overflow item also moves one step up,
+			// but this does not affect bl_count[max_length]
+			overflow -= 2;
+		} while (overflow > 0);
+
+		// Now recompute all bit lengths, scanning in increasing frequency.
+		// h is still equal to HEAP_SIZE. (It is simpler to reconstruct all
+		// lengths instead of fixing only the wrong ones. This idea is taken
+		// from 'ar' written by Haruhiko Okumura.)
+		for (bits = max_length; bits !== 0; bits--) {
+			n = bl_count[bits];
+			while (n !== 0) {
+				m = heap[--h];
+				if (m > max_code) {
+					continue;
+				}
+				if (tree[m].dl !== bits) {
+					opt_len += (bits - tree[m].dl) * tree[m].fc;
+					tree[m].fc = bits;
+				}
+				n--;
+			}
+		}
+	}
+
+	  /* ==========================================================================
+	   * Generate the codes for a given tree and bit counts (which need not be
+	   * optimal).
+	   * IN assertion: the array bl_count contains the bit length statistics for
+	   * the given tree and the field len is set for all tree elements.
+	   * OUT assertion: the field code is set for all tree elements of non
+	   *     zero code length.
+	   * @param tree- the tree to decorate
+	   * @param max_code- largest code with non-zero frequency
+	   */
+	function gen_codes(tree, max_code) {
+		var next_code = []; // new Array(MAX_BITS + 1); // next code value for each bit length
+		var code = 0; // running code value
+		var bits; // bit index
+		var n; // code index
+
+		// The distribution counts are first used to generate the code values
+		// without bit reversal.
+		for (bits = 1; bits <= MAX_BITS; bits++) {
+			code = ((code + bl_count[bits - 1]) << 1);
+			next_code[bits] = code;
+		}
+
+		// Check that the bit counts in bl_count are consistent. The last code
+		// must be all ones.
+		// Assert (code + encoder->bl_count[MAX_BITS]-1 === (1<<MAX_BITS)-1, "inconsistent bit counts");
+		// Tracev((stderr,"\ngen_codes: max_code %d ", max_code));
+
+		for (n = 0; n <= max_code; n++) {
+			var len = tree[n].dl;
+			if (len === 0) {
+				continue;
+			}
+			// Now reverse the bits
+			tree[n].fc = bi_reverse(next_code[len]++, len);
+
+			// Tracec(tree !== static_ltree, (stderr,"\nn %3d %c l %2d c %4x (%x) ", n, (isgraph(n) ? n : ' '), len, tree[n].fc, next_code[len]-1));
+		}
+	}
+
+	/* ==========================================================================
+	 * Construct one Huffman tree and assigns the code bit strings and lengths.
+	 * Update the total bit length for the current block.
+	 * IN assertion: the field freq is set for all tree elements.
+	 * OUT assertions: the fields len and code are set to the optimal bit length
+	 *     and corresponding code. The length opt_len is updated; static_len is
+	 *     also updated if stree is not null. The field max_code is set.
+	 */
+	function build_tree(desc) { // the tree descriptor
+		var tree = desc.dyn_tree;
+		var stree = desc.static_tree;
+		var elems = desc.elems;
+		var n, m; // iterate over heap elements
+		var max_code = -1; // largest code with non zero frequency
+		var node = elems; // next internal node of the tree
+
+		// Construct the initial heap, with least frequent element in
+		// heap[SMALLEST]. The sons of heap[n] are heap[2*n] and heap[2*n+1].
+		// heap[0] is not used.
+		heap_len = 0;
+		heap_max = HEAP_SIZE;
+
+		for (n = 0; n < elems; n++) {
+			if (tree[n].fc !== 0) {
+				heap[++heap_len] = max_code = n;
+				depth[n] = 0;
+			} else {
+				tree[n].dl = 0;
+			}
+		}
+
+		// The pkzip format requires that at least one distance code exists,
+		// and that at least one bit should be sent even if there is only one
+		// possible code. So to avoid special checks later on we force at least
+		// two codes of non zero frequency.
+		while (heap_len < 2) {
+			var xnew = heap[++heap_len] = (max_code < 2 ? ++max_code : 0);
+			tree[xnew].fc = 1;
+			depth[xnew] = 0;
+			opt_len--;
+			if (stree !== null) {
+				static_len -= stree[xnew].dl;
+			}
+			// new is 0 or 1 so it does not have extra bits
+		}
+		desc.max_code = max_code;
+
+		// The elements heap[heap_len/2+1 .. heap_len] are leaves of the tree,
+		// establish sub-heaps of increasing lengths:
+		for (n = heap_len >> 1; n >= 1; n--) {
+			pqdownheap(tree, n);
+		}
+
+		// Construct the Huffman tree by repeatedly combining the least two
+		// frequent nodes.
+		do {
+			n = heap[SMALLEST];
+			heap[SMALLEST] = heap[heap_len--];
+			pqdownheap(tree, SMALLEST);
+
+			m = heap[SMALLEST]; // m = node of next least frequency
+
+			// keep the nodes sorted by frequency
+			heap[--heap_max] = n;
+			heap[--heap_max] = m;
+
+			// Create a new node father of n and m
+			tree[node].fc = tree[n].fc + tree[m].fc;
+			//	depth[node] = (char)(MAX(depth[n], depth[m]) + 1);
+			if (depth[n] > depth[m] + 1) {
+				depth[node] = depth[n];
+			} else {
+				depth[node] = depth[m] + 1;
+			}
+			tree[n].dl = tree[m].dl = node;
+
+			// and insert the new node in the heap
+			heap[SMALLEST] = node++;
+			pqdownheap(tree, SMALLEST);
+
+		} while (heap_len >= 2);
+
+		heap[--heap_max] = heap[SMALLEST];
+
+		// At this point, the fields freq and dad are set. We can now
+		// generate the bit lengths.
+		gen_bitlen(desc);
+
+		// The field len is now set, we can generate the bit codes
+		gen_codes(tree, max_code);
+	}
+
+	/* ==========================================================================
+	 * Scan a literal or distance tree to determine the frequencies of the codes
+	 * in the bit length tree. Updates opt_len to take into account the repeat
+	 * counts. (The contribution of the bit length codes will be added later
+	 * during the construction of bl_tree.)
+	 *
+	 * @param tree- the tree to be scanned
+	 * @param max_code- and its largest code of non zero frequency
+	 */
+	function scan_tree(tree, max_code) {
+		var n, // iterates over all tree elements
+			prevlen = -1, // last emitted length
+			curlen, // length of current code
+			nextlen = tree[0].dl, // length of next code
+			count = 0, // repeat count of the current code
+			max_count = 7, // max repeat count
+			min_count = 4; // min repeat count
+
+		if (nextlen === 0) {
+			max_count = 138;
+			min_count = 3;
+		}
+		tree[max_code + 1].dl = 0xffff; // guard
+
+		for (n = 0; n <= max_code; n++) {
+			curlen = nextlen;
+			nextlen = tree[n + 1].dl;
+			if (++count < max_count && curlen === nextlen) {
+				continue;
+			} else if (count < min_count) {
+				bl_tree[curlen].fc += count;
+			} else if (curlen !== 0) {
+				if (curlen !== prevlen) {
+					bl_tree[curlen].fc++;
+				}
+				bl_tree[REP_3_6].fc++;
+			} else if (count <= 10) {
+				bl_tree[REPZ_3_10].fc++;
+			} else {
+				bl_tree[REPZ_11_138].fc++;
+			}
+			count = 0; prevlen = curlen;
+			if (nextlen === 0) {
+				max_count = 138;
+				min_count = 3;
+			} else if (curlen === nextlen) {
+				max_count = 6;
+				min_count = 3;
+			} else {
+				max_count = 7;
+				min_count = 4;
+			}
+		}
+	}
+
+	/* ==========================================================================
+	 * Send a literal or distance tree in compressed form, using the codes in
+	 * bl_tree.
+	 *
+	 * @param tree- the tree to be scanned
+	 * @param max_code- and its largest code of non zero frequency
+	 */
+	function send_tree(tree, max_code) {
+		var n; // iterates over all tree elements
+		var prevlen = -1; // last emitted length
+		var curlen; // length of current code
+		var nextlen = tree[0].dl; // length of next code
+		var count = 0; // repeat count of the current code
+		var max_count = 7; // max repeat count
+		var min_count = 4; // min repeat count
+
+		// tree[max_code+1].dl = -1; */  /* guard already set */
+		if (nextlen === 0) {
+			max_count = 138;
+			min_count = 3;
+		}
+
+		for (n = 0; n <= max_code; n++) {
+			curlen = nextlen;
+			nextlen = tree[n + 1].dl;
+			if (++count < max_count && curlen === nextlen) {
+				continue;
+			} else if (count < min_count) {
+				do {
+					SEND_CODE(curlen, bl_tree);
+				} while (--count !== 0);
+			} else if (curlen !== 0) {
+				if (curlen !== prevlen) {
+					SEND_CODE(curlen, bl_tree);
+					count--;
+				}
+			// Assert(count >= 3 && count <= 6, " 3_6?");
+				SEND_CODE(REP_3_6, bl_tree);
+				send_bits(count - 3, 2);
+			} else if (count <= 10) {
+				SEND_CODE(REPZ_3_10, bl_tree);
+				send_bits(count - 3, 3);
+			} else {
+				SEND_CODE(REPZ_11_138, bl_tree);
+				send_bits(count - 11, 7);
+			}
+			count = 0;
+			prevlen = curlen;
+			if (nextlen === 0) {
+				max_count = 138;
+				min_count = 3;
+			} else if (curlen === nextlen) {
+				max_count = 6;
+				min_count = 3;
+			} else {
+				max_count = 7;
+				min_count = 4;
+			}
+		}
+	}
+
+	/* ==========================================================================
+	 * Construct the Huffman tree for the bit lengths and return the index in
+	 * bl_order of the last bit length code to send.
+	 */
+	function build_bl_tree() {
+		var max_blindex; // index of last bit length code of non zero freq
+
+		// Determine the bit length frequencies for literal and distance trees
+		scan_tree(dyn_ltree, l_desc.max_code);
+		scan_tree(dyn_dtree, d_desc.max_code);
+
+		// Build the bit length tree:
+		build_tree(bl_desc);
+		// opt_len now includes the length of the tree representations, except
+		// the lengths of the bit lengths codes and the 5+5+4 bits for the counts.
+
+		// Determine the number of bit length codes to send. The pkzip format
+		// requires that at least 4 bit length codes be sent. (appnote.txt says
+		// 3 but the actual value used is 4.)
+		for (max_blindex = BL_CODES - 1; max_blindex >= 3; max_blindex--) {
+			if (bl_tree[bl_order[max_blindex]].dl !== 0) {
+				break;
+			}
+		}
+		// Update opt_len to include the bit length tree and counts */
+		opt_len += 3 * (max_blindex + 1) + 5 + 5 + 4;
+		// Tracev((stderr, "\ndyn trees: dyn %ld, stat %ld",
+		// encoder->opt_len, encoder->static_len));
+
+		return max_blindex;
+	}
+
+	/* ==========================================================================
+	 * Send the header for a block using dynamic Huffman trees: the counts, the
+	 * lengths of the bit length codes, the literal tree and the distance tree.
+	 * IN assertion: lcodes >= 257, dcodes >= 1, blcodes >= 4.
+	 */
+	function send_all_trees(lcodes, dcodes, blcodes) { // number of codes for each tree
+		var rank; // index in bl_order
+
+		// Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, "not enough codes");
+		// Assert (lcodes <= L_CODES && dcodes <= D_CODES && blcodes <= BL_CODES, "too many codes");
+		// Tracev((stderr, "\nbl counts: "));
+		send_bits(lcodes - 257, 5); // not +255 as stated in appnote.txt
+		send_bits(dcodes - 1,   5);
+		send_bits(blcodes - 4,  4); // not -3 as stated in appnote.txt
+		for (rank = 0; rank < blcodes; rank++) {
+			// Tracev((stderr, "\nbl code %2d ", bl_order[rank]));
+			send_bits(bl_tree[bl_order[rank]].dl, 3);
+		}
+
+		// send the literal tree
+		send_tree(dyn_ltree, lcodes - 1);
+
+		// send the distance tree
+		send_tree(dyn_dtree, dcodes - 1);
+	}
+
+	/* ==========================================================================
+	 * Determine the best encoding for the current block: dynamic trees, static
+	 * trees or store, and output the encoded block to the zip file.
+	 */
+	function flush_block(eof) { // true if this is the last block for a file
+		var opt_lenb, static_lenb, // opt_len and static_len in bytes
+			max_blindex, // index of last bit length code of non zero freq
+			stored_len, // length of input block
+			i;
+
+		stored_len = strstart - block_start;
+		flag_buf[last_flags] = flags; // Save the flags for the last 8 items
+
+		// Construct the literal and distance trees
+		build_tree(l_desc);
+		// Tracev((stderr, "\nlit data: dyn %ld, stat %ld",
+		// encoder->opt_len, encoder->static_len));
+
+		build_tree(d_desc);
+		// Tracev((stderr, "\ndist data: dyn %ld, stat %ld",
+		// encoder->opt_len, encoder->static_len));
+		// At this point, opt_len and static_len are the total bit lengths of
+		// the compressed block data, excluding the tree representations.
+
+		// Build the bit length tree for the above two trees, and get the index
+		// in bl_order of the last bit length code to send.
+		max_blindex = build_bl_tree();
+
+	 // Determine the best encoding. Compute first the block length in bytes
+		opt_lenb = (opt_len + 3 + 7) >> 3;
+		static_lenb = (static_len + 3 + 7) >> 3;
+
+	//  Trace((stderr, "\nopt %lu(%lu) stat %lu(%lu) stored %lu lit %u dist %u ", opt_lenb, encoder->opt_len, static_lenb, encoder->static_len, stored_len, encoder->last_lit, encoder->last_dist));
+
+		if (static_lenb <= opt_lenb) {
+			opt_lenb = static_lenb;
+		}
+		if (stored_len + 4 <= opt_lenb && block_start >= 0) { // 4: two words for the lengths
+			// The test buf !== NULL is only necessary if LIT_BUFSIZE > WSIZE.
+			// Otherwise we can't have processed more than WSIZE input bytes since
+			// the last block flush, because compression would have been
+			// successful. If LIT_BUFSIZE <= WSIZE, it is never too late to
+			// transform a block into a stored block.
+			send_bits((STORED_BLOCK << 1) + eof, 3);  /* send block type */
+			bi_windup();         /* align on byte boundary */
+			put_short(stored_len);
+			put_short(~stored_len);
+
+			// copy block
+			/*
+				p = &window[block_start];
+				for (i = 0; i < stored_len; i++) {
+					put_byte(p[i]);
+				}
+			*/
+			for (i = 0; i < stored_len; i++) {
+				put_byte(window[block_start + i]);
+			}
+		} else if (static_lenb === opt_lenb) {
+			send_bits((STATIC_TREES << 1) + eof, 3);
+			compress_block(static_ltree, static_dtree);
+		} else {
+			send_bits((DYN_TREES << 1) + eof, 3);
+			send_all_trees(l_desc.max_code + 1, d_desc.max_code + 1, max_blindex + 1);
+			compress_block(dyn_ltree, dyn_dtree);
+		}
+
+		init_block();
+
+		if (eof !== 0) {
+			bi_windup();
+		}
+	}
+
+	/* ==========================================================================
+	 * Save the match info and tally the frequency counts. Return true if
+	 * the current block must be flushed.
+	 *
+	 * @param dist- distance of matched string
+	 * @param lc- (match length - MIN_MATCH) or unmatched char (if dist === 0)
+	 */
+	function ct_tally(dist, lc) {
+		l_buf[last_lit++] = lc;
+		if (dist === 0) {
+			// lc is the unmatched char
+			dyn_ltree[lc].fc++;
+		} else {
+			// Here, lc is the match length - MIN_MATCH
+			dist--; // dist = match distance - 1
+			// Assert((ush)dist < (ush)MAX_DIST && (ush)lc <= (ush)(MAX_MATCH-MIN_MATCH) && (ush)D_CODE(dist) < (ush)D_CODES,  "ct_tally: bad match");
+
+			dyn_ltree[length_code[lc] + LITERALS + 1].fc++;
+			dyn_dtree[D_CODE(dist)].fc++;
+
+			d_buf[last_dist++] = dist;
+			flags |= flag_bit;
+		}
+		flag_bit <<= 1;
+
+		// Output the flags if they fill a byte
+		if ((last_lit & 7) === 0) {
+			flag_buf[last_flags++] = flags;
+			flags = 0;
+			flag_bit = 1;
+		}
+		// Try to guess if it is profitable to stop the current block here
+		if (compr_level > 2 && (last_lit & 0xfff) === 0) {
+			// Compute an upper bound for the compressed length
+			var out_length = last_lit * 8;
+			var in_length = strstart - block_start;
+			var dcode;
+
+			for (dcode = 0; dcode < D_CODES; dcode++) {
+				out_length += dyn_dtree[dcode].fc * (5 + extra_dbits[dcode]);
+			}
+			out_length >>= 3;
+			// Trace((stderr,"\nlast_lit %u, last_dist %u, in %ld, out ~%ld(%ld%%) ", encoder->last_lit, encoder->last_dist, in_length, out_length, 100L - out_length*100L/in_length));
+			if (last_dist < parseInt(last_lit / 2, 10) && out_length < parseInt(in_length / 2, 10)) {
+				return true;
+			}
+		}
+		return (last_lit === LIT_BUFSIZE - 1 || last_dist === DIST_BUFSIZE);
+		// We avoid equality with LIT_BUFSIZE because of wraparound at 64K
+		// on 16 bit machines and because stored blocks are restricted to
+		// 64K-1 bytes.
+	}
+
+	  /* ==========================================================================
+	   * Send the block data compressed using the given Huffman trees
+	   *
+	   * @param ltree- literal tree
+	   * @param dtree- distance tree
+	   */
+	function compress_block(ltree, dtree) {
+		var dist; // distance of matched string
+		var lc; // match length or unmatched char (if dist === 0)
+		var lx = 0; // running index in l_buf
+		var dx = 0; // running index in d_buf
+		var fx = 0; // running index in flag_buf
+		var flag = 0; // current flags
+		var code; // the code to send
+		var extra; // number of extra bits to send
+
+		if (last_lit !== 0) {
+			do {
+				if ((lx & 7) === 0) {
+					flag = flag_buf[fx++];
+				}
+				lc = l_buf[lx++] & 0xff;
+				if ((flag & 1) === 0) {
+					SEND_CODE(lc, ltree); /* send a literal byte */
+					//	Tracecv(isgraph(lc), (stderr," '%c' ", lc));
+				} else {
+					// Here, lc is the match length - MIN_MATCH
+					code = length_code[lc];
+					SEND_CODE(code + LITERALS + 1, ltree); // send the length code
+					extra = extra_lbits[code];
+					if (extra !== 0) {
+						lc -= base_length[code];
+						send_bits(lc, extra); // send the extra length bits
+					}
+					dist = d_buf[dx++];
+					// Here, dist is the match distance - 1
+					code = D_CODE(dist);
+					//	Assert (code < D_CODES, "bad d_code");
+
+					SEND_CODE(code, dtree); // send the distance code
+					extra = extra_dbits[code];
+					if (extra !== 0) {
+						dist -= base_dist[code];
+						send_bits(dist, extra); // send the extra distance bits
+					}
+				} // literal or match pair ?
+				flag >>= 1;
+			} while (lx < last_lit);
+		}
+
+		SEND_CODE(END_BLOCK, ltree);
+	}
+
+	/* ==========================================================================
+	 * Send a value on a given number of bits.
+	 * IN assertion: length <= 16 and value fits in length bits.
+	 *
+	 * @param value- value to send
+	 * @param length- number of bits
+	 */
+	var Buf_size = 16; // bit size of bi_buf
+	function send_bits(value, length) {
+		// If not enough room in bi_buf, use (valid) bits from bi_buf and
+		// (16 - bi_valid) bits from value, leaving (width - (16-bi_valid))
+		// unused bits in value.
+		if (bi_valid > Buf_size - length) {
+			bi_buf |= (value << bi_valid);
+			put_short(bi_buf);
+			bi_buf = (value >> (Buf_size - bi_valid));
+			bi_valid += length - Buf_size;
+		} else {
+			bi_buf |= value << bi_valid;
+			bi_valid += length;
+		}
+	}
+
+	/* ==========================================================================
+	 * Reverse the first len bits of a code, using straightforward code (a faster
+	 * method would use a table)
+	 * IN assertion: 1 <= len <= 15
+	 *
+	 * @param code- the value to invert
+	 * @param len- its bit length
+	 */
+	function bi_reverse(code, len) {
+		var res = 0;
+		do {
+			res |= code & 1;
+			code >>= 1;
+			res <<= 1;
+		} while (--len > 0);
+		return res >> 1;
+	}
+
+	/* ==========================================================================
+	 * Write out any remaining bits in an incomplete byte.
+	 */
+	function bi_windup() {
+		if (bi_valid > 8) {
+			put_short(bi_buf);
+		} else if (bi_valid > 0) {
+			put_byte(bi_buf);
+		}
+		bi_buf = 0;
+		bi_valid = 0;
+	}
+
+	function qoutbuf() {
+		var q, i;
+		if (outcnt !== 0) {
+			q = new_queue();
+			if (qhead === null) {
+				qhead = qtail = q;
+			} else {
+				qtail = qtail.next = q;
+			}
+			q.len = outcnt - outoff;
+			// System.arraycopy(outbuf, outoff, q.ptr, 0, q.len);
+			for (i = 0; i < q.len; i++) {
+				q.ptr[i] = outbuf[outoff + i];
+			}
+			outcnt = outoff = 0;
+		}
+	}
+
+	function deflate(arr, level) {
+		var i, j, buff;
+
+		deflate_data = arr;
+		deflate_pos = 0;
+		if (typeof level === "undefined") {
+			level = DEFAULT_LEVEL;
+		}
+		deflate_start(level);
+
+		buff = [];
+
+		do {
+			i = deflate_internal(buff, buff.length, 1024);
+		} while (i > 0);
+
+		deflate_data = null; // G.C.
+		return buff;
+	}
+
+	module.exports = deflate;
+	module.exports.DEFAULT_LEVEL = DEFAULT_LEVEL;
+}());
+
 
 /***/ }),
 
-/***/ "./node_modules/deflate-js/lib/rawinflate.js":
-/*!***************************************************!*\
-  !*** ./node_modules/deflate-js/lib/rawinflate.js ***!
-  \***************************************************/
+/***/ 689:
 /***/ ((module) => {
 
-eval("/*\n * $Id: rawinflate.js,v 0.2 2009/03/01 18:32:24 dankogai Exp $\n *\n * original:\n * http://www.onicos.com/staff/iz/amuse/javascript/expert/inflate.txt\n */\n\n/* Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>\n * Version: 1.0.0.1\n * LastModified: Dec 25 1999\n */\n\n/* Interface:\n * data = inflate(src);\n */\n\n(function () {\n\t/* constant parameters */\n\tvar WSIZE = 32768, // Sliding Window size\n\t\tSTORED_BLOCK = 0,\n\t\tSTATIC_TREES = 1,\n\t\tDYN_TREES = 2,\n\n\t/* for inflate */\n\t\tlbits = 9, // bits in base literal/length lookup table\n\t\tdbits = 6, // bits in base distance lookup table\n\n\t/* variables (inflate) */\n\t\tslide,\n\t\twp, // current position in slide\n\t\tfixed_tl = null, // inflate static\n\t\tfixed_td, // inflate static\n\t\tfixed_bl, // inflate static\n\t\tfixed_bd, // inflate static\n\t\tbit_buf, // bit buffer\n\t\tbit_len, // bits in bit buffer\n\t\tmethod,\n\t\teof,\n\t\tcopy_leng,\n\t\tcopy_dist,\n\t\ttl, // literal length decoder table\n\t\ttd, // literal distance decoder table\n\t\tbl, // number of bits decoded by tl\n\t\tbd, // number of bits decoded by td\n\n\t\tinflate_data,\n\t\tinflate_pos,\n\n\n/* constant tables (inflate) */\n\t\tMASK_BITS = [\n\t\t\t0x0000,\n\t\t\t0x0001, 0x0003, 0x0007, 0x000f, 0x001f, 0x003f, 0x007f, 0x00ff,\n\t\t\t0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff\n\t\t],\n\t\t// Tables for deflate from PKZIP's appnote.txt.\n\t\t// Copy lengths for literal codes 257..285\n\t\tcplens = [\n\t\t\t3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,\n\t\t\t35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0\n\t\t],\n/* note: see note #13 above about the 258 in this list. */\n\t\t// Extra bits for literal codes 257..285\n\t\tcplext = [\n\t\t\t0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,\n\t\t\t3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 99, 99 // 99==invalid\n\t\t],\n\t\t// Copy offsets for distance codes 0..29\n\t\tcpdist = [\n\t\t\t1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,\n\t\t\t257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,\n\t\t\t8193, 12289, 16385, 24577\n\t\t],\n\t\t// Extra bits for distance codes\n\t\tcpdext = [\n\t\t\t0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,\n\t\t\t7, 7, 8, 8, 9, 9, 10, 10, 11, 11,\n\t\t\t12, 12, 13, 13\n\t\t],\n\t\t// Order of the bit length code lengths\n\t\tborder = [\n\t\t\t16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15\n\t\t];\n\t/* objects (inflate) */\n\n\tfunction HuftList() {\n\t\tthis.next = null;\n\t\tthis.list = null;\n\t}\n\n\tfunction HuftNode() {\n\t\tthis.e = 0; // number of extra bits or operation\n\t\tthis.b = 0; // number of bits in this code or subcode\n\n\t\t// union\n\t\tthis.n = 0; // literal, length base, or distance base\n\t\tthis.t = null; // (HuftNode) pointer to next level of table\n\t}\n\n\t/*\n\t * @param b-  code lengths in bits (all assumed <= BMAX)\n\t * @param n- number of codes (assumed <= N_MAX)\n\t * @param s- number of simple-valued codes (0..s-1)\n\t * @param d- list of base values for non-simple codes\n\t * @param e- list of extra bits for non-simple codes\n\t * @param mm- maximum lookup bits\n\t */\n\tfunction HuftBuild(b, n, s, d, e, mm) {\n\t\tthis.BMAX = 16; // maximum bit length of any code\n\t\tthis.N_MAX = 288; // maximum number of codes in any set\n\t\tthis.status = 0; // 0: success, 1: incomplete table, 2: bad input\n\t\tthis.root = null; // (HuftList) starting table\n\t\tthis.m = 0; // maximum lookup bits, returns actual\n\n\t/* Given a list of code lengths and a maximum table size, make a set of\n\t   tables to decode that set of codes. Return zero on success, one if\n\t   the given code set is incomplete (the tables are still built in this\n\t   case), two if the input is invalid (all zero length codes or an\n\t   oversubscribed set of lengths), and three if not enough memory.\n\t   The code with value 256 is special, and the tables are constructed\n\t   so that no bits beyond that code are fetched when that code is\n\t   decoded. */\n\t\tvar a; // counter for codes of length k\n\t\tvar c = [];\n\t\tvar el; // length of EOB code (value 256)\n\t\tvar f; // i repeats in table every f entries\n\t\tvar g; // maximum code length\n\t\tvar h; // table level\n\t\tvar i; // counter, current code\n\t\tvar j; // counter\n\t\tvar k; // number of bits in current code\n\t\tvar lx = [];\n\t\tvar p; // pointer into c[], b[], or v[]\n\t\tvar pidx; // index of p\n\t\tvar q; // (HuftNode) points to current table\n\t\tvar r = new HuftNode(); // table entry for structure assignment\n\t\tvar u = [];\n\t\tvar v = [];\n\t\tvar w;\n\t\tvar x = [];\n\t\tvar xp; // pointer into x or c\n\t\tvar y; // number of dummy codes added\n\t\tvar z; // number of entries in current table\n\t\tvar o;\n\t\tvar tail; // (HuftList)\n\n\t\ttail = this.root = null;\n\n\t\t// bit length count table\n\t\tfor (i = 0; i < this.BMAX + 1; i++) {\n\t\t\tc[i] = 0;\n\t\t}\n\t\t// stack of bits per table\n\t\tfor (i = 0; i < this.BMAX + 1; i++) {\n\t\t\tlx[i] = 0;\n\t\t}\n\t\t// HuftNode[BMAX][]  table stack\n\t\tfor (i = 0; i < this.BMAX; i++) {\n\t\t\tu[i] = null;\n\t\t}\n\t\t// values in order of bit length\n\t\tfor (i = 0; i < this.N_MAX; i++) {\n\t\t\tv[i] = 0;\n\t\t}\n\t\t// bit offsets, then code stack\n\t\tfor (i = 0; i < this.BMAX + 1; i++) {\n\t\t\tx[i] = 0;\n\t\t}\n\n\t\t// Generate counts for each bit length\n\t\tel = n > 256 ? b[256] : this.BMAX; // set length of EOB code, if any\n\t\tp = b; pidx = 0;\n\t\ti = n;\n\t\tdo {\n\t\t\tc[p[pidx]]++; // assume all entries <= BMAX\n\t\t\tpidx++;\n\t\t} while (--i > 0);\n\t\tif (c[0] === n) { // null input--all zero length codes\n\t\t\tthis.root = null;\n\t\t\tthis.m = 0;\n\t\t\tthis.status = 0;\n\t\t\treturn;\n\t\t}\n\n\t\t// Find minimum and maximum length, bound *m by those\n\t\tfor (j = 1; j <= this.BMAX; j++) {\n\t\t\tif (c[j] !== 0) {\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tk = j; // minimum code length\n\t\tif (mm < j) {\n\t\t\tmm = j;\n\t\t}\n\t\tfor (i = this.BMAX; i !== 0; i--) {\n\t\t\tif (c[i] !== 0) {\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tg = i; // maximum code length\n\t\tif (mm > i) {\n\t\t\tmm = i;\n\t\t}\n\n\t\t// Adjust last length count to fill out codes, if needed\n\t\tfor (y = 1 << j; j < i; j++, y <<= 1) {\n\t\t\tif ((y -= c[j]) < 0) {\n\t\t\t\tthis.status = 2; // bad input: more codes than bits\n\t\t\t\tthis.m = mm;\n\t\t\t\treturn;\n\t\t\t}\n\t\t}\n\t\tif ((y -= c[i]) < 0) {\n\t\t\tthis.status = 2;\n\t\t\tthis.m = mm;\n\t\t\treturn;\n\t\t}\n\t\tc[i] += y;\n\n\t\t// Generate starting offsets into the value table for each length\n\t\tx[1] = j = 0;\n\t\tp = c;\n\t\tpidx = 1;\n\t\txp = 2;\n\t\twhile (--i > 0) { // note that i == g from above\n\t\t\tx[xp++] = (j += p[pidx++]);\n\t\t}\n\n\t\t// Make a table of values in order of bit lengths\n\t\tp = b; pidx = 0;\n\t\ti = 0;\n\t\tdo {\n\t\t\tif ((j = p[pidx++]) !== 0) {\n\t\t\t\tv[x[j]++] = i;\n\t\t\t}\n\t\t} while (++i < n);\n\t\tn = x[g]; // set n to length of v\n\n\t\t// Generate the Huffman codes and for each, make the table entries\n\t\tx[0] = i = 0; // first Huffman code is zero\n\t\tp = v; pidx = 0; // grab values in bit order\n\t\th = -1; // no tables yet--level -1\n\t\tw = lx[0] = 0; // no bits decoded yet\n\t\tq = null; // ditto\n\t\tz = 0; // ditto\n\n\t\t// go through the bit lengths (k already is bits in shortest code)\n\t\tfor (null; k <= g; k++) {\n\t\t\ta = c[k];\n\t\t\twhile (a-- > 0) {\n\t\t\t\t// here i is the Huffman code of length k bits for value p[pidx]\n\t\t\t\t// make tables up to required level\n\t\t\t\twhile (k > w + lx[1 + h]) {\n\t\t\t\t\tw += lx[1 + h]; // add bits already decoded\n\t\t\t\t\th++;\n\n\t\t\t\t\t// compute minimum size table less than or equal to *m bits\n\t\t\t\t\tz = (z = g - w) > mm ? mm : z; // upper limit\n\t\t\t\t\tif ((f = 1 << (j = k - w)) > a + 1) { // try a k-w bit table\n\t\t\t\t\t\t// too few codes for k-w bit table\n\t\t\t\t\t\tf -= a + 1; // deduct codes from patterns left\n\t\t\t\t\t\txp = k;\n\t\t\t\t\t\twhile (++j < z) { // try smaller tables up to z bits\n\t\t\t\t\t\t\tif ((f <<= 1) <= c[++xp]) {\n\t\t\t\t\t\t\t\tbreak; // enough codes to use up j bits\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tf -= c[xp]; // else deduct codes from patterns\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tif (w + j > el && w < el) {\n\t\t\t\t\t\tj = el - w; // make EOB code end at table\n\t\t\t\t\t}\n\t\t\t\t\tz = 1 << j; // table entries for j-bit table\n\t\t\t\t\tlx[1 + h] = j; // set table size in stack\n\n\t\t\t\t\t// allocate and link in new table\n\t\t\t\t\tq = [];\n\t\t\t\t\tfor (o = 0; o < z; o++) {\n\t\t\t\t\t\tq[o] = new HuftNode();\n\t\t\t\t\t}\n\n\t\t\t\t\tif (!tail) {\n\t\t\t\t\t\ttail = this.root = new HuftList();\n\t\t\t\t\t} else {\n\t\t\t\t\t\ttail = tail.next = new HuftList();\n\t\t\t\t\t}\n\t\t\t\t\ttail.next = null;\n\t\t\t\t\ttail.list = q;\n\t\t\t\t\tu[h] = q; // table starts after link\n\n\t\t\t\t\t/* connect to last table, if there is one */\n\t\t\t\t\tif (h > 0) {\n\t\t\t\t\t\tx[h] = i; // save pattern for backing up\n\t\t\t\t\t\tr.b = lx[h]; // bits to dump before this table\n\t\t\t\t\t\tr.e = 16 + j; // bits in this table\n\t\t\t\t\t\tr.t = q; // pointer to this table\n\t\t\t\t\t\tj = (i & ((1 << w) - 1)) >> (w - lx[h]);\n\t\t\t\t\t\tu[h - 1][j].e = r.e;\n\t\t\t\t\t\tu[h - 1][j].b = r.b;\n\t\t\t\t\t\tu[h - 1][j].n = r.n;\n\t\t\t\t\t\tu[h - 1][j].t = r.t;\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\t// set up table entry in r\n\t\t\t\tr.b = k - w;\n\t\t\t\tif (pidx >= n) {\n\t\t\t\t\tr.e = 99; // out of values--invalid code\n\t\t\t\t} else if (p[pidx] < s) {\n\t\t\t\t\tr.e = (p[pidx] < 256 ? 16 : 15); // 256 is end-of-block code\n\t\t\t\t\tr.n = p[pidx++]; // simple code is just the value\n\t\t\t\t} else {\n\t\t\t\t\tr.e = e[p[pidx] - s]; // non-simple--look up in lists\n\t\t\t\t\tr.n = d[p[pidx++] - s];\n\t\t\t\t}\n\n\t\t\t\t// fill code-like entries with r //\n\t\t\t\tf = 1 << (k - w);\n\t\t\t\tfor (j = i >> w; j < z; j += f) {\n\t\t\t\t\tq[j].e = r.e;\n\t\t\t\t\tq[j].b = r.b;\n\t\t\t\t\tq[j].n = r.n;\n\t\t\t\t\tq[j].t = r.t;\n\t\t\t\t}\n\n\t\t\t\t// backwards increment the k-bit code i\n\t\t\t\tfor (j = 1 << (k - 1); (i & j) !== 0; j >>= 1) {\n\t\t\t\t\ti ^= j;\n\t\t\t\t}\n\t\t\t\ti ^= j;\n\n\t\t\t\t// backup over finished tables\n\t\t\t\twhile ((i & ((1 << w) - 1)) !== x[h]) {\n\t\t\t\t\tw -= lx[h]; // don't need to update q\n\t\t\t\t\th--;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\t/* return actual size of base table */\n\t\tthis.m = lx[1];\n\n\t\t/* Return true (1) if we were given an incomplete table */\n\t\tthis.status = ((y !== 0 && g !== 1) ? 1 : 0);\n\t}\n\n\n\t/* routines (inflate) */\n\n\tfunction GET_BYTE() {\n\t\tif (inflate_data.length === inflate_pos) {\n\t\t\treturn -1;\n\t\t}\n\t\treturn inflate_data[inflate_pos++] & 0xff;\n\t}\n\n\tfunction NEEDBITS(n) {\n\t\twhile (bit_len < n) {\n\t\t\tbit_buf |= GET_BYTE() << bit_len;\n\t\t\tbit_len += 8;\n\t\t}\n\t}\n\n\tfunction GETBITS(n) {\n\t\treturn bit_buf & MASK_BITS[n];\n\t}\n\n\tfunction DUMPBITS(n) {\n\t\tbit_buf >>= n;\n\t\tbit_len -= n;\n\t}\n\n\tfunction inflate_codes(buff, off, size) {\n\t\t// inflate (decompress) the codes in a deflated (compressed) block.\n\t\t// Return an error code or zero if it all goes ok.\n\t\tvar e; // table entry flag/number of extra bits\n\t\tvar t; // (HuftNode) pointer to table entry\n\t\tvar n;\n\n\t\tif (size === 0) {\n\t\t\treturn 0;\n\t\t}\n\n\t\t// inflate the coded data\n\t\tn = 0;\n\t\tfor (;;) { // do until end of block\n\t\t\tNEEDBITS(bl);\n\t\t\tt = tl.list[GETBITS(bl)];\n\t\t\te = t.e;\n\t\t\twhile (e > 16) {\n\t\t\t\tif (e === 99) {\n\t\t\t\t\treturn -1;\n\t\t\t\t}\n\t\t\t\tDUMPBITS(t.b);\n\t\t\t\te -= 16;\n\t\t\t\tNEEDBITS(e);\n\t\t\t\tt = t.t[GETBITS(e)];\n\t\t\t\te = t.e;\n\t\t\t}\n\t\t\tDUMPBITS(t.b);\n\n\t\t\tif (e === 16) { // then it's a literal\n\t\t\t\twp &= WSIZE - 1;\n\t\t\t\tbuff[off + n++] = slide[wp++] = t.n;\n\t\t\t\tif (n === size) {\n\t\t\t\t\treturn size;\n\t\t\t\t}\n\t\t\t\tcontinue;\n\t\t\t}\n\n\t\t\t// exit if end of block\n\t\t\tif (e === 15) {\n\t\t\t\tbreak;\n\t\t\t}\n\n\t\t\t// it's an EOB or a length\n\n\t\t\t// get length of block to copy\n\t\t\tNEEDBITS(e);\n\t\t\tcopy_leng = t.n + GETBITS(e);\n\t\t\tDUMPBITS(e);\n\n\t\t\t// decode distance of block to copy\n\t\t\tNEEDBITS(bd);\n\t\t\tt = td.list[GETBITS(bd)];\n\t\t\te = t.e;\n\n\t\t\twhile (e > 16) {\n\t\t\t\tif (e === 99) {\n\t\t\t\t\treturn -1;\n\t\t\t\t}\n\t\t\t\tDUMPBITS(t.b);\n\t\t\t\te -= 16;\n\t\t\t\tNEEDBITS(e);\n\t\t\t\tt = t.t[GETBITS(e)];\n\t\t\t\te = t.e;\n\t\t\t}\n\t\t\tDUMPBITS(t.b);\n\t\t\tNEEDBITS(e);\n\t\t\tcopy_dist = wp - t.n - GETBITS(e);\n\t\t\tDUMPBITS(e);\n\n\t\t\t// do the copy\n\t\t\twhile (copy_leng > 0 && n < size) {\n\t\t\t\tcopy_leng--;\n\t\t\t\tcopy_dist &= WSIZE - 1;\n\t\t\t\twp &= WSIZE - 1;\n\t\t\t\tbuff[off + n++] = slide[wp++] = slide[copy_dist++];\n\t\t\t}\n\n\t\t\tif (n === size) {\n\t\t\t\treturn size;\n\t\t\t}\n\t\t}\n\n\t\tmethod = -1; // done\n\t\treturn n;\n\t}\n\n\tfunction inflate_stored(buff, off, size) {\n\t\t/* \"decompress\" an inflated type 0 (stored) block. */\n\t\tvar n;\n\n\t\t// go to byte boundary\n\t\tn = bit_len & 7;\n\t\tDUMPBITS(n);\n\n\t\t// get the length and its complement\n\t\tNEEDBITS(16);\n\t\tn = GETBITS(16);\n\t\tDUMPBITS(16);\n\t\tNEEDBITS(16);\n\t\tif (n !== ((~bit_buf) & 0xffff)) {\n\t\t\treturn -1; // error in compressed data\n\t\t}\n\t\tDUMPBITS(16);\n\n\t\t// read and output the compressed data\n\t\tcopy_leng = n;\n\n\t\tn = 0;\n\t\twhile (copy_leng > 0 && n < size) {\n\t\t\tcopy_leng--;\n\t\t\twp &= WSIZE - 1;\n\t\t\tNEEDBITS(8);\n\t\t\tbuff[off + n++] = slide[wp++] = GETBITS(8);\n\t\t\tDUMPBITS(8);\n\t\t}\n\n\t\tif (copy_leng === 0) {\n\t\t\tmethod = -1; // done\n\t\t}\n\t\treturn n;\n\t}\n\n\tfunction inflate_fixed(buff, off, size) {\n\t\t// decompress an inflated type 1 (fixed Huffman codes) block.  We should\n\t\t// either replace this with a custom decoder, or at least precompute the\n\t\t// Huffman tables.\n\n\t\t// if first time, set up tables for fixed blocks\n\t\tif (!fixed_tl) {\n\t\t\tvar i; // temporary variable\n\t\t\tvar l = []; // 288 length list for huft_build (initialized below)\n\t\t\tvar h; // HuftBuild\n\n\t\t\t// literal table\n\t\t\tfor (i = 0; i < 144; i++) {\n\t\t\t\tl[i] = 8;\n\t\t\t}\n\t\t\tfor (null; i < 256; i++) {\n\t\t\t\tl[i] = 9;\n\t\t\t}\n\t\t\tfor (null; i < 280; i++) {\n\t\t\t\tl[i] = 7;\n\t\t\t}\n\t\t\tfor (null; i < 288; i++) { // make a complete, but wrong code set\n\t\t\t\tl[i] = 8;\n\t\t\t}\n\t\t\tfixed_bl = 7;\n\n\t\t\th = new HuftBuild(l, 288, 257, cplens, cplext, fixed_bl);\n\t\t\tif (h.status !== 0) {\n\t\t\t\tconsole.error(\"HufBuild error: \" + h.status);\n\t\t\t\treturn -1;\n\t\t\t}\n\t\t\tfixed_tl = h.root;\n\t\t\tfixed_bl = h.m;\n\n\t\t\t// distance table\n\t\t\tfor (i = 0; i < 30; i++) { // make an incomplete code set\n\t\t\t\tl[i] = 5;\n\t\t\t}\n\t\t\tfixed_bd = 5;\n\n\t\t\th = new HuftBuild(l, 30, 0, cpdist, cpdext, fixed_bd);\n\t\t\tif (h.status > 1) {\n\t\t\t\tfixed_tl = null;\n\t\t\t\tconsole.error(\"HufBuild error: \" + h.status);\n\t\t\t\treturn -1;\n\t\t\t}\n\t\t\tfixed_td = h.root;\n\t\t\tfixed_bd = h.m;\n\t\t}\n\n\t\ttl = fixed_tl;\n\t\ttd = fixed_td;\n\t\tbl = fixed_bl;\n\t\tbd = fixed_bd;\n\t\treturn inflate_codes(buff, off, size);\n\t}\n\n\tfunction inflate_dynamic(buff, off, size) {\n\t\t// decompress an inflated type 2 (dynamic Huffman codes) block.\n\t\tvar i; // temporary variables\n\t\tvar j;\n\t\tvar l; // last length\n\t\tvar n; // number of lengths to get\n\t\tvar t; // (HuftNode) literal/length code table\n\t\tvar nb; // number of bit length codes\n\t\tvar nl; // number of literal/length codes\n\t\tvar nd; // number of distance codes\n\t\tvar ll = [];\n\t\tvar h; // (HuftBuild)\n\n\t\t// literal/length and distance code lengths\n\t\tfor (i = 0; i < 286 + 30; i++) {\n\t\t\tll[i] = 0;\n\t\t}\n\n\t\t// read in table lengths\n\t\tNEEDBITS(5);\n\t\tnl = 257 + GETBITS(5); // number of literal/length codes\n\t\tDUMPBITS(5);\n\t\tNEEDBITS(5);\n\t\tnd = 1 + GETBITS(5); // number of distance codes\n\t\tDUMPBITS(5);\n\t\tNEEDBITS(4);\n\t\tnb = 4 + GETBITS(4); // number of bit length codes\n\t\tDUMPBITS(4);\n\t\tif (nl > 286 || nd > 30) {\n\t\t\treturn -1; // bad lengths\n\t\t}\n\n\t\t// read in bit-length-code lengths\n\t\tfor (j = 0; j < nb; j++) {\n\t\t\tNEEDBITS(3);\n\t\t\tll[border[j]] = GETBITS(3);\n\t\t\tDUMPBITS(3);\n\t\t}\n\t\tfor (null; j < 19; j++) {\n\t\t\tll[border[j]] = 0;\n\t\t}\n\n\t\t// build decoding table for trees--single level, 7 bit lookup\n\t\tbl = 7;\n\t\th = new HuftBuild(ll, 19, 19, null, null, bl);\n\t\tif (h.status !== 0) {\n\t\t\treturn -1; // incomplete code set\n\t\t}\n\n\t\ttl = h.root;\n\t\tbl = h.m;\n\n\t\t// read in literal and distance code lengths\n\t\tn = nl + nd;\n\t\ti = l = 0;\n\t\twhile (i < n) {\n\t\t\tNEEDBITS(bl);\n\t\t\tt = tl.list[GETBITS(bl)];\n\t\t\tj = t.b;\n\t\t\tDUMPBITS(j);\n\t\t\tj = t.n;\n\t\t\tif (j < 16) { // length of code in bits (0..15)\n\t\t\t\tll[i++] = l = j; // save last length in l\n\t\t\t} else if (j === 16) { // repeat last length 3 to 6 times\n\t\t\t\tNEEDBITS(2);\n\t\t\t\tj = 3 + GETBITS(2);\n\t\t\t\tDUMPBITS(2);\n\t\t\t\tif (i + j > n) {\n\t\t\t\t\treturn -1;\n\t\t\t\t}\n\t\t\t\twhile (j-- > 0) {\n\t\t\t\t\tll[i++] = l;\n\t\t\t\t}\n\t\t\t} else if (j === 17) { // 3 to 10 zero length codes\n\t\t\t\tNEEDBITS(3);\n\t\t\t\tj = 3 + GETBITS(3);\n\t\t\t\tDUMPBITS(3);\n\t\t\t\tif (i + j > n) {\n\t\t\t\t\treturn -1;\n\t\t\t\t}\n\t\t\t\twhile (j-- > 0) {\n\t\t\t\t\tll[i++] = 0;\n\t\t\t\t}\n\t\t\t\tl = 0;\n\t\t\t} else { // j === 18: 11 to 138 zero length codes\n\t\t\t\tNEEDBITS(7);\n\t\t\t\tj = 11 + GETBITS(7);\n\t\t\t\tDUMPBITS(7);\n\t\t\t\tif (i + j > n) {\n\t\t\t\t\treturn -1;\n\t\t\t\t}\n\t\t\t\twhile (j-- > 0) {\n\t\t\t\t\tll[i++] = 0;\n\t\t\t\t}\n\t\t\t\tl = 0;\n\t\t\t}\n\t\t}\n\n\t\t// build the decoding tables for literal/length and distance codes\n\t\tbl = lbits;\n\t\th = new HuftBuild(ll, nl, 257, cplens, cplext, bl);\n\t\tif (bl === 0) { // no literals or lengths\n\t\t\th.status = 1;\n\t\t}\n\t\tif (h.status !== 0) {\n\t\t\tif (h.status !== 1) {\n\t\t\t\treturn -1; // incomplete code set\n\t\t\t}\n\t\t\t// **incomplete literal tree**\n\t\t}\n\t\ttl = h.root;\n\t\tbl = h.m;\n\n\t\tfor (i = 0; i < nd; i++) {\n\t\t\tll[i] = ll[i + nl];\n\t\t}\n\t\tbd = dbits;\n\t\th = new HuftBuild(ll, nd, 0, cpdist, cpdext, bd);\n\t\ttd = h.root;\n\t\tbd = h.m;\n\n\t\tif (bd === 0 && nl > 257) { // lengths but no distances\n\t\t\t// **incomplete distance tree**\n\t\t\treturn -1;\n\t\t}\n/*\n\t\tif (h.status === 1) {\n\t\t\t// **incomplete distance tree**\n\t\t}\n*/\n\t\tif (h.status !== 0) {\n\t\t\treturn -1;\n\t\t}\n\n\t\t// decompress until an end-of-block code\n\t\treturn inflate_codes(buff, off, size);\n\t}\n\n\tfunction inflate_start() {\n\t\tif (!slide) {\n\t\t\tslide = []; // new Array(2 * WSIZE); // slide.length is never called\n\t\t}\n\t\twp = 0;\n\t\tbit_buf = 0;\n\t\tbit_len = 0;\n\t\tmethod = -1;\n\t\teof = false;\n\t\tcopy_leng = copy_dist = 0;\n\t\ttl = null;\n\t}\n\n\tfunction inflate_internal(buff, off, size) {\n\t\t// decompress an inflated entry\n\t\tvar n, i;\n\n\t\tn = 0;\n\t\twhile (n < size) {\n\t\t\tif (eof && method === -1) {\n\t\t\t\treturn n;\n\t\t\t}\n\n\t\t\tif (copy_leng > 0) {\n\t\t\t\tif (method !== STORED_BLOCK) {\n\t\t\t\t\t// STATIC_TREES or DYN_TREES\n\t\t\t\t\twhile (copy_leng > 0 && n < size) {\n\t\t\t\t\t\tcopy_leng--;\n\t\t\t\t\t\tcopy_dist &= WSIZE - 1;\n\t\t\t\t\t\twp &= WSIZE - 1;\n\t\t\t\t\t\tbuff[off + n++] = slide[wp++] = slide[copy_dist++];\n\t\t\t\t\t}\n\t\t\t\t} else {\n\t\t\t\t\twhile (copy_leng > 0 && n < size) {\n\t\t\t\t\t\tcopy_leng--;\n\t\t\t\t\t\twp &= WSIZE - 1;\n\t\t\t\t\t\tNEEDBITS(8);\n\t\t\t\t\t\tbuff[off + n++] = slide[wp++] = GETBITS(8);\n\t\t\t\t\t\tDUMPBITS(8);\n\t\t\t\t\t}\n\t\t\t\t\tif (copy_leng === 0) {\n\t\t\t\t\t\tmethod = -1; // done\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tif (n === size) {\n\t\t\t\t\treturn n;\n\t\t\t\t}\n\t\t\t}\n\n\t\t\tif (method === -1) {\n\t\t\t\tif (eof) {\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\n\t\t\t\t// read in last block bit\n\t\t\t\tNEEDBITS(1);\n\t\t\t\tif (GETBITS(1) !== 0) {\n\t\t\t\t\teof = true;\n\t\t\t\t}\n\t\t\t\tDUMPBITS(1);\n\n\t\t\t\t// read in block type\n\t\t\t\tNEEDBITS(2);\n\t\t\t\tmethod = GETBITS(2);\n\t\t\t\tDUMPBITS(2);\n\t\t\t\ttl = null;\n\t\t\t\tcopy_leng = 0;\n\t\t\t}\n\n\t\t\tswitch (method) {\n\t\t\tcase STORED_BLOCK:\n\t\t\t\ti = inflate_stored(buff, off + n, size - n);\n\t\t\t\tbreak;\n\n\t\t\tcase STATIC_TREES:\n\t\t\t\tif (tl) {\n\t\t\t\t\ti = inflate_codes(buff, off + n, size - n);\n\t\t\t\t} else {\n\t\t\t\t\ti = inflate_fixed(buff, off + n, size - n);\n\t\t\t\t}\n\t\t\t\tbreak;\n\n\t\t\tcase DYN_TREES:\n\t\t\t\tif (tl) {\n\t\t\t\t\ti = inflate_codes(buff, off + n, size - n);\n\t\t\t\t} else {\n\t\t\t\t\ti = inflate_dynamic(buff, off + n, size - n);\n\t\t\t\t}\n\t\t\t\tbreak;\n\n\t\t\tdefault: // error\n\t\t\t\ti = -1;\n\t\t\t\tbreak;\n\t\t\t}\n\n\t\t\tif (i === -1) {\n\t\t\t\tif (eof) {\n\t\t\t\t\treturn 0;\n\t\t\t\t}\n\t\t\t\treturn -1;\n\t\t\t}\n\t\t\tn += i;\n\t\t}\n\t\treturn n;\n\t}\n\n\tfunction inflate(arr) {\n\t\tvar buff = [], i;\n\n\t\tinflate_start();\n\t\tinflate_data = arr;\n\t\tinflate_pos = 0;\n\n\t\tdo {\n\t\t\ti = inflate_internal(buff, buff.length, 1024);\n\t\t} while (i > 0);\n\t\tinflate_data = null; // G.C.\n\t\treturn buff;\n\t}\n\n\tmodule.exports = inflate;\n}());\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/deflate-js/lib/rawinflate.js?");
+/*
+ * $Id: rawinflate.js,v 0.2 2009/03/01 18:32:24 dankogai Exp $
+ *
+ * original:
+ * http://www.onicos.com/staff/iz/amuse/javascript/expert/inflate.txt
+ */
+
+/* Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
+ * Version: 1.0.0.1
+ * LastModified: Dec 25 1999
+ */
+
+/* Interface:
+ * data = inflate(src);
+ */
+
+(function () {
+	/* constant parameters */
+	var WSIZE = 32768, // Sliding Window size
+		STORED_BLOCK = 0,
+		STATIC_TREES = 1,
+		DYN_TREES = 2,
+
+	/* for inflate */
+		lbits = 9, // bits in base literal/length lookup table
+		dbits = 6, // bits in base distance lookup table
+
+	/* variables (inflate) */
+		slide,
+		wp, // current position in slide
+		fixed_tl = null, // inflate static
+		fixed_td, // inflate static
+		fixed_bl, // inflate static
+		fixed_bd, // inflate static
+		bit_buf, // bit buffer
+		bit_len, // bits in bit buffer
+		method,
+		eof,
+		copy_leng,
+		copy_dist,
+		tl, // literal length decoder table
+		td, // literal distance decoder table
+		bl, // number of bits decoded by tl
+		bd, // number of bits decoded by td
+
+		inflate_data,
+		inflate_pos,
+
+
+/* constant tables (inflate) */
+		MASK_BITS = [
+			0x0000,
+			0x0001, 0x0003, 0x0007, 0x000f, 0x001f, 0x003f, 0x007f, 0x00ff,
+			0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
+		],
+		// Tables for deflate from PKZIP's appnote.txt.
+		// Copy lengths for literal codes 257..285
+		cplens = [
+			3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
+			35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0
+		],
+/* note: see note #13 above about the 258 in this list. */
+		// Extra bits for literal codes 257..285
+		cplext = [
+			0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
+			3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 99, 99 // 99==invalid
+		],
+		// Copy offsets for distance codes 0..29
+		cpdist = [
+			1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
+			257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
+			8193, 12289, 16385, 24577
+		],
+		// Extra bits for distance codes
+		cpdext = [
+			0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
+			7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
+			12, 12, 13, 13
+		],
+		// Order of the bit length code lengths
+		border = [
+			16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15
+		];
+	/* objects (inflate) */
+
+	function HuftList() {
+		this.next = null;
+		this.list = null;
+	}
+
+	function HuftNode() {
+		this.e = 0; // number of extra bits or operation
+		this.b = 0; // number of bits in this code or subcode
+
+		// union
+		this.n = 0; // literal, length base, or distance base
+		this.t = null; // (HuftNode) pointer to next level of table
+	}
+
+	/*
+	 * @param b-  code lengths in bits (all assumed <= BMAX)
+	 * @param n- number of codes (assumed <= N_MAX)
+	 * @param s- number of simple-valued codes (0..s-1)
+	 * @param d- list of base values for non-simple codes
+	 * @param e- list of extra bits for non-simple codes
+	 * @param mm- maximum lookup bits
+	 */
+	function HuftBuild(b, n, s, d, e, mm) {
+		this.BMAX = 16; // maximum bit length of any code
+		this.N_MAX = 288; // maximum number of codes in any set
+		this.status = 0; // 0: success, 1: incomplete table, 2: bad input
+		this.root = null; // (HuftList) starting table
+		this.m = 0; // maximum lookup bits, returns actual
+
+	/* Given a list of code lengths and a maximum table size, make a set of
+	   tables to decode that set of codes. Return zero on success, one if
+	   the given code set is incomplete (the tables are still built in this
+	   case), two if the input is invalid (all zero length codes or an
+	   oversubscribed set of lengths), and three if not enough memory.
+	   The code with value 256 is special, and the tables are constructed
+	   so that no bits beyond that code are fetched when that code is
+	   decoded. */
+		var a; // counter for codes of length k
+		var c = [];
+		var el; // length of EOB code (value 256)
+		var f; // i repeats in table every f entries
+		var g; // maximum code length
+		var h; // table level
+		var i; // counter, current code
+		var j; // counter
+		var k; // number of bits in current code
+		var lx = [];
+		var p; // pointer into c[], b[], or v[]
+		var pidx; // index of p
+		var q; // (HuftNode) points to current table
+		var r = new HuftNode(); // table entry for structure assignment
+		var u = [];
+		var v = [];
+		var w;
+		var x = [];
+		var xp; // pointer into x or c
+		var y; // number of dummy codes added
+		var z; // number of entries in current table
+		var o;
+		var tail; // (HuftList)
+
+		tail = this.root = null;
+
+		// bit length count table
+		for (i = 0; i < this.BMAX + 1; i++) {
+			c[i] = 0;
+		}
+		// stack of bits per table
+		for (i = 0; i < this.BMAX + 1; i++) {
+			lx[i] = 0;
+		}
+		// HuftNode[BMAX][]  table stack
+		for (i = 0; i < this.BMAX; i++) {
+			u[i] = null;
+		}
+		// values in order of bit length
+		for (i = 0; i < this.N_MAX; i++) {
+			v[i] = 0;
+		}
+		// bit offsets, then code stack
+		for (i = 0; i < this.BMAX + 1; i++) {
+			x[i] = 0;
+		}
+
+		// Generate counts for each bit length
+		el = n > 256 ? b[256] : this.BMAX; // set length of EOB code, if any
+		p = b; pidx = 0;
+		i = n;
+		do {
+			c[p[pidx]]++; // assume all entries <= BMAX
+			pidx++;
+		} while (--i > 0);
+		if (c[0] === n) { // null input--all zero length codes
+			this.root = null;
+			this.m = 0;
+			this.status = 0;
+			return;
+		}
+
+		// Find minimum and maximum length, bound *m by those
+		for (j = 1; j <= this.BMAX; j++) {
+			if (c[j] !== 0) {
+				break;
+			}
+		}
+		k = j; // minimum code length
+		if (mm < j) {
+			mm = j;
+		}
+		for (i = this.BMAX; i !== 0; i--) {
+			if (c[i] !== 0) {
+				break;
+			}
+		}
+		g = i; // maximum code length
+		if (mm > i) {
+			mm = i;
+		}
+
+		// Adjust last length count to fill out codes, if needed
+		for (y = 1 << j; j < i; j++, y <<= 1) {
+			if ((y -= c[j]) < 0) {
+				this.status = 2; // bad input: more codes than bits
+				this.m = mm;
+				return;
+			}
+		}
+		if ((y -= c[i]) < 0) {
+			this.status = 2;
+			this.m = mm;
+			return;
+		}
+		c[i] += y;
+
+		// Generate starting offsets into the value table for each length
+		x[1] = j = 0;
+		p = c;
+		pidx = 1;
+		xp = 2;
+		while (--i > 0) { // note that i == g from above
+			x[xp++] = (j += p[pidx++]);
+		}
+
+		// Make a table of values in order of bit lengths
+		p = b; pidx = 0;
+		i = 0;
+		do {
+			if ((j = p[pidx++]) !== 0) {
+				v[x[j]++] = i;
+			}
+		} while (++i < n);
+		n = x[g]; // set n to length of v
+
+		// Generate the Huffman codes and for each, make the table entries
+		x[0] = i = 0; // first Huffman code is zero
+		p = v; pidx = 0; // grab values in bit order
+		h = -1; // no tables yet--level -1
+		w = lx[0] = 0; // no bits decoded yet
+		q = null; // ditto
+		z = 0; // ditto
+
+		// go through the bit lengths (k already is bits in shortest code)
+		for (null; k <= g; k++) {
+			a = c[k];
+			while (a-- > 0) {
+				// here i is the Huffman code of length k bits for value p[pidx]
+				// make tables up to required level
+				while (k > w + lx[1 + h]) {
+					w += lx[1 + h]; // add bits already decoded
+					h++;
+
+					// compute minimum size table less than or equal to *m bits
+					z = (z = g - w) > mm ? mm : z; // upper limit
+					if ((f = 1 << (j = k - w)) > a + 1) { // try a k-w bit table
+						// too few codes for k-w bit table
+						f -= a + 1; // deduct codes from patterns left
+						xp = k;
+						while (++j < z) { // try smaller tables up to z bits
+							if ((f <<= 1) <= c[++xp]) {
+								break; // enough codes to use up j bits
+							}
+							f -= c[xp]; // else deduct codes from patterns
+						}
+					}
+					if (w + j > el && w < el) {
+						j = el - w; // make EOB code end at table
+					}
+					z = 1 << j; // table entries for j-bit table
+					lx[1 + h] = j; // set table size in stack
+
+					// allocate and link in new table
+					q = [];
+					for (o = 0; o < z; o++) {
+						q[o] = new HuftNode();
+					}
+
+					if (!tail) {
+						tail = this.root = new HuftList();
+					} else {
+						tail = tail.next = new HuftList();
+					}
+					tail.next = null;
+					tail.list = q;
+					u[h] = q; // table starts after link
+
+					/* connect to last table, if there is one */
+					if (h > 0) {
+						x[h] = i; // save pattern for backing up
+						r.b = lx[h]; // bits to dump before this table
+						r.e = 16 + j; // bits in this table
+						r.t = q; // pointer to this table
+						j = (i & ((1 << w) - 1)) >> (w - lx[h]);
+						u[h - 1][j].e = r.e;
+						u[h - 1][j].b = r.b;
+						u[h - 1][j].n = r.n;
+						u[h - 1][j].t = r.t;
+					}
+				}
+
+				// set up table entry in r
+				r.b = k - w;
+				if (pidx >= n) {
+					r.e = 99; // out of values--invalid code
+				} else if (p[pidx] < s) {
+					r.e = (p[pidx] < 256 ? 16 : 15); // 256 is end-of-block code
+					r.n = p[pidx++]; // simple code is just the value
+				} else {
+					r.e = e[p[pidx] - s]; // non-simple--look up in lists
+					r.n = d[p[pidx++] - s];
+				}
+
+				// fill code-like entries with r //
+				f = 1 << (k - w);
+				for (j = i >> w; j < z; j += f) {
+					q[j].e = r.e;
+					q[j].b = r.b;
+					q[j].n = r.n;
+					q[j].t = r.t;
+				}
+
+				// backwards increment the k-bit code i
+				for (j = 1 << (k - 1); (i & j) !== 0; j >>= 1) {
+					i ^= j;
+				}
+				i ^= j;
+
+				// backup over finished tables
+				while ((i & ((1 << w) - 1)) !== x[h]) {
+					w -= lx[h]; // don't need to update q
+					h--;
+				}
+			}
+		}
+
+		/* return actual size of base table */
+		this.m = lx[1];
+
+		/* Return true (1) if we were given an incomplete table */
+		this.status = ((y !== 0 && g !== 1) ? 1 : 0);
+	}
+
+
+	/* routines (inflate) */
+
+	function GET_BYTE() {
+		if (inflate_data.length === inflate_pos) {
+			return -1;
+		}
+		return inflate_data[inflate_pos++] & 0xff;
+	}
+
+	function NEEDBITS(n) {
+		while (bit_len < n) {
+			bit_buf |= GET_BYTE() << bit_len;
+			bit_len += 8;
+		}
+	}
+
+	function GETBITS(n) {
+		return bit_buf & MASK_BITS[n];
+	}
+
+	function DUMPBITS(n) {
+		bit_buf >>= n;
+		bit_len -= n;
+	}
+
+	function inflate_codes(buff, off, size) {
+		// inflate (decompress) the codes in a deflated (compressed) block.
+		// Return an error code or zero if it all goes ok.
+		var e; // table entry flag/number of extra bits
+		var t; // (HuftNode) pointer to table entry
+		var n;
+
+		if (size === 0) {
+			return 0;
+		}
+
+		// inflate the coded data
+		n = 0;
+		for (;;) { // do until end of block
+			NEEDBITS(bl);
+			t = tl.list[GETBITS(bl)];
+			e = t.e;
+			while (e > 16) {
+				if (e === 99) {
+					return -1;
+				}
+				DUMPBITS(t.b);
+				e -= 16;
+				NEEDBITS(e);
+				t = t.t[GETBITS(e)];
+				e = t.e;
+			}
+			DUMPBITS(t.b);
+
+			if (e === 16) { // then it's a literal
+				wp &= WSIZE - 1;
+				buff[off + n++] = slide[wp++] = t.n;
+				if (n === size) {
+					return size;
+				}
+				continue;
+			}
+
+			// exit if end of block
+			if (e === 15) {
+				break;
+			}
+
+			// it's an EOB or a length
+
+			// get length of block to copy
+			NEEDBITS(e);
+			copy_leng = t.n + GETBITS(e);
+			DUMPBITS(e);
+
+			// decode distance of block to copy
+			NEEDBITS(bd);
+			t = td.list[GETBITS(bd)];
+			e = t.e;
+
+			while (e > 16) {
+				if (e === 99) {
+					return -1;
+				}
+				DUMPBITS(t.b);
+				e -= 16;
+				NEEDBITS(e);
+				t = t.t[GETBITS(e)];
+				e = t.e;
+			}
+			DUMPBITS(t.b);
+			NEEDBITS(e);
+			copy_dist = wp - t.n - GETBITS(e);
+			DUMPBITS(e);
+
+			// do the copy
+			while (copy_leng > 0 && n < size) {
+				copy_leng--;
+				copy_dist &= WSIZE - 1;
+				wp &= WSIZE - 1;
+				buff[off + n++] = slide[wp++] = slide[copy_dist++];
+			}
+
+			if (n === size) {
+				return size;
+			}
+		}
+
+		method = -1; // done
+		return n;
+	}
+
+	function inflate_stored(buff, off, size) {
+		/* "decompress" an inflated type 0 (stored) block. */
+		var n;
+
+		// go to byte boundary
+		n = bit_len & 7;
+		DUMPBITS(n);
+
+		// get the length and its complement
+		NEEDBITS(16);
+		n = GETBITS(16);
+		DUMPBITS(16);
+		NEEDBITS(16);
+		if (n !== ((~bit_buf) & 0xffff)) {
+			return -1; // error in compressed data
+		}
+		DUMPBITS(16);
+
+		// read and output the compressed data
+		copy_leng = n;
+
+		n = 0;
+		while (copy_leng > 0 && n < size) {
+			copy_leng--;
+			wp &= WSIZE - 1;
+			NEEDBITS(8);
+			buff[off + n++] = slide[wp++] = GETBITS(8);
+			DUMPBITS(8);
+		}
+
+		if (copy_leng === 0) {
+			method = -1; // done
+		}
+		return n;
+	}
+
+	function inflate_fixed(buff, off, size) {
+		// decompress an inflated type 1 (fixed Huffman codes) block.  We should
+		// either replace this with a custom decoder, or at least precompute the
+		// Huffman tables.
+
+		// if first time, set up tables for fixed blocks
+		if (!fixed_tl) {
+			var i; // temporary variable
+			var l = []; // 288 length list for huft_build (initialized below)
+			var h; // HuftBuild
+
+			// literal table
+			for (i = 0; i < 144; i++) {
+				l[i] = 8;
+			}
+			for (null; i < 256; i++) {
+				l[i] = 9;
+			}
+			for (null; i < 280; i++) {
+				l[i] = 7;
+			}
+			for (null; i < 288; i++) { // make a complete, but wrong code set
+				l[i] = 8;
+			}
+			fixed_bl = 7;
+
+			h = new HuftBuild(l, 288, 257, cplens, cplext, fixed_bl);
+			if (h.status !== 0) {
+				console.error("HufBuild error: " + h.status);
+				return -1;
+			}
+			fixed_tl = h.root;
+			fixed_bl = h.m;
+
+			// distance table
+			for (i = 0; i < 30; i++) { // make an incomplete code set
+				l[i] = 5;
+			}
+			fixed_bd = 5;
+
+			h = new HuftBuild(l, 30, 0, cpdist, cpdext, fixed_bd);
+			if (h.status > 1) {
+				fixed_tl = null;
+				console.error("HufBuild error: " + h.status);
+				return -1;
+			}
+			fixed_td = h.root;
+			fixed_bd = h.m;
+		}
+
+		tl = fixed_tl;
+		td = fixed_td;
+		bl = fixed_bl;
+		bd = fixed_bd;
+		return inflate_codes(buff, off, size);
+	}
+
+	function inflate_dynamic(buff, off, size) {
+		// decompress an inflated type 2 (dynamic Huffman codes) block.
+		var i; // temporary variables
+		var j;
+		var l; // last length
+		var n; // number of lengths to get
+		var t; // (HuftNode) literal/length code table
+		var nb; // number of bit length codes
+		var nl; // number of literal/length codes
+		var nd; // number of distance codes
+		var ll = [];
+		var h; // (HuftBuild)
+
+		// literal/length and distance code lengths
+		for (i = 0; i < 286 + 30; i++) {
+			ll[i] = 0;
+		}
+
+		// read in table lengths
+		NEEDBITS(5);
+		nl = 257 + GETBITS(5); // number of literal/length codes
+		DUMPBITS(5);
+		NEEDBITS(5);
+		nd = 1 + GETBITS(5); // number of distance codes
+		DUMPBITS(5);
+		NEEDBITS(4);
+		nb = 4 + GETBITS(4); // number of bit length codes
+		DUMPBITS(4);
+		if (nl > 286 || nd > 30) {
+			return -1; // bad lengths
+		}
+
+		// read in bit-length-code lengths
+		for (j = 0; j < nb; j++) {
+			NEEDBITS(3);
+			ll[border[j]] = GETBITS(3);
+			DUMPBITS(3);
+		}
+		for (null; j < 19; j++) {
+			ll[border[j]] = 0;
+		}
+
+		// build decoding table for trees--single level, 7 bit lookup
+		bl = 7;
+		h = new HuftBuild(ll, 19, 19, null, null, bl);
+		if (h.status !== 0) {
+			return -1; // incomplete code set
+		}
+
+		tl = h.root;
+		bl = h.m;
+
+		// read in literal and distance code lengths
+		n = nl + nd;
+		i = l = 0;
+		while (i < n) {
+			NEEDBITS(bl);
+			t = tl.list[GETBITS(bl)];
+			j = t.b;
+			DUMPBITS(j);
+			j = t.n;
+			if (j < 16) { // length of code in bits (0..15)
+				ll[i++] = l = j; // save last length in l
+			} else if (j === 16) { // repeat last length 3 to 6 times
+				NEEDBITS(2);
+				j = 3 + GETBITS(2);
+				DUMPBITS(2);
+				if (i + j > n) {
+					return -1;
+				}
+				while (j-- > 0) {
+					ll[i++] = l;
+				}
+			} else if (j === 17) { // 3 to 10 zero length codes
+				NEEDBITS(3);
+				j = 3 + GETBITS(3);
+				DUMPBITS(3);
+				if (i + j > n) {
+					return -1;
+				}
+				while (j-- > 0) {
+					ll[i++] = 0;
+				}
+				l = 0;
+			} else { // j === 18: 11 to 138 zero length codes
+				NEEDBITS(7);
+				j = 11 + GETBITS(7);
+				DUMPBITS(7);
+				if (i + j > n) {
+					return -1;
+				}
+				while (j-- > 0) {
+					ll[i++] = 0;
+				}
+				l = 0;
+			}
+		}
+
+		// build the decoding tables for literal/length and distance codes
+		bl = lbits;
+		h = new HuftBuild(ll, nl, 257, cplens, cplext, bl);
+		if (bl === 0) { // no literals or lengths
+			h.status = 1;
+		}
+		if (h.status !== 0) {
+			if (h.status !== 1) {
+				return -1; // incomplete code set
+			}
+			// **incomplete literal tree**
+		}
+		tl = h.root;
+		bl = h.m;
+
+		for (i = 0; i < nd; i++) {
+			ll[i] = ll[i + nl];
+		}
+		bd = dbits;
+		h = new HuftBuild(ll, nd, 0, cpdist, cpdext, bd);
+		td = h.root;
+		bd = h.m;
+
+		if (bd === 0 && nl > 257) { // lengths but no distances
+			// **incomplete distance tree**
+			return -1;
+		}
+/*
+		if (h.status === 1) {
+			// **incomplete distance tree**
+		}
+*/
+		if (h.status !== 0) {
+			return -1;
+		}
+
+		// decompress until an end-of-block code
+		return inflate_codes(buff, off, size);
+	}
+
+	function inflate_start() {
+		if (!slide) {
+			slide = []; // new Array(2 * WSIZE); // slide.length is never called
+		}
+		wp = 0;
+		bit_buf = 0;
+		bit_len = 0;
+		method = -1;
+		eof = false;
+		copy_leng = copy_dist = 0;
+		tl = null;
+	}
+
+	function inflate_internal(buff, off, size) {
+		// decompress an inflated entry
+		var n, i;
+
+		n = 0;
+		while (n < size) {
+			if (eof && method === -1) {
+				return n;
+			}
+
+			if (copy_leng > 0) {
+				if (method !== STORED_BLOCK) {
+					// STATIC_TREES or DYN_TREES
+					while (copy_leng > 0 && n < size) {
+						copy_leng--;
+						copy_dist &= WSIZE - 1;
+						wp &= WSIZE - 1;
+						buff[off + n++] = slide[wp++] = slide[copy_dist++];
+					}
+				} else {
+					while (copy_leng > 0 && n < size) {
+						copy_leng--;
+						wp &= WSIZE - 1;
+						NEEDBITS(8);
+						buff[off + n++] = slide[wp++] = GETBITS(8);
+						DUMPBITS(8);
+					}
+					if (copy_leng === 0) {
+						method = -1; // done
+					}
+				}
+				if (n === size) {
+					return n;
+				}
+			}
+
+			if (method === -1) {
+				if (eof) {
+					break;
+				}
+
+				// read in last block bit
+				NEEDBITS(1);
+				if (GETBITS(1) !== 0) {
+					eof = true;
+				}
+				DUMPBITS(1);
+
+				// read in block type
+				NEEDBITS(2);
+				method = GETBITS(2);
+				DUMPBITS(2);
+				tl = null;
+				copy_leng = 0;
+			}
+
+			switch (method) {
+			case STORED_BLOCK:
+				i = inflate_stored(buff, off + n, size - n);
+				break;
+
+			case STATIC_TREES:
+				if (tl) {
+					i = inflate_codes(buff, off + n, size - n);
+				} else {
+					i = inflate_fixed(buff, off + n, size - n);
+				}
+				break;
+
+			case DYN_TREES:
+				if (tl) {
+					i = inflate_codes(buff, off + n, size - n);
+				} else {
+					i = inflate_dynamic(buff, off + n, size - n);
+				}
+				break;
+
+			default: // error
+				i = -1;
+				break;
+			}
+
+			if (i === -1) {
+				if (eof) {
+					return 0;
+				}
+				return -1;
+			}
+			n += i;
+		}
+		return n;
+	}
+
+	function inflate(arr) {
+		var buff = [], i;
+
+		inflate_start();
+		inflate_data = arr;
+		inflate_pos = 0;
+
+		do {
+			i = inflate_internal(buff, buff.length, 1024);
+		} while (i > 0);
+		inflate_data = null; // G.C.
+		return buff;
+	}
+
+	module.exports = inflate;
+}());
+
 
 /***/ }),
 
-/***/ "./node_modules/gzip-js/lib/gzip.js":
-/*!******************************************!*\
-  !*** ./node_modules/gzip-js/lib/gzip.js ***!
-  \******************************************/
+/***/ 3606:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("(function () {\n\t'use strict';\n\n\tvar crc32 = __webpack_require__(/*! crc32 */ \"./node_modules/crc32/lib/crc32.js\"),\n\t\tdeflate = __webpack_require__(/*! deflate-js */ \"./node_modules/deflate-js/index.js\"),\n\t\t// magic numbers marking this file as GZIP\n\t\tID1 = 0x1F,\n\t\tID2 = 0x8B,\n\t\tcompressionMethods = {\n\t\t\t'deflate': 8\n\t\t},\n\t\tpossibleFlags = {\n\t\t\t'FTEXT': 0x01,\n\t\t\t'FHCRC': 0x02,\n\t\t\t'FEXTRA': 0x04,\n\t\t\t'FNAME': 0x08,\n\t\t\t'FCOMMENT': 0x10\n\t\t},\n\t\tosMap = {\n\t\t\t'fat': 0, // FAT file system (DOS, OS/2, NT) + PKZIPW 2.50 VFAT, NTFS\n\t\t\t'amiga': 1, // Amiga\n\t\t\t'vmz': 2, // VMS (VAX or Alpha AXP)\n\t\t\t'unix': 3, // Unix\n\t\t\t'vm/cms': 4, // VM/CMS\n\t\t\t'atari': 5, // Atari\n\t\t\t'hpfs': 6, // HPFS file system (OS/2, NT 3.x)\n\t\t\t'macintosh': 7, // Macintosh\n\t\t\t'z-system': 8, // Z-System\n\t\t\t'cplm': 9, // CP/M\n\t\t\t'tops-20': 10, // TOPS-20\n\t\t\t'ntfs': 11, // NTFS file system (NT)\n\t\t\t'qdos': 12, // SMS/QDOS\n\t\t\t'acorn': 13, // Acorn RISC OS\n\t\t\t'vfat': 14, // VFAT file system (Win95, NT)\n\t\t\t'vms': 15, // MVS (code also taken for PRIMOS)\n\t\t\t'beos': 16, // BeOS (BeBox or PowerMac)\n\t\t\t'tandem': 17, // Tandem/NSK\n\t\t\t'theos': 18 // THEOS\n\t\t},\n\t\tos = 'unix',\n\t\tDEFAULT_LEVEL = 6;\n\n\tfunction putByte(n, arr) {\n\t\tarr.push(n & 0xFF);\n\t}\n\n\t// LSB first\n\tfunction putShort(n, arr) {\n\t\tarr.push(n & 0xFF);\n\t\tarr.push(n >>> 8);\n\t}\n\n\t// LSB first\n\tfunction putLong(n, arr) {\n\t\tputShort(n & 0xffff, arr);\n\t\tputShort(n >>> 16, arr);\n\t}\n\n\tfunction putString(s, arr) {\n\t\tvar i, len = s.length;\n\t\tfor (i = 0; i < len; i += 1) {\n\t\t\tputByte(s.charCodeAt(i), arr);\n\t\t}\n\t}\n\n\tfunction readByte(arr) {\n\t\treturn arr.shift();\n\t}\n\n\tfunction readShort(arr) {\n\t\treturn arr.shift() | (arr.shift() << 8);\n\t}\n\n\tfunction readLong(arr) {\n\t\tvar n1 = readShort(arr),\n\t\t\tn2 = readShort(arr);\n\n\t\t// JavaScript can't handle bits in the position 32\n\t\t// we'll emulate this by removing the left-most bit (if it exists)\n\t\t// and add it back in via multiplication, which does work\n\t\tif (n2 > 32768) {\n\t\t\tn2 -= 32768;\n\n\t\t\treturn ((n2 << 16) | n1) + 32768 * Math.pow(2, 16);\n\t\t}\n\n\t\treturn (n2 << 16) | n1;\n\t}\n\n\tfunction readString(arr) {\n\t\tvar charArr = [];\n\n\t\t// turn all bytes into chars until the terminating null\n\t\twhile (arr[0] !== 0) {\n\t\t\tcharArr.push(String.fromCharCode(arr.shift()));\n\t\t}\n\n\t\t// throw away terminating null\n\t\tarr.shift();\n\n\t\t// join all characters into a cohesive string\n\t\treturn charArr.join('');\n\t}\n\n\t/*\n\t * Reads n number of bytes and return as an array.\n\t *\n\t * @param arr- Array of bytes to read from\n\t * @param n- Number of bytes to read\n\t */\n\tfunction readBytes(arr, n) {\n\t\tvar i, ret = [];\n\t\tfor (i = 0; i < n; i += 1) {\n\t\t\tret.push(arr.shift());\n\t\t}\n\n\t\treturn ret;\n\t}\n\n\t/*\n\t * ZIPs a file in GZIP format. The format is as given by the spec, found at:\n\t * http://www.gzip.org/zlib/rfc-gzip.html\n\t *\n\t * Omitted parts in this implementation:\n\t */\n\tfunction zip(data, options) {\n\t\tvar flags = 0,\n\t\t\tlevel,\n\t\t\tcrc, out = [];\n\n\t\tif (!options) {\n\t\t\toptions = {};\n\t\t}\n\t\tlevel = options.level || DEFAULT_LEVEL;\n\n\t\tif (typeof data === 'string') {\n\t\t\tdata = Array.prototype.map.call(data, function (char) {\n\t\t\t\treturn char.charCodeAt(0);\n\t\t\t});\n\t\t}\n\n\t\t// magic number marking this file as GZIP\n\t\tputByte(ID1, out);\n\t\tputByte(ID2, out);\n\n\t\tputByte(compressionMethods['deflate'], out);\n\n\t\tif (options.name) {\n\t\t\tflags |= possibleFlags['FNAME'];\n\t\t}\n\n\t\tputByte(flags, out);\n\t\tputLong(options.timestamp || parseInt(Date.now() / 1000, 10), out);\n\n\t\t// put deflate args (extra flags)\n\t\tif (level === 1) {\n\t\t\t// fastest algorithm\n\t\t\tputByte(4, out);\n\t\t} else if (level === 9) {\n\t\t\t// maximum compression (fastest algorithm)\n\t\t\tputByte(2, out);\n\t\t} else {\n\t\t\tputByte(0, out);\n\t\t}\n\n\t\t// OS identifier\n\t\tputByte(osMap[os], out);\n\n\t\tif (options.name) {\n\t\t\t// ignore the directory part\n\t\t\tputString(options.name.substring(options.name.lastIndexOf('/') + 1), out);\n\n\t\t\t// terminating null\n\t\t\tputByte(0, out);\n\t\t}\n\n\t\tdeflate.deflate(data, level).forEach(function (byte) {\n\t\t\tputByte(byte, out);\n\t\t});\n\n\t\tputLong(parseInt(crc32(data), 16), out);\n\t\tputLong(data.length, out);\n\n\t\treturn out;\n\t}\n\n\tfunction unzip(data, options) {\n\t\t// start with a copy of the array\n\t\tvar arr = Array.prototype.slice.call(data, 0),\n\t\t\tt,\n\t\t\tcompressionMethod,\n\t\t\tflags,\n\t\t\tmtime,\n\t\t\txFlags,\n\t\t\tkey,\n\t\t\tos,\n\t\t\tcrc,\n\t\t\tsize,\n\t\t\tres;\n\n\t\t// check the first two bytes for the magic numbers\n\t\tif (readByte(arr) !== ID1 || readByte(arr) !== ID2) {\n\t\t\tthrow 'Not a GZIP file';\n\t\t}\n\n\t\tt = readByte(arr);\n\t\tt = Object.keys(compressionMethods).some(function (key) {\n\t\t\tcompressionMethod = key;\n\t\t\treturn compressionMethods[key] === t;\n\t\t});\n\n\t\tif (!t) {\n\t\t\tthrow 'Unsupported compression method';\n\t\t}\n\n\t\tflags = readByte(arr);\n\t\tmtime = readLong(arr);\n\t\txFlags = readByte(arr);\n\t\tt = readByte(arr);\n\t\tObject.keys(osMap).some(function (key) {\n\t\t\tif (osMap[key] === t) {\n\t\t\t\tos = key;\n\t\t\t\treturn true;\n\t\t\t}\n\t\t});\n\n\t\t// just throw away the bytes for now\n\t\tif (flags & possibleFlags['FEXTRA']) {\n\t\t\tt = readShort(arr);\n\t\t\treadBytes(arr, t);\n\t\t}\n\n\t\t// just throw away for now\n\t\tif (flags & possibleFlags['FNAME']) {\n\t\t\treadString(arr);\n\t\t}\n\n\t\t// just throw away for now\n\t\tif (flags & possibleFlags['FCOMMENT']) {\n\t\t\treadString(arr);\n\t\t}\n\n\t\t// just throw away for now\n\t\tif (flags & possibleFlags['FHCRC']) {\n\t\t\treadShort(arr);\n\t\t}\n\n\t\tif (compressionMethod === 'deflate') {\n\t\t\t// give deflate everything but the last 8 bytes\n\t\t\t// the last 8 bytes are for the CRC32 checksum and filesize\n\t\t\tres = deflate.inflate(arr.splice(0, arr.length - 8));\n\t\t}\n\n\t\tif (flags & possibleFlags['FTEXT']) {\n\t\t\tres = Array.prototype.map.call(res, function (byte) {\n\t\t\t\treturn String.fromCharCode(byte);\n\t\t\t}).join('');\n\t\t}\n\n\t\tcrc = readLong(arr);\n\t\tif (crc !== parseInt(crc32(res), 16)) {\n\t\t\tthrow 'Checksum does not match';\n\t\t}\n\n\t\tsize = readLong(arr);\n\t\tif (size !== res.length) {\n\t\t\tthrow 'Size of decompressed file not correct';\n\t\t}\n\n\t\treturn res;\n\t}\n\n\tmodule.exports = {\n\t\tzip: zip,\n\t\tunzip: unzip,\n\t\tget DEFAULT_LEVEL() {\n\t\t\treturn DEFAULT_LEVEL;\n\t\t}\n\t};\n}());\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/gzip-js/lib/gzip.js?");
+(function () {
+	'use strict';
+
+	var crc32 = __webpack_require__(3793),
+		deflate = __webpack_require__(9762),
+		// magic numbers marking this file as GZIP
+		ID1 = 0x1F,
+		ID2 = 0x8B,
+		compressionMethods = {
+			'deflate': 8
+		},
+		possibleFlags = {
+			'FTEXT': 0x01,
+			'FHCRC': 0x02,
+			'FEXTRA': 0x04,
+			'FNAME': 0x08,
+			'FCOMMENT': 0x10
+		},
+		osMap = {
+			'fat': 0, // FAT file system (DOS, OS/2, NT) + PKZIPW 2.50 VFAT, NTFS
+			'amiga': 1, // Amiga
+			'vmz': 2, // VMS (VAX or Alpha AXP)
+			'unix': 3, // Unix
+			'vm/cms': 4, // VM/CMS
+			'atari': 5, // Atari
+			'hpfs': 6, // HPFS file system (OS/2, NT 3.x)
+			'macintosh': 7, // Macintosh
+			'z-system': 8, // Z-System
+			'cplm': 9, // CP/M
+			'tops-20': 10, // TOPS-20
+			'ntfs': 11, // NTFS file system (NT)
+			'qdos': 12, // SMS/QDOS
+			'acorn': 13, // Acorn RISC OS
+			'vfat': 14, // VFAT file system (Win95, NT)
+			'vms': 15, // MVS (code also taken for PRIMOS)
+			'beos': 16, // BeOS (BeBox or PowerMac)
+			'tandem': 17, // Tandem/NSK
+			'theos': 18 // THEOS
+		},
+		os = 'unix',
+		DEFAULT_LEVEL = 6;
+
+	function putByte(n, arr) {
+		arr.push(n & 0xFF);
+	}
+
+	// LSB first
+	function putShort(n, arr) {
+		arr.push(n & 0xFF);
+		arr.push(n >>> 8);
+	}
+
+	// LSB first
+	function putLong(n, arr) {
+		putShort(n & 0xffff, arr);
+		putShort(n >>> 16, arr);
+	}
+
+	function putString(s, arr) {
+		var i, len = s.length;
+		for (i = 0; i < len; i += 1) {
+			putByte(s.charCodeAt(i), arr);
+		}
+	}
+
+	function readByte(arr) {
+		return arr.shift();
+	}
+
+	function readShort(arr) {
+		return arr.shift() | (arr.shift() << 8);
+	}
+
+	function readLong(arr) {
+		var n1 = readShort(arr),
+			n2 = readShort(arr);
+
+		// JavaScript can't handle bits in the position 32
+		// we'll emulate this by removing the left-most bit (if it exists)
+		// and add it back in via multiplication, which does work
+		if (n2 > 32768) {
+			n2 -= 32768;
+
+			return ((n2 << 16) | n1) + 32768 * Math.pow(2, 16);
+		}
+
+		return (n2 << 16) | n1;
+	}
+
+	function readString(arr) {
+		var charArr = [];
+
+		// turn all bytes into chars until the terminating null
+		while (arr[0] !== 0) {
+			charArr.push(String.fromCharCode(arr.shift()));
+		}
+
+		// throw away terminating null
+		arr.shift();
+
+		// join all characters into a cohesive string
+		return charArr.join('');
+	}
+
+	/*
+	 * Reads n number of bytes and return as an array.
+	 *
+	 * @param arr- Array of bytes to read from
+	 * @param n- Number of bytes to read
+	 */
+	function readBytes(arr, n) {
+		var i, ret = [];
+		for (i = 0; i < n; i += 1) {
+			ret.push(arr.shift());
+		}
+
+		return ret;
+	}
+
+	/*
+	 * ZIPs a file in GZIP format. The format is as given by the spec, found at:
+	 * http://www.gzip.org/zlib/rfc-gzip.html
+	 *
+	 * Omitted parts in this implementation:
+	 */
+	function zip(data, options) {
+		var flags = 0,
+			level,
+			crc, out = [];
+
+		if (!options) {
+			options = {};
+		}
+		level = options.level || DEFAULT_LEVEL;
+
+		if (typeof data === 'string') {
+			data = Array.prototype.map.call(data, function (char) {
+				return char.charCodeAt(0);
+			});
+		}
+
+		// magic number marking this file as GZIP
+		putByte(ID1, out);
+		putByte(ID2, out);
+
+		putByte(compressionMethods['deflate'], out);
+
+		if (options.name) {
+			flags |= possibleFlags['FNAME'];
+		}
+
+		putByte(flags, out);
+		putLong(options.timestamp || parseInt(Date.now() / 1000, 10), out);
+
+		// put deflate args (extra flags)
+		if (level === 1) {
+			// fastest algorithm
+			putByte(4, out);
+		} else if (level === 9) {
+			// maximum compression (fastest algorithm)
+			putByte(2, out);
+		} else {
+			putByte(0, out);
+		}
+
+		// OS identifier
+		putByte(osMap[os], out);
+
+		if (options.name) {
+			// ignore the directory part
+			putString(options.name.substring(options.name.lastIndexOf('/') + 1), out);
+
+			// terminating null
+			putByte(0, out);
+		}
+
+		deflate.deflate(data, level).forEach(function (byte) {
+			putByte(byte, out);
+		});
+
+		putLong(parseInt(crc32(data), 16), out);
+		putLong(data.length, out);
+
+		return out;
+	}
+
+	function unzip(data, options) {
+		// start with a copy of the array
+		var arr = Array.prototype.slice.call(data, 0),
+			t,
+			compressionMethod,
+			flags,
+			mtime,
+			xFlags,
+			key,
+			os,
+			crc,
+			size,
+			res;
+
+		// check the first two bytes for the magic numbers
+		if (readByte(arr) !== ID1 || readByte(arr) !== ID2) {
+			throw 'Not a GZIP file';
+		}
+
+		t = readByte(arr);
+		t = Object.keys(compressionMethods).some(function (key) {
+			compressionMethod = key;
+			return compressionMethods[key] === t;
+		});
+
+		if (!t) {
+			throw 'Unsupported compression method';
+		}
+
+		flags = readByte(arr);
+		mtime = readLong(arr);
+		xFlags = readByte(arr);
+		t = readByte(arr);
+		Object.keys(osMap).some(function (key) {
+			if (osMap[key] === t) {
+				os = key;
+				return true;
+			}
+		});
+
+		// just throw away the bytes for now
+		if (flags & possibleFlags['FEXTRA']) {
+			t = readShort(arr);
+			readBytes(arr, t);
+		}
+
+		// just throw away for now
+		if (flags & possibleFlags['FNAME']) {
+			readString(arr);
+		}
+
+		// just throw away for now
+		if (flags & possibleFlags['FCOMMENT']) {
+			readString(arr);
+		}
+
+		// just throw away for now
+		if (flags & possibleFlags['FHCRC']) {
+			readShort(arr);
+		}
+
+		if (compressionMethod === 'deflate') {
+			// give deflate everything but the last 8 bytes
+			// the last 8 bytes are for the CRC32 checksum and filesize
+			res = deflate.inflate(arr.splice(0, arr.length - 8));
+		}
+
+		if (flags & possibleFlags['FTEXT']) {
+			res = Array.prototype.map.call(res, function (byte) {
+				return String.fromCharCode(byte);
+			}).join('');
+		}
+
+		crc = readLong(arr);
+		if (crc !== parseInt(crc32(res), 16)) {
+			throw 'Checksum does not match';
+		}
+
+		size = readLong(arr);
+		if (size !== res.length) {
+			throw 'Size of decompressed file not correct';
+		}
+
+		return res;
+	}
+
+	module.exports = {
+		zip: zip,
+		unzip: unzip,
+		get DEFAULT_LEVEL() {
+			return DEFAULT_LEVEL;
+		}
+	};
+}());
+
 
 /***/ }),
 
-/***/ "./node_modules/ieee754/index.js":
-/*!***************************************!*\
-  !*** ./node_modules/ieee754/index.js ***!
-  \***************************************/
+/***/ 645:
 /***/ ((__unused_webpack_module, exports) => {
 
-eval("/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */\nexports.read = function (buffer, offset, isLE, mLen, nBytes) {\n  var e, m\n  var eLen = (nBytes * 8) - mLen - 1\n  var eMax = (1 << eLen) - 1\n  var eBias = eMax >> 1\n  var nBits = -7\n  var i = isLE ? (nBytes - 1) : 0\n  var d = isLE ? -1 : 1\n  var s = buffer[offset + i]\n\n  i += d\n\n  e = s & ((1 << (-nBits)) - 1)\n  s >>= (-nBits)\n  nBits += eLen\n  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}\n\n  m = e & ((1 << (-nBits)) - 1)\n  e >>= (-nBits)\n  nBits += mLen\n  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}\n\n  if (e === 0) {\n    e = 1 - eBias\n  } else if (e === eMax) {\n    return m ? NaN : ((s ? -1 : 1) * Infinity)\n  } else {\n    m = m + Math.pow(2, mLen)\n    e = e - eBias\n  }\n  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)\n}\n\nexports.write = function (buffer, value, offset, isLE, mLen, nBytes) {\n  var e, m, c\n  var eLen = (nBytes * 8) - mLen - 1\n  var eMax = (1 << eLen) - 1\n  var eBias = eMax >> 1\n  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)\n  var i = isLE ? 0 : (nBytes - 1)\n  var d = isLE ? 1 : -1\n  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0\n\n  value = Math.abs(value)\n\n  if (isNaN(value) || value === Infinity) {\n    m = isNaN(value) ? 1 : 0\n    e = eMax\n  } else {\n    e = Math.floor(Math.log(value) / Math.LN2)\n    if (value * (c = Math.pow(2, -e)) < 1) {\n      e--\n      c *= 2\n    }\n    if (e + eBias >= 1) {\n      value += rt / c\n    } else {\n      value += rt * Math.pow(2, 1 - eBias)\n    }\n    if (value * c >= 2) {\n      e++\n      c /= 2\n    }\n\n    if (e + eBias >= eMax) {\n      m = 0\n      e = eMax\n    } else if (e + eBias >= 1) {\n      m = ((value * c) - 1) * Math.pow(2, mLen)\n      e = e + eBias\n    } else {\n      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)\n      e = 0\n    }\n  }\n\n  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}\n\n  e = (e << mLen) | m\n  eLen += mLen\n  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}\n\n  buffer[offset + i - d] |= s * 128\n}\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/ieee754/index.js?");
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = ((value * c) - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/array.js":
-/*!******************************************!*\
-  !*** ./node_modules/js-xdr/lib/array.js ***!
-  \******************************************/
+/***/ 7441:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Array = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _every = __webpack_require__(/*! lodash/every */ \"./node_modules/lodash/every.js\");\n\nvar _every2 = _interopRequireDefault(_every);\n\nvar _each = __webpack_require__(/*! lodash/each */ \"./node_modules/lodash/each.js\");\n\nvar _each2 = _interopRequireDefault(_each);\n\nvar _times = __webpack_require__(/*! lodash/times */ \"./node_modules/lodash/times.js\");\n\nvar _times2 = _interopRequireDefault(_times);\n\nvar _isArray = __webpack_require__(/*! lodash/isArray */ \"./node_modules/lodash/isArray.js\");\n\nvar _isArray2 = _interopRequireDefault(_isArray);\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Array = exports.Array = function () {\n  function Array(childType, length) {\n    _classCallCheck(this, Array);\n\n    this._childType = childType;\n    this._length = length;\n  }\n\n  _createClass(Array, [{\n    key: 'read',\n    value: function read(io) {\n      var _this = this;\n\n      return (0, _times2.default)(this._length, function () {\n        return _this._childType.read(io);\n      });\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      var _this2 = this;\n\n      if (!(0, _isArray2.default)(value)) {\n        throw new Error('XDR Write Error: value is not array');\n      }\n\n      if (value.length !== this._length) {\n        throw new Error('XDR Write Error: Got array of size ' + value.length + ',' + ('expected ' + this._length));\n      }\n\n      (0, _each2.default)(value, function (child) {\n        return _this2._childType.write(child, io);\n      });\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      var _this3 = this;\n\n      if (!(0, _isArray2.default)(value)) {\n        return false;\n      }\n      if (value.length !== this._length) {\n        return false;\n      }\n\n      return (0, _every2.default)(value, function (child) {\n        return _this3._childType.isValid(child);\n      });\n    }\n  }]);\n\n  return Array;\n}();\n\n(0, _ioMixin2.default)(Array.prototype);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/array.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Array = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _every = __webpack_require__(711);
+
+var _every2 = _interopRequireDefault(_every);
+
+var _each = __webpack_require__(6073);
+
+var _each2 = _interopRequireDefault(_each);
+
+var _times = __webpack_require__(8913);
+
+var _times2 = _interopRequireDefault(_times);
+
+var _isArray = __webpack_require__(1469);
+
+var _isArray2 = _interopRequireDefault(_isArray);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Array = exports.Array = function () {
+  function Array(childType, length) {
+    _classCallCheck(this, Array);
+
+    this._childType = childType;
+    this._length = length;
+  }
+
+  _createClass(Array, [{
+    key: 'read',
+    value: function read(io) {
+      var _this = this;
+
+      return (0, _times2.default)(this._length, function () {
+        return _this._childType.read(io);
+      });
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      var _this2 = this;
+
+      if (!(0, _isArray2.default)(value)) {
+        throw new Error('XDR Write Error: value is not array');
+      }
+
+      if (value.length !== this._length) {
+        throw new Error('XDR Write Error: Got array of size ' + value.length + ',' + ('expected ' + this._length));
+      }
+
+      (0, _each2.default)(value, function (child) {
+        return _this2._childType.write(child, io);
+      });
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      var _this3 = this;
+
+      if (!(0, _isArray2.default)(value)) {
+        return false;
+      }
+      if (value.length !== this._length) {
+        return false;
+      }
+
+      return (0, _every2.default)(value, function (child) {
+        return _this3._childType.isValid(child);
+      });
+    }
+  }]);
+
+  return Array;
+}();
+
+(0, _ioMixin2.default)(Array.prototype);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/bool.js":
-/*!*****************************************!*\
-  !*** ./node_modules/js-xdr/lib/bool.js ***!
-  \*****************************************/
+/***/ 6378:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Bool = undefined;\n\nvar _isBoolean = __webpack_require__(/*! lodash/isBoolean */ \"./node_modules/lodash/isBoolean.js\");\n\nvar _isBoolean2 = _interopRequireDefault(_isBoolean);\n\nvar _int = __webpack_require__(/*! ./int */ \"./node_modules/js-xdr/lib/int.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar Bool = exports.Bool = {\n  read: function read(io) {\n    var value = _int.Int.read(io);\n\n    switch (value) {\n      case 0:\n        return false;\n      case 1:\n        return true;\n      default:\n        throw new Error('XDR Read Error: Got ' + value + ' when trying to read a bool');\n    }\n  },\n  write: function write(value, io) {\n    var intVal = value ? 1 : 0;\n    return _int.Int.write(intVal, io);\n  },\n  isValid: function isValid(value) {\n    return (0, _isBoolean2.default)(value);\n  }\n};\n\n(0, _ioMixin2.default)(Bool);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/bool.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Bool = undefined;
+
+var _isBoolean = __webpack_require__(1584);
+
+var _isBoolean2 = _interopRequireDefault(_isBoolean);
+
+var _int = __webpack_require__(3983);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Bool = exports.Bool = {
+  read: function read(io) {
+    var value = _int.Int.read(io);
+
+    switch (value) {
+      case 0:
+        return false;
+      case 1:
+        return true;
+      default:
+        throw new Error('XDR Read Error: Got ' + value + ' when trying to read a bool');
+    }
+  },
+  write: function write(value, io) {
+    var intVal = value ? 1 : 0;
+    return _int.Int.write(intVal, io);
+  },
+  isValid: function isValid(value) {
+    return (0, _isBoolean2.default)(value);
+  }
+};
+
+(0, _ioMixin2.default)(Bool);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/config.js":
-/*!*******************************************!*\
-  !*** ./node_modules/js-xdr/lib/config.js ***!
-  \*******************************************/
+/***/ 1890:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _reference = __webpack_require__(/*! ./reference */ \"./node_modules/js-xdr/lib/reference.js\");\n\nObject.keys(_reference).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _reference[key];\n    }\n  });\n});\nexports.config = config;\n\nvar _isUndefined = __webpack_require__(/*! lodash/isUndefined */ \"./node_modules/lodash/isUndefined.js\");\n\nvar _isUndefined2 = _interopRequireDefault(_isUndefined);\n\nvar _each = __webpack_require__(/*! lodash/each */ \"./node_modules/lodash/each.js\");\n\nvar _each2 = _interopRequireDefault(_each);\n\nvar _types = __webpack_require__(/*! ./types */ \"./node_modules/js-xdr/lib/types.js\");\n\nvar XDRTypes = _interopRequireWildcard(_types);\n\nfunction _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nfunction config(fn) {\n  var types = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};\n\n  if (fn) {\n    var builder = new TypeBuilder(types);\n    fn(builder);\n    builder.resolve();\n  }\n\n  return types;\n}\n\nvar SimpleReference = function (_Reference) {\n  _inherits(SimpleReference, _Reference);\n\n  function SimpleReference(name) {\n    _classCallCheck(this, SimpleReference);\n\n    var _this = _possibleConstructorReturn(this, (SimpleReference.__proto__ || Object.getPrototypeOf(SimpleReference)).call(this));\n\n    _this.name = name;\n    return _this;\n  }\n\n  _createClass(SimpleReference, [{\n    key: 'resolve',\n    value: function resolve(context) {\n      var defn = context.definitions[this.name];\n      return defn.resolve(context);\n    }\n  }]);\n\n  return SimpleReference;\n}(_reference.Reference);\n\nvar ArrayReference = function (_Reference2) {\n  _inherits(ArrayReference, _Reference2);\n\n  function ArrayReference(childReference, length) {\n    var variable = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;\n\n    _classCallCheck(this, ArrayReference);\n\n    var _this2 = _possibleConstructorReturn(this, (ArrayReference.__proto__ || Object.getPrototypeOf(ArrayReference)).call(this));\n\n    _this2.childReference = childReference;\n    _this2.length = length;\n    _this2.variable = variable;\n    return _this2;\n  }\n\n  _createClass(ArrayReference, [{\n    key: 'resolve',\n    value: function resolve(context) {\n      var resolvedChild = this.childReference;\n      var length = this.length;\n\n      if (resolvedChild instanceof _reference.Reference) {\n        resolvedChild = resolvedChild.resolve(context);\n      }\n\n      if (length instanceof _reference.Reference) {\n        length = length.resolve(context);\n      }\n\n      if (this.variable) {\n        return new XDRTypes.VarArray(resolvedChild, length);\n      }\n      return new XDRTypes.Array(resolvedChild, length);\n    }\n  }]);\n\n  return ArrayReference;\n}(_reference.Reference);\n\nvar OptionReference = function (_Reference3) {\n  _inherits(OptionReference, _Reference3);\n\n  function OptionReference(childReference) {\n    _classCallCheck(this, OptionReference);\n\n    var _this3 = _possibleConstructorReturn(this, (OptionReference.__proto__ || Object.getPrototypeOf(OptionReference)).call(this));\n\n    _this3.childReference = childReference;\n    _this3.name = childReference.name;\n    return _this3;\n  }\n\n  _createClass(OptionReference, [{\n    key: 'resolve',\n    value: function resolve(context) {\n      var resolvedChild = this.childReference;\n\n      if (resolvedChild instanceof _reference.Reference) {\n        resolvedChild = resolvedChild.resolve(context);\n      }\n\n      return new XDRTypes.Option(resolvedChild);\n    }\n  }]);\n\n  return OptionReference;\n}(_reference.Reference);\n\nvar SizedReference = function (_Reference4) {\n  _inherits(SizedReference, _Reference4);\n\n  function SizedReference(sizedType, length) {\n    _classCallCheck(this, SizedReference);\n\n    var _this4 = _possibleConstructorReturn(this, (SizedReference.__proto__ || Object.getPrototypeOf(SizedReference)).call(this));\n\n    _this4.sizedType = sizedType;\n    _this4.length = length;\n    return _this4;\n  }\n\n  _createClass(SizedReference, [{\n    key: 'resolve',\n    value: function resolve(context) {\n      var length = this.length;\n\n      if (length instanceof _reference.Reference) {\n        length = length.resolve(context);\n      }\n\n      return new this.sizedType(length);\n    }\n  }]);\n\n  return SizedReference;\n}(_reference.Reference);\n\nvar Definition = function () {\n  function Definition(constructor, name, cfg) {\n    _classCallCheck(this, Definition);\n\n    this.constructor = constructor;\n    this.name = name;\n    this.config = cfg;\n  }\n\n  // resolve calls the constructor of this definition with the provided context\n  // and this definitions config values.  The definitions constructor should\n  // populate the final type on `context.results`, and may refer to other\n  // definitions through `context.definitions`\n\n\n  _createClass(Definition, [{\n    key: 'resolve',\n    value: function resolve(context) {\n      if (this.name in context.results) {\n        return context.results[this.name];\n      }\n\n      return this.constructor(context, this.name, this.config);\n    }\n  }]);\n\n  return Definition;\n}();\n\n// let the reference resoltion system do it's thing\n// the \"constructor\" for a typedef just returns the resolved value\n\n\nfunction createTypedef(context, typeName, value) {\n  if (value instanceof _reference.Reference) {\n    value = value.resolve(context);\n  }\n  context.results[typeName] = value;\n  return value;\n}\n\nfunction createConst(context, name, value) {\n  context.results[name] = value;\n  return value;\n}\n\nvar TypeBuilder = function () {\n  function TypeBuilder(destination) {\n    _classCallCheck(this, TypeBuilder);\n\n    this._destination = destination;\n    this._definitions = {};\n  }\n\n  _createClass(TypeBuilder, [{\n    key: 'enum',\n    value: function _enum(name, members) {\n      var result = new Definition(XDRTypes.Enum.create, name, members);\n      this.define(name, result);\n    }\n  }, {\n    key: 'struct',\n    value: function struct(name, members) {\n      var result = new Definition(XDRTypes.Struct.create, name, members);\n      this.define(name, result);\n    }\n  }, {\n    key: 'union',\n    value: function union(name, cfg) {\n      var result = new Definition(XDRTypes.Union.create, name, cfg);\n      this.define(name, result);\n    }\n  }, {\n    key: 'typedef',\n    value: function typedef(name, cfg) {\n      var result = new Definition(createTypedef, name, cfg);\n      this.define(name, result);\n    }\n  }, {\n    key: 'const',\n    value: function _const(name, cfg) {\n      var result = new Definition(createConst, name, cfg);\n      this.define(name, result);\n    }\n  }, {\n    key: 'void',\n    value: function _void() {\n      return XDRTypes.Void;\n    }\n  }, {\n    key: 'bool',\n    value: function bool() {\n      return XDRTypes.Bool;\n    }\n  }, {\n    key: 'int',\n    value: function int() {\n      return XDRTypes.Int;\n    }\n  }, {\n    key: 'hyper',\n    value: function hyper() {\n      return XDRTypes.Hyper;\n    }\n  }, {\n    key: 'uint',\n    value: function uint() {\n      return XDRTypes.UnsignedInt;\n    }\n  }, {\n    key: 'uhyper',\n    value: function uhyper() {\n      return XDRTypes.UnsignedHyper;\n    }\n  }, {\n    key: 'float',\n    value: function float() {\n      return XDRTypes.Float;\n    }\n  }, {\n    key: 'double',\n    value: function double() {\n      return XDRTypes.Double;\n    }\n  }, {\n    key: 'quadruple',\n    value: function quadruple() {\n      return XDRTypes.Quadruple;\n    }\n  }, {\n    key: 'string',\n    value: function string(length) {\n      return new SizedReference(XDRTypes.String, length);\n    }\n  }, {\n    key: 'opaque',\n    value: function opaque(length) {\n      return new SizedReference(XDRTypes.Opaque, length);\n    }\n  }, {\n    key: 'varOpaque',\n    value: function varOpaque(length) {\n      return new SizedReference(XDRTypes.VarOpaque, length);\n    }\n  }, {\n    key: 'array',\n    value: function array(childType, length) {\n      return new ArrayReference(childType, length);\n    }\n  }, {\n    key: 'varArray',\n    value: function varArray(childType, maxLength) {\n      return new ArrayReference(childType, maxLength, true);\n    }\n  }, {\n    key: 'option',\n    value: function option(childType) {\n      return new OptionReference(childType);\n    }\n  }, {\n    key: 'define',\n    value: function define(name, definition) {\n      if ((0, _isUndefined2.default)(this._destination[name])) {\n        this._definitions[name] = definition;\n      } else {\n        throw new Error('XDRTypes Error:' + name + ' is already defined');\n      }\n    }\n  }, {\n    key: 'lookup',\n    value: function lookup(name) {\n      return new SimpleReference(name);\n    }\n  }, {\n    key: 'resolve',\n    value: function resolve() {\n      var _this5 = this;\n\n      (0, _each2.default)(this._definitions, function (defn) {\n        defn.resolve({\n          definitions: _this5._definitions,\n          results: _this5._destination\n        });\n      });\n    }\n  }]);\n\n  return TypeBuilder;\n}();\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/config.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _reference = __webpack_require__(6357);
+
+Object.keys(_reference).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _reference[key];
+    }
+  });
+});
+exports.config = config;
+
+var _isUndefined = __webpack_require__(2353);
+
+var _isUndefined2 = _interopRequireDefault(_isUndefined);
+
+var _each = __webpack_require__(6073);
+
+var _each2 = _interopRequireDefault(_each);
+
+var _types = __webpack_require__(5830);
+
+var XDRTypes = _interopRequireWildcard(_types);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function config(fn) {
+  var types = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  if (fn) {
+    var builder = new TypeBuilder(types);
+    fn(builder);
+    builder.resolve();
+  }
+
+  return types;
+}
+
+var SimpleReference = function (_Reference) {
+  _inherits(SimpleReference, _Reference);
+
+  function SimpleReference(name) {
+    _classCallCheck(this, SimpleReference);
+
+    var _this = _possibleConstructorReturn(this, (SimpleReference.__proto__ || Object.getPrototypeOf(SimpleReference)).call(this));
+
+    _this.name = name;
+    return _this;
+  }
+
+  _createClass(SimpleReference, [{
+    key: 'resolve',
+    value: function resolve(context) {
+      var defn = context.definitions[this.name];
+      return defn.resolve(context);
+    }
+  }]);
+
+  return SimpleReference;
+}(_reference.Reference);
+
+var ArrayReference = function (_Reference2) {
+  _inherits(ArrayReference, _Reference2);
+
+  function ArrayReference(childReference, length) {
+    var variable = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    _classCallCheck(this, ArrayReference);
+
+    var _this2 = _possibleConstructorReturn(this, (ArrayReference.__proto__ || Object.getPrototypeOf(ArrayReference)).call(this));
+
+    _this2.childReference = childReference;
+    _this2.length = length;
+    _this2.variable = variable;
+    return _this2;
+  }
+
+  _createClass(ArrayReference, [{
+    key: 'resolve',
+    value: function resolve(context) {
+      var resolvedChild = this.childReference;
+      var length = this.length;
+
+      if (resolvedChild instanceof _reference.Reference) {
+        resolvedChild = resolvedChild.resolve(context);
+      }
+
+      if (length instanceof _reference.Reference) {
+        length = length.resolve(context);
+      }
+
+      if (this.variable) {
+        return new XDRTypes.VarArray(resolvedChild, length);
+      }
+      return new XDRTypes.Array(resolvedChild, length);
+    }
+  }]);
+
+  return ArrayReference;
+}(_reference.Reference);
+
+var OptionReference = function (_Reference3) {
+  _inherits(OptionReference, _Reference3);
+
+  function OptionReference(childReference) {
+    _classCallCheck(this, OptionReference);
+
+    var _this3 = _possibleConstructorReturn(this, (OptionReference.__proto__ || Object.getPrototypeOf(OptionReference)).call(this));
+
+    _this3.childReference = childReference;
+    _this3.name = childReference.name;
+    return _this3;
+  }
+
+  _createClass(OptionReference, [{
+    key: 'resolve',
+    value: function resolve(context) {
+      var resolvedChild = this.childReference;
+
+      if (resolvedChild instanceof _reference.Reference) {
+        resolvedChild = resolvedChild.resolve(context);
+      }
+
+      return new XDRTypes.Option(resolvedChild);
+    }
+  }]);
+
+  return OptionReference;
+}(_reference.Reference);
+
+var SizedReference = function (_Reference4) {
+  _inherits(SizedReference, _Reference4);
+
+  function SizedReference(sizedType, length) {
+    _classCallCheck(this, SizedReference);
+
+    var _this4 = _possibleConstructorReturn(this, (SizedReference.__proto__ || Object.getPrototypeOf(SizedReference)).call(this));
+
+    _this4.sizedType = sizedType;
+    _this4.length = length;
+    return _this4;
+  }
+
+  _createClass(SizedReference, [{
+    key: 'resolve',
+    value: function resolve(context) {
+      var length = this.length;
+
+      if (length instanceof _reference.Reference) {
+        length = length.resolve(context);
+      }
+
+      return new this.sizedType(length);
+    }
+  }]);
+
+  return SizedReference;
+}(_reference.Reference);
+
+var Definition = function () {
+  function Definition(constructor, name, cfg) {
+    _classCallCheck(this, Definition);
+
+    this.constructor = constructor;
+    this.name = name;
+    this.config = cfg;
+  }
+
+  // resolve calls the constructor of this definition with the provided context
+  // and this definitions config values.  The definitions constructor should
+  // populate the final type on `context.results`, and may refer to other
+  // definitions through `context.definitions`
+
+
+  _createClass(Definition, [{
+    key: 'resolve',
+    value: function resolve(context) {
+      if (this.name in context.results) {
+        return context.results[this.name];
+      }
+
+      return this.constructor(context, this.name, this.config);
+    }
+  }]);
+
+  return Definition;
+}();
+
+// let the reference resoltion system do it's thing
+// the "constructor" for a typedef just returns the resolved value
+
+
+function createTypedef(context, typeName, value) {
+  if (value instanceof _reference.Reference) {
+    value = value.resolve(context);
+  }
+  context.results[typeName] = value;
+  return value;
+}
+
+function createConst(context, name, value) {
+  context.results[name] = value;
+  return value;
+}
+
+var TypeBuilder = function () {
+  function TypeBuilder(destination) {
+    _classCallCheck(this, TypeBuilder);
+
+    this._destination = destination;
+    this._definitions = {};
+  }
+
+  _createClass(TypeBuilder, [{
+    key: 'enum',
+    value: function _enum(name, members) {
+      var result = new Definition(XDRTypes.Enum.create, name, members);
+      this.define(name, result);
+    }
+  }, {
+    key: 'struct',
+    value: function struct(name, members) {
+      var result = new Definition(XDRTypes.Struct.create, name, members);
+      this.define(name, result);
+    }
+  }, {
+    key: 'union',
+    value: function union(name, cfg) {
+      var result = new Definition(XDRTypes.Union.create, name, cfg);
+      this.define(name, result);
+    }
+  }, {
+    key: 'typedef',
+    value: function typedef(name, cfg) {
+      var result = new Definition(createTypedef, name, cfg);
+      this.define(name, result);
+    }
+  }, {
+    key: 'const',
+    value: function _const(name, cfg) {
+      var result = new Definition(createConst, name, cfg);
+      this.define(name, result);
+    }
+  }, {
+    key: 'void',
+    value: function _void() {
+      return XDRTypes.Void;
+    }
+  }, {
+    key: 'bool',
+    value: function bool() {
+      return XDRTypes.Bool;
+    }
+  }, {
+    key: 'int',
+    value: function int() {
+      return XDRTypes.Int;
+    }
+  }, {
+    key: 'hyper',
+    value: function hyper() {
+      return XDRTypes.Hyper;
+    }
+  }, {
+    key: 'uint',
+    value: function uint() {
+      return XDRTypes.UnsignedInt;
+    }
+  }, {
+    key: 'uhyper',
+    value: function uhyper() {
+      return XDRTypes.UnsignedHyper;
+    }
+  }, {
+    key: 'float',
+    value: function float() {
+      return XDRTypes.Float;
+    }
+  }, {
+    key: 'double',
+    value: function double() {
+      return XDRTypes.Double;
+    }
+  }, {
+    key: 'quadruple',
+    value: function quadruple() {
+      return XDRTypes.Quadruple;
+    }
+  }, {
+    key: 'string',
+    value: function string(length) {
+      return new SizedReference(XDRTypes.String, length);
+    }
+  }, {
+    key: 'opaque',
+    value: function opaque(length) {
+      return new SizedReference(XDRTypes.Opaque, length);
+    }
+  }, {
+    key: 'varOpaque',
+    value: function varOpaque(length) {
+      return new SizedReference(XDRTypes.VarOpaque, length);
+    }
+  }, {
+    key: 'array',
+    value: function array(childType, length) {
+      return new ArrayReference(childType, length);
+    }
+  }, {
+    key: 'varArray',
+    value: function varArray(childType, maxLength) {
+      return new ArrayReference(childType, maxLength, true);
+    }
+  }, {
+    key: 'option',
+    value: function option(childType) {
+      return new OptionReference(childType);
+    }
+  }, {
+    key: 'define',
+    value: function define(name, definition) {
+      if ((0, _isUndefined2.default)(this._destination[name])) {
+        this._definitions[name] = definition;
+      } else {
+        throw new Error('XDRTypes Error:' + name + ' is already defined');
+      }
+    }
+  }, {
+    key: 'lookup',
+    value: function lookup(name) {
+      return new SimpleReference(name);
+    }
+  }, {
+    key: 'resolve',
+    value: function resolve() {
+      var _this5 = this;
+
+      (0, _each2.default)(this._definitions, function (defn) {
+        defn.resolve({
+          definitions: _this5._definitions,
+          results: _this5._destination
+        });
+      });
+    }
+  }]);
+
+  return TypeBuilder;
+}();
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/cursor.js":
-/*!*******************************************!*\
-  !*** ./node_modules/js-xdr/lib/cursor.js ***!
-  \*******************************************/
+/***/ 5610:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Cursor = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _util = __webpack_require__(/*! ./util */ \"./node_modules/js-xdr/lib/util.js\");\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Cursor = function () {\n  function Cursor(buffer) {\n    _classCallCheck(this, Cursor);\n\n    if (!(buffer instanceof Buffer)) {\n      buffer = typeof buffer === 'number' ? Buffer.alloc(buffer) : Buffer.from(buffer);\n    }\n\n    this._setBuffer(buffer);\n    this.rewind();\n  }\n\n  _createClass(Cursor, [{\n    key: '_setBuffer',\n    value: function _setBuffer(buffer) {\n      this._buffer = buffer;\n      this.length = buffer.length;\n    }\n  }, {\n    key: 'buffer',\n    value: function buffer() {\n      return this._buffer;\n    }\n  }, {\n    key: 'tap',\n    value: function tap(cb) {\n      cb(this);\n      return this;\n    }\n  }, {\n    key: 'clone',\n    value: function clone(newIndex) {\n      var c = new this.constructor(this.buffer());\n      c.seek(arguments.length === 0 ? this.tell() : newIndex);\n\n      return c;\n    }\n  }, {\n    key: 'tell',\n    value: function tell() {\n      return this._index;\n    }\n  }, {\n    key: 'seek',\n    value: function seek(op, index) {\n      if (arguments.length === 1) {\n        index = op;\n        op = '=';\n      }\n\n      if (op === '+') {\n        this._index += index;\n      } else if (op === '-') {\n        this._index -= index;\n      } else {\n        this._index = index;\n      }\n\n      return this;\n    }\n  }, {\n    key: 'rewind',\n    value: function rewind() {\n      return this.seek(0);\n    }\n  }, {\n    key: 'eof',\n    value: function eof() {\n      return this.tell() === this.buffer().length;\n    }\n  }, {\n    key: 'write',\n    value: function write(string, length, encoding) {\n      return this.seek('+', this.buffer().write(string, this.tell(), length, encoding));\n    }\n  }, {\n    key: 'fill',\n    value: function fill(value, length) {\n      if (arguments.length === 1) {\n        length = this.buffer().length - this.tell();\n      }\n\n      this.buffer().fill(value, this.tell(), this.tell() + length);\n      this.seek('+', length);\n\n      return this;\n    }\n  }, {\n    key: 'slice',\n    value: function slice(length) {\n      if (arguments.length === 0) {\n        length = this.length - this.tell();\n      }\n\n      var c = new this.constructor(this.buffer().slice(this.tell(), this.tell() + length));\n      this.seek('+', length);\n\n      return c;\n    }\n  }, {\n    key: 'copyFrom',\n    value: function copyFrom(source) {\n      var buf = source instanceof Buffer ? source : source.buffer();\n      buf.copy(this.buffer(), this.tell(), 0, buf.length);\n      this.seek('+', buf.length);\n\n      return this;\n    }\n  }, {\n    key: 'concat',\n    value: function concat(list) {\n      list.forEach(function (item, i) {\n        if (item instanceof Cursor) {\n          list[i] = item.buffer();\n        }\n      });\n\n      list.unshift(this.buffer());\n\n      var b = Buffer.concat(list);\n      this._setBuffer(b);\n\n      return this;\n    }\n  }, {\n    key: 'toString',\n    value: function toString(encoding, length) {\n      if (arguments.length === 0) {\n        encoding = 'utf8';\n        length = this.buffer().length - this.tell();\n      } else if (arguments.length === 1) {\n        length = this.buffer().length - this.tell();\n      }\n\n      var val = this.buffer().toString(encoding, this.tell(), this.tell() + length);\n      this.seek('+', length);\n\n      return val;\n    }\n  }, {\n    key: 'writeBufferPadded',\n    value: function writeBufferPadded(buffer) {\n      var padding = (0, _util.calculatePadding)(buffer.length);\n      var paddingBuffer = Buffer.alloc(padding);\n\n      return this.copyFrom(new Cursor(buffer)).copyFrom(new Cursor(paddingBuffer));\n    }\n  }]);\n\n  return Cursor;\n}();\n\n[[1, ['readInt8', 'readUInt8']], [2, ['readInt16BE', 'readInt16LE', 'readUInt16BE', 'readUInt16LE']], [4, ['readInt32BE', 'readInt32LE', 'readUInt32BE', 'readUInt32LE', 'readFloatBE', 'readFloatLE']], [8, ['readDoubleBE', 'readDoubleLE']]].forEach(function (arr) {\n  arr[1].forEach(function (method) {\n    Cursor.prototype[method] = function read() {\n      var val = this.buffer()[method](this.tell());\n      this.seek('+', arr[0]);\n\n      return val;\n    };\n  });\n});\n\n[[1, ['writeInt8', 'writeUInt8']], [2, ['writeInt16BE', 'writeInt16LE', 'writeUInt16BE', 'writeUInt16LE']], [4, ['writeInt32BE', 'writeInt32LE', 'writeUInt32BE', 'writeUInt32LE', 'writeFloatBE', 'writeFloatLE']], [8, ['writeDoubleBE', 'writeDoubleLE']]].forEach(function (arr) {\n  arr[1].forEach(function (method) {\n    Cursor.prototype[method] = function write(val) {\n      this.buffer()[method](val, this.tell());\n      this.seek('+', arr[0]);\n\n      return this;\n    };\n  });\n});\n\nexports.Cursor = Cursor;\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/cursor.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Cursor = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _util = __webpack_require__(2230);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cursor = function () {
+  function Cursor(buffer) {
+    _classCallCheck(this, Cursor);
+
+    if (!(buffer instanceof Buffer)) {
+      buffer = typeof buffer === 'number' ? Buffer.alloc(buffer) : Buffer.from(buffer);
+    }
+
+    this._setBuffer(buffer);
+    this.rewind();
+  }
+
+  _createClass(Cursor, [{
+    key: '_setBuffer',
+    value: function _setBuffer(buffer) {
+      this._buffer = buffer;
+      this.length = buffer.length;
+    }
+  }, {
+    key: 'buffer',
+    value: function buffer() {
+      return this._buffer;
+    }
+  }, {
+    key: 'tap',
+    value: function tap(cb) {
+      cb(this);
+      return this;
+    }
+  }, {
+    key: 'clone',
+    value: function clone(newIndex) {
+      var c = new this.constructor(this.buffer());
+      c.seek(arguments.length === 0 ? this.tell() : newIndex);
+
+      return c;
+    }
+  }, {
+    key: 'tell',
+    value: function tell() {
+      return this._index;
+    }
+  }, {
+    key: 'seek',
+    value: function seek(op, index) {
+      if (arguments.length === 1) {
+        index = op;
+        op = '=';
+      }
+
+      if (op === '+') {
+        this._index += index;
+      } else if (op === '-') {
+        this._index -= index;
+      } else {
+        this._index = index;
+      }
+
+      return this;
+    }
+  }, {
+    key: 'rewind',
+    value: function rewind() {
+      return this.seek(0);
+    }
+  }, {
+    key: 'eof',
+    value: function eof() {
+      return this.tell() === this.buffer().length;
+    }
+  }, {
+    key: 'write',
+    value: function write(string, length, encoding) {
+      return this.seek('+', this.buffer().write(string, this.tell(), length, encoding));
+    }
+  }, {
+    key: 'fill',
+    value: function fill(value, length) {
+      if (arguments.length === 1) {
+        length = this.buffer().length - this.tell();
+      }
+
+      this.buffer().fill(value, this.tell(), this.tell() + length);
+      this.seek('+', length);
+
+      return this;
+    }
+  }, {
+    key: 'slice',
+    value: function slice(length) {
+      if (arguments.length === 0) {
+        length = this.length - this.tell();
+      }
+
+      var c = new this.constructor(this.buffer().slice(this.tell(), this.tell() + length));
+      this.seek('+', length);
+
+      return c;
+    }
+  }, {
+    key: 'copyFrom',
+    value: function copyFrom(source) {
+      var buf = source instanceof Buffer ? source : source.buffer();
+      buf.copy(this.buffer(), this.tell(), 0, buf.length);
+      this.seek('+', buf.length);
+
+      return this;
+    }
+  }, {
+    key: 'concat',
+    value: function concat(list) {
+      list.forEach(function (item, i) {
+        if (item instanceof Cursor) {
+          list[i] = item.buffer();
+        }
+      });
+
+      list.unshift(this.buffer());
+
+      var b = Buffer.concat(list);
+      this._setBuffer(b);
+
+      return this;
+    }
+  }, {
+    key: 'toString',
+    value: function toString(encoding, length) {
+      if (arguments.length === 0) {
+        encoding = 'utf8';
+        length = this.buffer().length - this.tell();
+      } else if (arguments.length === 1) {
+        length = this.buffer().length - this.tell();
+      }
+
+      var val = this.buffer().toString(encoding, this.tell(), this.tell() + length);
+      this.seek('+', length);
+
+      return val;
+    }
+  }, {
+    key: 'writeBufferPadded',
+    value: function writeBufferPadded(buffer) {
+      var padding = (0, _util.calculatePadding)(buffer.length);
+      var paddingBuffer = Buffer.alloc(padding);
+
+      return this.copyFrom(new Cursor(buffer)).copyFrom(new Cursor(paddingBuffer));
+    }
+  }]);
+
+  return Cursor;
+}();
+
+[[1, ['readInt8', 'readUInt8']], [2, ['readInt16BE', 'readInt16LE', 'readUInt16BE', 'readUInt16LE']], [4, ['readInt32BE', 'readInt32LE', 'readUInt32BE', 'readUInt32LE', 'readFloatBE', 'readFloatLE']], [8, ['readDoubleBE', 'readDoubleLE']]].forEach(function (arr) {
+  arr[1].forEach(function (method) {
+    Cursor.prototype[method] = function read() {
+      var val = this.buffer()[method](this.tell());
+      this.seek('+', arr[0]);
+
+      return val;
+    };
+  });
+});
+
+[[1, ['writeInt8', 'writeUInt8']], [2, ['writeInt16BE', 'writeInt16LE', 'writeUInt16BE', 'writeUInt16LE']], [4, ['writeInt32BE', 'writeInt32LE', 'writeUInt32BE', 'writeUInt32LE', 'writeFloatBE', 'writeFloatLE']], [8, ['writeDoubleBE', 'writeDoubleLE']]].forEach(function (arr) {
+  arr[1].forEach(function (method) {
+    Cursor.prototype[method] = function write(val) {
+      this.buffer()[method](val, this.tell());
+      this.seek('+', arr[0]);
+
+      return this;
+    };
+  });
+});
+
+exports.Cursor = Cursor;
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/double.js":
-/*!*******************************************!*\
-  !*** ./node_modules/js-xdr/lib/double.js ***!
-  \*******************************************/
+/***/ 1160:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Double = undefined;\n\nvar _isNumber = __webpack_require__(/*! lodash/isNumber */ \"./node_modules/lodash/isNumber.js\");\n\nvar _isNumber2 = _interopRequireDefault(_isNumber);\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar Double = exports.Double = {\n  read: function read(io) {\n    return io.readDoubleBE();\n  },\n  write: function write(value, io) {\n    if (!(0, _isNumber2.default)(value)) {\n      throw new Error('XDR Write Error: not a number');\n    }\n\n    io.writeDoubleBE(value);\n  },\n  isValid: function isValid(value) {\n    return (0, _isNumber2.default)(value);\n  }\n};\n\n(0, _ioMixin2.default)(Double);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/double.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Double = undefined;
+
+var _isNumber = __webpack_require__(1763);
+
+var _isNumber2 = _interopRequireDefault(_isNumber);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Double = exports.Double = {
+  read: function read(io) {
+    return io.readDoubleBE();
+  },
+  write: function write(value, io) {
+    if (!(0, _isNumber2.default)(value)) {
+      throw new Error('XDR Write Error: not a number');
+    }
+
+    io.writeDoubleBE(value);
+  },
+  isValid: function isValid(value) {
+    return (0, _isNumber2.default)(value);
+  }
+};
+
+(0, _ioMixin2.default)(Double);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/enum.js":
-/*!*****************************************!*\
-  !*** ./node_modules/js-xdr/lib/enum.js ***!
-  \*****************************************/
+/***/ 1969:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Enum = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _each = __webpack_require__(/*! lodash/each */ \"./node_modules/lodash/each.js\");\n\nvar _each2 = _interopRequireDefault(_each);\n\nvar _values = __webpack_require__(/*! lodash/values */ \"./node_modules/lodash/values.js\");\n\nvar _values2 = _interopRequireDefault(_values);\n\nvar _int = __webpack_require__(/*! ./int */ \"./node_modules/js-xdr/lib/int.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Enum = exports.Enum = function () {\n  function Enum(name, value) {\n    _classCallCheck(this, Enum);\n\n    this.name = name;\n    this.value = value;\n  }\n\n  _createClass(Enum, null, [{\n    key: 'read',\n    value: function read(io) {\n      var intVal = _int.Int.read(io);\n\n      if (!this._byValue.has(intVal)) {\n        throw new Error('XDR Read Error: Unknown ' + this.enumName + ' member for value ' + intVal);\n      }\n\n      return this._byValue.get(intVal);\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      if (!(value instanceof this)) {\n        throw new Error('XDR Write Error: Unknown ' + value + ' is not a ' + this.enumName);\n      }\n\n      _int.Int.write(value.value, io);\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      return value instanceof this;\n    }\n  }, {\n    key: 'members',\n    value: function members() {\n      return this._members;\n    }\n  }, {\n    key: 'values',\n    value: function values() {\n      return (0, _values2.default)(this._members);\n    }\n  }, {\n    key: 'fromName',\n    value: function fromName(name) {\n      var result = this._members[name];\n\n      if (!result) {\n        throw new Error(name + ' is not a member of ' + this.enumName);\n      }\n\n      return result;\n    }\n  }, {\n    key: 'fromValue',\n    value: function fromValue(value) {\n      var result = this._byValue.get(value);\n\n      if (!result) {\n        throw new Error(value + ' is not a value of any member of ' + this.enumName);\n      }\n\n      return result;\n    }\n  }, {\n    key: 'create',\n    value: function create(context, name, members) {\n      var ChildEnum = function (_Enum) {\n        _inherits(ChildEnum, _Enum);\n\n        function ChildEnum() {\n          _classCallCheck(this, ChildEnum);\n\n          return _possibleConstructorReturn(this, (ChildEnum.__proto__ || Object.getPrototypeOf(ChildEnum)).apply(this, arguments));\n        }\n\n        return ChildEnum;\n      }(Enum);\n\n      ChildEnum.enumName = name;\n      context.results[name] = ChildEnum;\n\n      ChildEnum._members = {};\n      ChildEnum._byValue = new Map();\n\n      (0, _each2.default)(members, function (value, key) {\n        var inst = new ChildEnum(key, value);\n        ChildEnum._members[key] = inst;\n        ChildEnum._byValue.set(value, inst);\n        ChildEnum[key] = function () {\n          return inst;\n        };\n      });\n\n      return ChildEnum;\n    }\n  }]);\n\n  return Enum;\n}();\n\n(0, _ioMixin2.default)(Enum);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/enum.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Enum = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _each = __webpack_require__(6073);
+
+var _each2 = _interopRequireDefault(_each);
+
+var _values = __webpack_require__(2628);
+
+var _values2 = _interopRequireDefault(_values);
+
+var _int = __webpack_require__(3983);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Enum = exports.Enum = function () {
+  function Enum(name, value) {
+    _classCallCheck(this, Enum);
+
+    this.name = name;
+    this.value = value;
+  }
+
+  _createClass(Enum, null, [{
+    key: 'read',
+    value: function read(io) {
+      var intVal = _int.Int.read(io);
+
+      if (!this._byValue.has(intVal)) {
+        throw new Error('XDR Read Error: Unknown ' + this.enumName + ' member for value ' + intVal);
+      }
+
+      return this._byValue.get(intVal);
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      if (!(value instanceof this)) {
+        throw new Error('XDR Write Error: Unknown ' + value + ' is not a ' + this.enumName);
+      }
+
+      _int.Int.write(value.value, io);
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      return value instanceof this;
+    }
+  }, {
+    key: 'members',
+    value: function members() {
+      return this._members;
+    }
+  }, {
+    key: 'values',
+    value: function values() {
+      return (0, _values2.default)(this._members);
+    }
+  }, {
+    key: 'fromName',
+    value: function fromName(name) {
+      var result = this._members[name];
+
+      if (!result) {
+        throw new Error(name + ' is not a member of ' + this.enumName);
+      }
+
+      return result;
+    }
+  }, {
+    key: 'fromValue',
+    value: function fromValue(value) {
+      var result = this._byValue.get(value);
+
+      if (!result) {
+        throw new Error(value + ' is not a value of any member of ' + this.enumName);
+      }
+
+      return result;
+    }
+  }, {
+    key: 'create',
+    value: function create(context, name, members) {
+      var ChildEnum = function (_Enum) {
+        _inherits(ChildEnum, _Enum);
+
+        function ChildEnum() {
+          _classCallCheck(this, ChildEnum);
+
+          return _possibleConstructorReturn(this, (ChildEnum.__proto__ || Object.getPrototypeOf(ChildEnum)).apply(this, arguments));
+        }
+
+        return ChildEnum;
+      }(Enum);
+
+      ChildEnum.enumName = name;
+      context.results[name] = ChildEnum;
+
+      ChildEnum._members = {};
+      ChildEnum._byValue = new Map();
+
+      (0, _each2.default)(members, function (value, key) {
+        var inst = new ChildEnum(key, value);
+        ChildEnum._members[key] = inst;
+        ChildEnum._byValue.set(value, inst);
+        ChildEnum[key] = function () {
+          return inst;
+        };
+      });
+
+      return ChildEnum;
+    }
+  }]);
+
+  return Enum;
+}();
+
+(0, _ioMixin2.default)(Enum);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/float.js":
-/*!******************************************!*\
-  !*** ./node_modules/js-xdr/lib/float.js ***!
-  \******************************************/
+/***/ 2990:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Float = undefined;\n\nvar _isNumber = __webpack_require__(/*! lodash/isNumber */ \"./node_modules/lodash/isNumber.js\");\n\nvar _isNumber2 = _interopRequireDefault(_isNumber);\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar Float = exports.Float = {\n  read: function read(io) {\n    return io.readFloatBE();\n  },\n  write: function write(value, io) {\n    if (!(0, _isNumber2.default)(value)) {\n      throw new Error('XDR Write Error: not a number');\n    }\n\n    io.writeFloatBE(value);\n  },\n  isValid: function isValid(value) {\n    return (0, _isNumber2.default)(value);\n  }\n};\n\n(0, _ioMixin2.default)(Float);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/float.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Float = undefined;
+
+var _isNumber = __webpack_require__(1763);
+
+var _isNumber2 = _interopRequireDefault(_isNumber);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Float = exports.Float = {
+  read: function read(io) {
+    return io.readFloatBE();
+  },
+  write: function write(value, io) {
+    if (!(0, _isNumber2.default)(value)) {
+      throw new Error('XDR Write Error: not a number');
+    }
+
+    io.writeFloatBE(value);
+  },
+  isValid: function isValid(value) {
+    return (0, _isNumber2.default)(value);
+  }
+};
+
+(0, _ioMixin2.default)(Float);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/hyper.js":
-/*!******************************************!*\
-  !*** ./node_modules/js-xdr/lib/hyper.js ***!
-  \******************************************/
+/***/ 8372:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Hyper = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if (\"value\" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };\n\nvar _long = __webpack_require__(/*! long */ \"./node_modules/long/dist/Long.js\");\n\nvar _long2 = _interopRequireDefault(_long);\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nvar Hyper = exports.Hyper = function (_Long) {\n  _inherits(Hyper, _Long);\n\n  _createClass(Hyper, null, [{\n    key: 'read',\n    value: function read(io) {\n      var high = io.readInt32BE();\n      var low = io.readInt32BE();\n      return this.fromBits(low, high);\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      if (!(value instanceof this)) {\n        throw new Error('XDR Write Error: ' + value + ' is not a Hyper');\n      }\n\n      io.writeInt32BE(value.high);\n      io.writeInt32BE(value.low);\n    }\n  }, {\n    key: 'fromString',\n    value: function fromString(string) {\n      if (!/^-?\\d+$/.test(string)) {\n        throw new Error('Invalid hyper string: ' + string);\n      }\n      var result = _get(Hyper.__proto__ || Object.getPrototypeOf(Hyper), 'fromString', this).call(this, string, false);\n      return new this(result.low, result.high);\n    }\n  }, {\n    key: 'fromBits',\n    value: function fromBits(low, high) {\n      var result = _get(Hyper.__proto__ || Object.getPrototypeOf(Hyper), 'fromBits', this).call(this, low, high, false);\n      return new this(result.low, result.high);\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      return value instanceof this;\n    }\n  }]);\n\n  function Hyper(low, high) {\n    _classCallCheck(this, Hyper);\n\n    return _possibleConstructorReturn(this, (Hyper.__proto__ || Object.getPrototypeOf(Hyper)).call(this, low, high, false));\n  }\n\n  return Hyper;\n}(_long2.default);\n\n(0, _ioMixin2.default)(Hyper);\n\nHyper.MAX_VALUE = new Hyper(_long2.default.MAX_VALUE.low, _long2.default.MAX_VALUE.high);\nHyper.MIN_VALUE = new Hyper(_long2.default.MIN_VALUE.low, _long2.default.MIN_VALUE.high);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/hyper.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Hyper = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _long = __webpack_require__(1102);
+
+var _long2 = _interopRequireDefault(_long);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Hyper = exports.Hyper = function (_Long) {
+  _inherits(Hyper, _Long);
+
+  _createClass(Hyper, null, [{
+    key: 'read',
+    value: function read(io) {
+      var high = io.readInt32BE();
+      var low = io.readInt32BE();
+      return this.fromBits(low, high);
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      if (!(value instanceof this)) {
+        throw new Error('XDR Write Error: ' + value + ' is not a Hyper');
+      }
+
+      io.writeInt32BE(value.high);
+      io.writeInt32BE(value.low);
+    }
+  }, {
+    key: 'fromString',
+    value: function fromString(string) {
+      if (!/^-?\d+$/.test(string)) {
+        throw new Error('Invalid hyper string: ' + string);
+      }
+      var result = _get(Hyper.__proto__ || Object.getPrototypeOf(Hyper), 'fromString', this).call(this, string, false);
+      return new this(result.low, result.high);
+    }
+  }, {
+    key: 'fromBits',
+    value: function fromBits(low, high) {
+      var result = _get(Hyper.__proto__ || Object.getPrototypeOf(Hyper), 'fromBits', this).call(this, low, high, false);
+      return new this(result.low, result.high);
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      return value instanceof this;
+    }
+  }]);
+
+  function Hyper(low, high) {
+    _classCallCheck(this, Hyper);
+
+    return _possibleConstructorReturn(this, (Hyper.__proto__ || Object.getPrototypeOf(Hyper)).call(this, low, high, false));
+  }
+
+  return Hyper;
+}(_long2.default);
+
+(0, _ioMixin2.default)(Hyper);
+
+Hyper.MAX_VALUE = new Hyper(_long2.default.MAX_VALUE.low, _long2.default.MAX_VALUE.high);
+Hyper.MIN_VALUE = new Hyper(_long2.default.MIN_VALUE.low, _long2.default.MIN_VALUE.high);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/index.js":
-/*!******************************************!*\
-  !*** ./node_modules/js-xdr/lib/index.js ***!
-  \******************************************/
+/***/ 2259:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\n\nvar _types = __webpack_require__(/*! ./types */ \"./node_modules/js-xdr/lib/types.js\");\n\nObject.keys(_types).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _types[key];\n    }\n  });\n});\n\nvar _config = __webpack_require__(/*! ./config */ \"./node_modules/js-xdr/lib/config.js\");\n\nObject.keys(_config).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _config[key];\n    }\n  });\n});\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/index.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var _types = __webpack_require__(5830);
+
+Object.keys(_types).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _types[key];
+    }
+  });
+});
+
+var _config = __webpack_require__(1890);
+
+Object.keys(_config).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _config[key];
+    }
+  });
+});
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/int.js":
-/*!****************************************!*\
-  !*** ./node_modules/js-xdr/lib/int.js ***!
-  \****************************************/
+/***/ 3983:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Int = undefined;\n\nvar _isNumber = __webpack_require__(/*! lodash/isNumber */ \"./node_modules/lodash/isNumber.js\");\n\nvar _isNumber2 = _interopRequireDefault(_isNumber);\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar Int = exports.Int = {\n  read: function read(io) {\n    return io.readInt32BE();\n  },\n  write: function write(value, io) {\n    if (!(0, _isNumber2.default)(value)) {\n      throw new Error('XDR Write Error: not a number');\n    }\n\n    if (Math.floor(value) !== value) {\n      throw new Error('XDR Write Error: not an integer');\n    }\n\n    io.writeInt32BE(value);\n  },\n  isValid: function isValid(value) {\n    if (!(0, _isNumber2.default)(value)) {\n      return false;\n    }\n    if (Math.floor(value) !== value) {\n      return false;\n    }\n\n    return value >= Int.MIN_VALUE && value <= Int.MAX_VALUE;\n  }\n};\n\nInt.MAX_VALUE = Math.pow(2, 31) - 1;\nInt.MIN_VALUE = -Math.pow(2, 31);\n\n(0, _ioMixin2.default)(Int);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/int.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Int = undefined;
+
+var _isNumber = __webpack_require__(1763);
+
+var _isNumber2 = _interopRequireDefault(_isNumber);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Int = exports.Int = {
+  read: function read(io) {
+    return io.readInt32BE();
+  },
+  write: function write(value, io) {
+    if (!(0, _isNumber2.default)(value)) {
+      throw new Error('XDR Write Error: not a number');
+    }
+
+    if (Math.floor(value) !== value) {
+      throw new Error('XDR Write Error: not an integer');
+    }
+
+    io.writeInt32BE(value);
+  },
+  isValid: function isValid(value) {
+    if (!(0, _isNumber2.default)(value)) {
+      return false;
+    }
+    if (Math.floor(value) !== value) {
+      return false;
+    }
+
+    return value >= Int.MIN_VALUE && value <= Int.MAX_VALUE;
+  }
+};
+
+Int.MAX_VALUE = Math.pow(2, 31) - 1;
+Int.MIN_VALUE = -Math.pow(2, 31);
+
+(0, _ioMixin2.default)(Int);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/io-mixin.js":
-/*!*********************************************!*\
-  !*** ./node_modules/js-xdr/lib/io-mixin.js ***!
-  \*********************************************/
+/***/ 8666:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports[\"default\"] = includeIoMixin;\n\nvar _extend = __webpack_require__(/*! lodash/extend */ \"./node_modules/lodash/extend.js\");\n\nvar _extend2 = _interopRequireDefault(_extend);\n\nvar _isFunction = __webpack_require__(/*! lodash/isFunction */ \"./node_modules/lodash/isFunction.js\");\n\nvar _isFunction2 = _interopRequireDefault(_isFunction);\n\nvar _cursor = __webpack_require__(/*! ./cursor */ \"./node_modules/js-xdr/lib/cursor.js\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n// TODO: build a system to grow a buffer as we write to it\nvar BUFFER_SIZE = Math.pow(2, 16);\n\nvar staticMethods = {\n  toXDR: function toXDR(val) {\n    var cursor = new _cursor.Cursor(BUFFER_SIZE);\n    this.write(val, cursor);\n    var bytesWritten = cursor.tell();\n    cursor.rewind();\n\n    return cursor.slice(bytesWritten).buffer();\n  },\n  fromXDR: function fromXDR(input) {\n    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'raw';\n\n    var buffer = void 0;\n    switch (format) {\n      case 'raw':\n        buffer = input;\n        break;\n      case 'hex':\n        buffer = Buffer.from(input, 'hex');\n        break;\n      case 'base64':\n        buffer = Buffer.from(input, 'base64');\n        break;\n      default:\n        throw new Error('Invalid format ' + format + ', must be \"raw\", \"hex\", \"base64\"');\n    }\n\n    var cursor = new _cursor.Cursor(buffer);\n    var result = this.read(cursor);\n\n    // TODO: error out if the entire buffer isn't consumed\n\n    return result;\n  },\n  validateXDR: function validateXDR(input) {\n    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'raw';\n\n    try {\n      this.fromXDR(input, format);\n      return true;\n    } catch (e) {\n      return false;\n    }\n  }\n};\n\nvar instanceMethods = {\n  toXDR: function toXDR() {\n    var format = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'raw';\n\n    var buffer = this.constructor.toXDR(this);\n    switch (format) {\n      case 'raw':\n        return buffer;\n      case 'hex':\n        return buffer.toString('hex');\n      case 'base64':\n        return buffer.toString('base64');\n      default:\n        throw new Error('Invalid format ' + format + ', must be \"raw\", \"hex\", \"base64\"');\n    }\n  }\n};\n\nfunction includeIoMixin(obj) {\n  (0, _extend2.default)(obj, staticMethods);\n\n  if ((0, _isFunction2.default)(obj)) {\n    (0, _extend2.default)(obj.prototype, instanceMethods);\n  }\n}\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/io-mixin.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = includeIoMixin;
+
+var _extend = __webpack_require__(2205);
+
+var _extend2 = _interopRequireDefault(_extend);
+
+var _isFunction = __webpack_require__(3560);
+
+var _isFunction2 = _interopRequireDefault(_isFunction);
+
+var _cursor = __webpack_require__(5610);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// TODO: build a system to grow a buffer as we write to it
+var BUFFER_SIZE = Math.pow(2, 16);
+
+var staticMethods = {
+  toXDR: function toXDR(val) {
+    var cursor = new _cursor.Cursor(BUFFER_SIZE);
+    this.write(val, cursor);
+    var bytesWritten = cursor.tell();
+    cursor.rewind();
+
+    return cursor.slice(bytesWritten).buffer();
+  },
+  fromXDR: function fromXDR(input) {
+    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'raw';
+
+    var buffer = void 0;
+    switch (format) {
+      case 'raw':
+        buffer = input;
+        break;
+      case 'hex':
+        buffer = Buffer.from(input, 'hex');
+        break;
+      case 'base64':
+        buffer = Buffer.from(input, 'base64');
+        break;
+      default:
+        throw new Error('Invalid format ' + format + ', must be "raw", "hex", "base64"');
+    }
+
+    var cursor = new _cursor.Cursor(buffer);
+    var result = this.read(cursor);
+
+    // TODO: error out if the entire buffer isn't consumed
+
+    return result;
+  },
+  validateXDR: function validateXDR(input) {
+    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'raw';
+
+    try {
+      this.fromXDR(input, format);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+};
+
+var instanceMethods = {
+  toXDR: function toXDR() {
+    var format = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'raw';
+
+    var buffer = this.constructor.toXDR(this);
+    switch (format) {
+      case 'raw':
+        return buffer;
+      case 'hex':
+        return buffer.toString('hex');
+      case 'base64':
+        return buffer.toString('base64');
+      default:
+        throw new Error('Invalid format ' + format + ', must be "raw", "hex", "base64"');
+    }
+  }
+};
+
+function includeIoMixin(obj) {
+  (0, _extend2.default)(obj, staticMethods);
+
+  if ((0, _isFunction2.default)(obj)) {
+    (0, _extend2.default)(obj.prototype, instanceMethods);
+  }
+}
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/opaque.js":
-/*!*******************************************!*\
-  !*** ./node_modules/js-xdr/lib/opaque.js ***!
-  \*******************************************/
+/***/ 6186:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Opaque = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _util = __webpack_require__(/*! ./util */ \"./node_modules/js-xdr/lib/util.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Opaque = exports.Opaque = function () {\n  function Opaque(length) {\n    _classCallCheck(this, Opaque);\n\n    this._length = length;\n    this._padding = (0, _util.calculatePadding)(length);\n  }\n\n  _createClass(Opaque, [{\n    key: 'read',\n    value: function read(io) {\n      var result = io.slice(this._length);\n      (0, _util.slicePadding)(io, this._padding);\n      return result.buffer();\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      if (value.length !== this._length) {\n        throw new Error('XDR Write Error: Got ' + value.length + ' bytes, expected ' + this._length);\n      }\n\n      io.writeBufferPadded(value);\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      return Buffer.isBuffer(value) && value.length === this._length;\n    }\n  }]);\n\n  return Opaque;\n}();\n\n(0, _ioMixin2.default)(Opaque.prototype);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/opaque.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Opaque = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _util = __webpack_require__(2230);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Opaque = exports.Opaque = function () {
+  function Opaque(length) {
+    _classCallCheck(this, Opaque);
+
+    this._length = length;
+    this._padding = (0, _util.calculatePadding)(length);
+  }
+
+  _createClass(Opaque, [{
+    key: 'read',
+    value: function read(io) {
+      var result = io.slice(this._length);
+      (0, _util.slicePadding)(io, this._padding);
+      return result.buffer();
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      if (value.length !== this._length) {
+        throw new Error('XDR Write Error: Got ' + value.length + ' bytes, expected ' + this._length);
+      }
+
+      io.writeBufferPadded(value);
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      return Buffer.isBuffer(value) && value.length === this._length;
+    }
+  }]);
+
+  return Opaque;
+}();
+
+(0, _ioMixin2.default)(Opaque.prototype);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/option.js":
-/*!*******************************************!*\
-  !*** ./node_modules/js-xdr/lib/option.js ***!
-  \*******************************************/
+/***/ 4043:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Option = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _isNull = __webpack_require__(/*! lodash/isNull */ \"./node_modules/lodash/isNull.js\");\n\nvar _isNull2 = _interopRequireDefault(_isNull);\n\nvar _isUndefined = __webpack_require__(/*! lodash/isUndefined */ \"./node_modules/lodash/isUndefined.js\");\n\nvar _isUndefined2 = _interopRequireDefault(_isUndefined);\n\nvar _bool = __webpack_require__(/*! ./bool */ \"./node_modules/js-xdr/lib/bool.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Option = exports.Option = function () {\n  function Option(childType) {\n    _classCallCheck(this, Option);\n\n    this._childType = childType;\n  }\n\n  _createClass(Option, [{\n    key: 'read',\n    value: function read(io) {\n      if (_bool.Bool.read(io)) {\n        return this._childType.read(io);\n      }\n\n      return undefined;\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      var isPresent = !((0, _isNull2.default)(value) || (0, _isUndefined2.default)(value));\n\n      _bool.Bool.write(isPresent, io);\n\n      if (isPresent) {\n        this._childType.write(value, io);\n      }\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      if ((0, _isNull2.default)(value)) {\n        return true;\n      }\n      if ((0, _isUndefined2.default)(value)) {\n        return true;\n      }\n\n      return this._childType.isValid(value);\n    }\n  }]);\n\n  return Option;\n}();\n\n(0, _ioMixin2.default)(Option.prototype);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/option.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Option = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _isNull = __webpack_require__(5220);
+
+var _isNull2 = _interopRequireDefault(_isNull);
+
+var _isUndefined = __webpack_require__(2353);
+
+var _isUndefined2 = _interopRequireDefault(_isUndefined);
+
+var _bool = __webpack_require__(6378);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Option = exports.Option = function () {
+  function Option(childType) {
+    _classCallCheck(this, Option);
+
+    this._childType = childType;
+  }
+
+  _createClass(Option, [{
+    key: 'read',
+    value: function read(io) {
+      if (_bool.Bool.read(io)) {
+        return this._childType.read(io);
+      }
+
+      return undefined;
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      var isPresent = !((0, _isNull2.default)(value) || (0, _isUndefined2.default)(value));
+
+      _bool.Bool.write(isPresent, io);
+
+      if (isPresent) {
+        this._childType.write(value, io);
+      }
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      if ((0, _isNull2.default)(value)) {
+        return true;
+      }
+      if ((0, _isUndefined2.default)(value)) {
+        return true;
+      }
+
+      return this._childType.isValid(value);
+    }
+  }]);
+
+  return Option;
+}();
+
+(0, _ioMixin2.default)(Option.prototype);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/quadruple.js":
-/*!**********************************************!*\
-  !*** ./node_modules/js-xdr/lib/quadruple.js ***!
-  \**********************************************/
+/***/ 8233:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Quadruple = undefined;\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar Quadruple = exports.Quadruple = {\n  /* jshint unused: false */\n\n  read: function read() {\n    throw new Error('XDR Read Error: quadruple not supported');\n  },\n  write: function write() {\n    throw new Error('XDR Write Error: quadruple not supported');\n  },\n  isValid: function isValid() {\n    return false;\n  }\n};\n\n(0, _ioMixin2.default)(Quadruple);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/quadruple.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Quadruple = undefined;
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Quadruple = exports.Quadruple = {
+  /* jshint unused: false */
+
+  read: function read() {
+    throw new Error('XDR Read Error: quadruple not supported');
+  },
+  write: function write() {
+    throw new Error('XDR Write Error: quadruple not supported');
+  },
+  isValid: function isValid() {
+    return false;
+  }
+};
+
+(0, _ioMixin2.default)(Quadruple);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/reference.js":
-/*!**********************************************!*\
-  !*** ./node_modules/js-xdr/lib/reference.js ***!
-  \**********************************************/
+/***/ 6357:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Reference = exports.Reference = function () {\n  function Reference() {\n    _classCallCheck(this, Reference);\n  }\n\n  _createClass(Reference, [{\n    key: 'resolve',\n\n    /* jshint unused: false */\n    value: function resolve() {\n      throw new Error('implement resolve in child class');\n    }\n  }]);\n\n  return Reference;\n}();\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/reference.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Reference = exports.Reference = function () {
+  function Reference() {
+    _classCallCheck(this, Reference);
+  }
+
+  _createClass(Reference, [{
+    key: 'resolve',
+
+    /* jshint unused: false */
+    value: function resolve() {
+      throw new Error('implement resolve in child class');
+    }
+  }]);
+
+  return Reference;
+}();
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/string.js":
-/*!*******************************************!*\
-  !*** ./node_modules/js-xdr/lib/string.js ***!
-  \*******************************************/
+/***/ 2583:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.String = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _isString = __webpack_require__(/*! lodash/isString */ \"./node_modules/lodash/isString.js\");\n\nvar _isString2 = _interopRequireDefault(_isString);\n\nvar _isArray = __webpack_require__(/*! lodash/isArray */ \"./node_modules/lodash/isArray.js\");\n\nvar _isArray2 = _interopRequireDefault(_isArray);\n\nvar _int = __webpack_require__(/*! ./int */ \"./node_modules/js-xdr/lib/int.js\");\n\nvar _unsignedInt = __webpack_require__(/*! ./unsigned-int */ \"./node_modules/js-xdr/lib/unsigned-int.js\");\n\nvar _util = __webpack_require__(/*! ./util */ \"./node_modules/js-xdr/lib/util.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar String = exports.String = function () {\n  function String() {\n    var maxLength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _unsignedInt.UnsignedInt.MAX_VALUE;\n\n    _classCallCheck(this, String);\n\n    this._maxLength = maxLength;\n  }\n\n  _createClass(String, [{\n    key: 'read',\n    value: function read(io) {\n      var length = _int.Int.read(io);\n\n      if (length > this._maxLength) {\n        throw new Error('XDR Read Error: Saw ' + length + ' length String,' + ('max allowed is ' + this._maxLength));\n      }\n      var padding = (0, _util.calculatePadding)(length);\n      var result = io.slice(length);\n      (0, _util.slicePadding)(io, padding);\n      return result.buffer();\n    }\n  }, {\n    key: 'readString',\n    value: function readString(io) {\n      return this.read(io).toString('utf8');\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      if (value.length > this._maxLength) {\n        throw new Error('XDR Write Error: Got ' + value.length + ' bytes,' + ('max allows is ' + this._maxLength));\n      }\n\n      var buffer = void 0;\n      if ((0, _isString2.default)(value)) {\n        buffer = Buffer.from(value, 'utf8');\n      } else {\n        buffer = Buffer.from(value);\n      }\n\n      _int.Int.write(buffer.length, io);\n      io.writeBufferPadded(buffer);\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      var buffer = void 0;\n      if ((0, _isString2.default)(value)) {\n        buffer = Buffer.from(value, 'utf8');\n      } else if ((0, _isArray2.default)(value) || Buffer.isBuffer(value)) {\n        buffer = Buffer.from(value);\n      } else {\n        return false;\n      }\n      return buffer.length <= this._maxLength;\n    }\n  }]);\n\n  return String;\n}();\n\n(0, _ioMixin2.default)(String.prototype);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/string.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.String = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _isString = __webpack_require__(7037);
+
+var _isString2 = _interopRequireDefault(_isString);
+
+var _isArray = __webpack_require__(1469);
+
+var _isArray2 = _interopRequireDefault(_isArray);
+
+var _int = __webpack_require__(3983);
+
+var _unsignedInt = __webpack_require__(7981);
+
+var _util = __webpack_require__(2230);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var String = exports.String = function () {
+  function String() {
+    var maxLength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _unsignedInt.UnsignedInt.MAX_VALUE;
+
+    _classCallCheck(this, String);
+
+    this._maxLength = maxLength;
+  }
+
+  _createClass(String, [{
+    key: 'read',
+    value: function read(io) {
+      var length = _int.Int.read(io);
+
+      if (length > this._maxLength) {
+        throw new Error('XDR Read Error: Saw ' + length + ' length String,' + ('max allowed is ' + this._maxLength));
+      }
+      var padding = (0, _util.calculatePadding)(length);
+      var result = io.slice(length);
+      (0, _util.slicePadding)(io, padding);
+      return result.buffer();
+    }
+  }, {
+    key: 'readString',
+    value: function readString(io) {
+      return this.read(io).toString('utf8');
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      if (value.length > this._maxLength) {
+        throw new Error('XDR Write Error: Got ' + value.length + ' bytes,' + ('max allows is ' + this._maxLength));
+      }
+
+      var buffer = void 0;
+      if ((0, _isString2.default)(value)) {
+        buffer = Buffer.from(value, 'utf8');
+      } else {
+        buffer = Buffer.from(value);
+      }
+
+      _int.Int.write(buffer.length, io);
+      io.writeBufferPadded(buffer);
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      var buffer = void 0;
+      if ((0, _isString2.default)(value)) {
+        buffer = Buffer.from(value, 'utf8');
+      } else if ((0, _isArray2.default)(value) || Buffer.isBuffer(value)) {
+        buffer = Buffer.from(value);
+      } else {
+        return false;
+      }
+      return buffer.length <= this._maxLength;
+    }
+  }]);
+
+  return String;
+}();
+
+(0, _ioMixin2.default)(String.prototype);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/struct.js":
-/*!*******************************************!*\
-  !*** ./node_modules/js-xdr/lib/struct.js ***!
-  \*******************************************/
+/***/ 2250:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Struct = undefined;\n\nvar _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"]) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError(\"Invalid attempt to destructure non-iterable instance\"); } }; }();\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _each = __webpack_require__(/*! lodash/each */ \"./node_modules/lodash/each.js\");\n\nvar _each2 = _interopRequireDefault(_each);\n\nvar _map = __webpack_require__(/*! lodash/map */ \"./node_modules/lodash/map.js\");\n\nvar _map2 = _interopRequireDefault(_map);\n\nvar _isUndefined = __webpack_require__(/*! lodash/isUndefined */ \"./node_modules/lodash/isUndefined.js\");\n\nvar _isUndefined2 = _interopRequireDefault(_isUndefined);\n\nvar _fromPairs = __webpack_require__(/*! lodash/fromPairs */ \"./node_modules/lodash/fromPairs.js\");\n\nvar _fromPairs2 = _interopRequireDefault(_fromPairs);\n\nvar _reference = __webpack_require__(/*! ./reference */ \"./node_modules/js-xdr/lib/reference.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Struct = exports.Struct = function () {\n  function Struct(attributes) {\n    _classCallCheck(this, Struct);\n\n    this._attributes = attributes || {};\n  }\n\n  _createClass(Struct, null, [{\n    key: 'read',\n    value: function read(io) {\n      var fields = (0, _map2.default)(this._fields, function (field) {\n        var _field = _slicedToArray(field, 2),\n            name = _field[0],\n            type = _field[1];\n\n        var value = type.read(io);\n        return [name, value];\n      });\n\n      return new this((0, _fromPairs2.default)(fields));\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      if (!(value instanceof this)) {\n        throw new Error('XDR Write Error: ' + value + ' is not a ' + this.structName);\n      }\n      (0, _each2.default)(this._fields, function (field) {\n        var _field2 = _slicedToArray(field, 2),\n            name = _field2[0],\n            type = _field2[1];\n\n        var attribute = value._attributes[name];\n        type.write(attribute, io);\n      });\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      return value instanceof this;\n    }\n  }, {\n    key: 'create',\n    value: function create(context, name, fields) {\n      var ChildStruct = function (_Struct) {\n        _inherits(ChildStruct, _Struct);\n\n        function ChildStruct() {\n          _classCallCheck(this, ChildStruct);\n\n          return _possibleConstructorReturn(this, (ChildStruct.__proto__ || Object.getPrototypeOf(ChildStruct)).apply(this, arguments));\n        }\n\n        return ChildStruct;\n      }(Struct);\n\n      ChildStruct.structName = name;\n\n      context.results[name] = ChildStruct;\n\n      ChildStruct._fields = fields.map(function (_ref) {\n        var _ref2 = _slicedToArray(_ref, 2),\n            fieldName = _ref2[0],\n            field = _ref2[1];\n\n        if (field instanceof _reference.Reference) {\n          field = field.resolve(context);\n        }\n\n        return [fieldName, field];\n      });\n\n      (0, _each2.default)(ChildStruct._fields, function (field) {\n        var _field3 = _slicedToArray(field, 1),\n            fieldName = _field3[0];\n\n        ChildStruct.prototype[fieldName] = getReadOrWriteAttribute(fieldName);\n      });\n\n      return ChildStruct;\n    }\n  }]);\n\n  return Struct;\n}();\n\n(0, _ioMixin2.default)(Struct);\n\nfunction getReadOrWriteAttribute(name) {\n  return function readOrWriteAttribute(value) {\n    if (!(0, _isUndefined2.default)(value)) {\n      this._attributes[name] = value;\n    }\n\n    return this._attributes[name];\n  };\n}\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/struct.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Struct = undefined;
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _each = __webpack_require__(6073);
+
+var _each2 = _interopRequireDefault(_each);
+
+var _map = __webpack_require__(5161);
+
+var _map2 = _interopRequireDefault(_map);
+
+var _isUndefined = __webpack_require__(2353);
+
+var _isUndefined2 = _interopRequireDefault(_isUndefined);
+
+var _fromPairs = __webpack_require__(7204);
+
+var _fromPairs2 = _interopRequireDefault(_fromPairs);
+
+var _reference = __webpack_require__(6357);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Struct = exports.Struct = function () {
+  function Struct(attributes) {
+    _classCallCheck(this, Struct);
+
+    this._attributes = attributes || {};
+  }
+
+  _createClass(Struct, null, [{
+    key: 'read',
+    value: function read(io) {
+      var fields = (0, _map2.default)(this._fields, function (field) {
+        var _field = _slicedToArray(field, 2),
+            name = _field[0],
+            type = _field[1];
+
+        var value = type.read(io);
+        return [name, value];
+      });
+
+      return new this((0, _fromPairs2.default)(fields));
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      if (!(value instanceof this)) {
+        throw new Error('XDR Write Error: ' + value + ' is not a ' + this.structName);
+      }
+      (0, _each2.default)(this._fields, function (field) {
+        var _field2 = _slicedToArray(field, 2),
+            name = _field2[0],
+            type = _field2[1];
+
+        var attribute = value._attributes[name];
+        type.write(attribute, io);
+      });
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      return value instanceof this;
+    }
+  }, {
+    key: 'create',
+    value: function create(context, name, fields) {
+      var ChildStruct = function (_Struct) {
+        _inherits(ChildStruct, _Struct);
+
+        function ChildStruct() {
+          _classCallCheck(this, ChildStruct);
+
+          return _possibleConstructorReturn(this, (ChildStruct.__proto__ || Object.getPrototypeOf(ChildStruct)).apply(this, arguments));
+        }
+
+        return ChildStruct;
+      }(Struct);
+
+      ChildStruct.structName = name;
+
+      context.results[name] = ChildStruct;
+
+      ChildStruct._fields = fields.map(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            fieldName = _ref2[0],
+            field = _ref2[1];
+
+        if (field instanceof _reference.Reference) {
+          field = field.resolve(context);
+        }
+
+        return [fieldName, field];
+      });
+
+      (0, _each2.default)(ChildStruct._fields, function (field) {
+        var _field3 = _slicedToArray(field, 1),
+            fieldName = _field3[0];
+
+        ChildStruct.prototype[fieldName] = getReadOrWriteAttribute(fieldName);
+      });
+
+      return ChildStruct;
+    }
+  }]);
+
+  return Struct;
+}();
+
+(0, _ioMixin2.default)(Struct);
+
+function getReadOrWriteAttribute(name) {
+  return function readOrWriteAttribute(value) {
+    if (!(0, _isUndefined2.default)(value)) {
+      this._attributes[name] = value;
+    }
+
+    return this._attributes[name];
+  };
+}
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/types.js":
-/*!******************************************!*\
-  !*** ./node_modules/js-xdr/lib/types.js ***!
-  \******************************************/
+/***/ 5830:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\n\nvar _int = __webpack_require__(/*! ./int */ \"./node_modules/js-xdr/lib/int.js\");\n\nObject.keys(_int).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _int[key];\n    }\n  });\n});\n\nvar _hyper = __webpack_require__(/*! ./hyper */ \"./node_modules/js-xdr/lib/hyper.js\");\n\nObject.keys(_hyper).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _hyper[key];\n    }\n  });\n});\n\nvar _unsignedInt = __webpack_require__(/*! ./unsigned-int */ \"./node_modules/js-xdr/lib/unsigned-int.js\");\n\nObject.keys(_unsignedInt).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _unsignedInt[key];\n    }\n  });\n});\n\nvar _unsignedHyper = __webpack_require__(/*! ./unsigned-hyper */ \"./node_modules/js-xdr/lib/unsigned-hyper.js\");\n\nObject.keys(_unsignedHyper).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _unsignedHyper[key];\n    }\n  });\n});\n\nvar _float = __webpack_require__(/*! ./float */ \"./node_modules/js-xdr/lib/float.js\");\n\nObject.keys(_float).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _float[key];\n    }\n  });\n});\n\nvar _double = __webpack_require__(/*! ./double */ \"./node_modules/js-xdr/lib/double.js\");\n\nObject.keys(_double).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _double[key];\n    }\n  });\n});\n\nvar _quadruple = __webpack_require__(/*! ./quadruple */ \"./node_modules/js-xdr/lib/quadruple.js\");\n\nObject.keys(_quadruple).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _quadruple[key];\n    }\n  });\n});\n\nvar _bool = __webpack_require__(/*! ./bool */ \"./node_modules/js-xdr/lib/bool.js\");\n\nObject.keys(_bool).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _bool[key];\n    }\n  });\n});\n\nvar _string = __webpack_require__(/*! ./string */ \"./node_modules/js-xdr/lib/string.js\");\n\nObject.keys(_string).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _string[key];\n    }\n  });\n});\n\nvar _opaque = __webpack_require__(/*! ./opaque */ \"./node_modules/js-xdr/lib/opaque.js\");\n\nObject.keys(_opaque).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _opaque[key];\n    }\n  });\n});\n\nvar _varOpaque = __webpack_require__(/*! ./var-opaque */ \"./node_modules/js-xdr/lib/var-opaque.js\");\n\nObject.keys(_varOpaque).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _varOpaque[key];\n    }\n  });\n});\n\nvar _array = __webpack_require__(/*! ./array */ \"./node_modules/js-xdr/lib/array.js\");\n\nObject.keys(_array).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _array[key];\n    }\n  });\n});\n\nvar _varArray = __webpack_require__(/*! ./var-array */ \"./node_modules/js-xdr/lib/var-array.js\");\n\nObject.keys(_varArray).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _varArray[key];\n    }\n  });\n});\n\nvar _option = __webpack_require__(/*! ./option */ \"./node_modules/js-xdr/lib/option.js\");\n\nObject.keys(_option).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _option[key];\n    }\n  });\n});\n\nvar _void = __webpack_require__(/*! ./void */ \"./node_modules/js-xdr/lib/void.js\");\n\nObject.keys(_void).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _void[key];\n    }\n  });\n});\n\nvar _enum = __webpack_require__(/*! ./enum */ \"./node_modules/js-xdr/lib/enum.js\");\n\nObject.keys(_enum).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _enum[key];\n    }\n  });\n});\n\nvar _struct = __webpack_require__(/*! ./struct */ \"./node_modules/js-xdr/lib/struct.js\");\n\nObject.keys(_struct).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _struct[key];\n    }\n  });\n});\n\nvar _union = __webpack_require__(/*! ./union */ \"./node_modules/js-xdr/lib/union.js\");\n\nObject.keys(_union).forEach(function (key) {\n  if (key === \"default\" || key === \"__esModule\") return;\n  Object.defineProperty(exports, key, {\n    enumerable: true,\n    get: function get() {\n      return _union[key];\n    }\n  });\n});\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/types.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var _int = __webpack_require__(3983);
+
+Object.keys(_int).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _int[key];
+    }
+  });
+});
+
+var _hyper = __webpack_require__(8372);
+
+Object.keys(_hyper).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _hyper[key];
+    }
+  });
+});
+
+var _unsignedInt = __webpack_require__(7981);
+
+Object.keys(_unsignedInt).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _unsignedInt[key];
+    }
+  });
+});
+
+var _unsignedHyper = __webpack_require__(8663);
+
+Object.keys(_unsignedHyper).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _unsignedHyper[key];
+    }
+  });
+});
+
+var _float = __webpack_require__(2990);
+
+Object.keys(_float).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _float[key];
+    }
+  });
+});
+
+var _double = __webpack_require__(1160);
+
+Object.keys(_double).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _double[key];
+    }
+  });
+});
+
+var _quadruple = __webpack_require__(8233);
+
+Object.keys(_quadruple).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _quadruple[key];
+    }
+  });
+});
+
+var _bool = __webpack_require__(6378);
+
+Object.keys(_bool).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _bool[key];
+    }
+  });
+});
+
+var _string = __webpack_require__(2583);
+
+Object.keys(_string).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _string[key];
+    }
+  });
+});
+
+var _opaque = __webpack_require__(6186);
+
+Object.keys(_opaque).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _opaque[key];
+    }
+  });
+});
+
+var _varOpaque = __webpack_require__(8886);
+
+Object.keys(_varOpaque).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _varOpaque[key];
+    }
+  });
+});
+
+var _array = __webpack_require__(7441);
+
+Object.keys(_array).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _array[key];
+    }
+  });
+});
+
+var _varArray = __webpack_require__(9758);
+
+Object.keys(_varArray).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _varArray[key];
+    }
+  });
+});
+
+var _option = __webpack_require__(4043);
+
+Object.keys(_option).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _option[key];
+    }
+  });
+});
+
+var _void = __webpack_require__(9317);
+
+Object.keys(_void).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _void[key];
+    }
+  });
+});
+
+var _enum = __webpack_require__(1969);
+
+Object.keys(_enum).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _enum[key];
+    }
+  });
+});
+
+var _struct = __webpack_require__(2250);
+
+Object.keys(_struct).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _struct[key];
+    }
+  });
+});
+
+var _union = __webpack_require__(8948);
+
+Object.keys(_union).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _union[key];
+    }
+  });
+});
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/union.js":
-/*!******************************************!*\
-  !*** ./node_modules/js-xdr/lib/union.js ***!
-  \******************************************/
+/***/ 8948:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Union = undefined;\n\nvar _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"]) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError(\"Invalid attempt to destructure non-iterable instance\"); } }; }();\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _each = __webpack_require__(/*! lodash/each */ \"./node_modules/lodash/each.js\");\n\nvar _each2 = _interopRequireDefault(_each);\n\nvar _isUndefined = __webpack_require__(/*! lodash/isUndefined */ \"./node_modules/lodash/isUndefined.js\");\n\nvar _isUndefined2 = _interopRequireDefault(_isUndefined);\n\nvar _isString = __webpack_require__(/*! lodash/isString */ \"./node_modules/lodash/isString.js\");\n\nvar _isString2 = _interopRequireDefault(_isString);\n\nvar _void = __webpack_require__(/*! ./void */ \"./node_modules/js-xdr/lib/void.js\");\n\nvar _reference = __webpack_require__(/*! ./reference */ \"./node_modules/js-xdr/lib/reference.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Union = exports.Union = function () {\n  function Union(aSwitch, value) {\n    _classCallCheck(this, Union);\n\n    this.set(aSwitch, value);\n  }\n\n  _createClass(Union, [{\n    key: 'set',\n    value: function set(aSwitch, value) {\n      if ((0, _isString2.default)(aSwitch)) {\n        aSwitch = this.constructor._switchOn.fromName(aSwitch);\n      }\n\n      this._switch = aSwitch;\n      this._arm = this.constructor.armForSwitch(this._switch);\n      this._armType = this.constructor.armTypeForArm(this._arm);\n      this._value = value;\n    }\n  }, {\n    key: 'get',\n    value: function get() {\n      var armName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._arm;\n\n      if (this._arm !== _void.Void && this._arm !== armName) {\n        throw new Error(armName + ' not set');\n      }\n      return this._value;\n    }\n  }, {\n    key: 'switch',\n    value: function _switch() {\n      return this._switch;\n    }\n  }, {\n    key: 'arm',\n    value: function arm() {\n      return this._arm;\n    }\n  }, {\n    key: 'armType',\n    value: function armType() {\n      return this._armType;\n    }\n  }, {\n    key: 'value',\n    value: function value() {\n      return this._value;\n    }\n  }], [{\n    key: 'armForSwitch',\n    value: function armForSwitch(aSwitch) {\n      if (this._switches.has(aSwitch)) {\n        return this._switches.get(aSwitch);\n      }\n      if (this._defaultArm) {\n        return this._defaultArm;\n      }\n      throw new Error('Bad union switch: ' + aSwitch);\n    }\n  }, {\n    key: 'armTypeForArm',\n    value: function armTypeForArm(arm) {\n      if (arm === _void.Void) {\n        return _void.Void;\n      }\n      return this._arms[arm];\n    }\n  }, {\n    key: 'read',\n    value: function read(io) {\n      var aSwitch = this._switchOn.read(io);\n      var arm = this.armForSwitch(aSwitch);\n      var armType = this.armTypeForArm(arm);\n      var value = void 0;\n      if (!(0, _isUndefined2.default)(armType)) {\n        value = armType.read(io);\n      } else {\n        value = arm.read(io);\n      }\n      return new this(aSwitch, value);\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      if (!(value instanceof this)) {\n        throw new Error('XDR Write Error: ' + value + ' is not a ' + this.unionName);\n      }\n\n      this._switchOn.write(value.switch(), io);\n      value.armType().write(value.value(), io);\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      return value instanceof this;\n    }\n  }, {\n    key: 'create',\n    value: function create(context, name, config) {\n      var ChildUnion = function (_Union) {\n        _inherits(ChildUnion, _Union);\n\n        function ChildUnion() {\n          _classCallCheck(this, ChildUnion);\n\n          return _possibleConstructorReturn(this, (ChildUnion.__proto__ || Object.getPrototypeOf(ChildUnion)).apply(this, arguments));\n        }\n\n        return ChildUnion;\n      }(Union);\n\n      ChildUnion.unionName = name;\n      context.results[name] = ChildUnion;\n\n      if (config.switchOn instanceof _reference.Reference) {\n        ChildUnion._switchOn = config.switchOn.resolve(context);\n      } else {\n        ChildUnion._switchOn = config.switchOn;\n      }\n\n      ChildUnion._switches = new Map();\n      ChildUnion._arms = {};\n\n      (0, _each2.default)(config.arms, function (value, armsName) {\n        if (value instanceof _reference.Reference) {\n          value = value.resolve(context);\n        }\n\n        ChildUnion._arms[armsName] = value;\n      });\n\n      // resolve default arm\n      var defaultArm = config.defaultArm;\n      if (defaultArm instanceof _reference.Reference) {\n        defaultArm = defaultArm.resolve(context);\n      }\n\n      ChildUnion._defaultArm = defaultArm;\n\n      (0, _each2.default)(config.switches, function (_ref) {\n        var _ref2 = _slicedToArray(_ref, 2),\n            aSwitch = _ref2[0],\n            armName = _ref2[1];\n\n        if ((0, _isString2.default)(aSwitch)) {\n          aSwitch = ChildUnion._switchOn.fromName(aSwitch);\n        }\n\n        ChildUnion._switches.set(aSwitch, armName);\n      });\n\n      // add enum-based helpers\n      // NOTE: we don't have good notation for \"is a subclass of XDR.Enum\",\n      //  and so we use the following check (does _switchOn have a `values`\n      //  attribute) to approximate the intent.\n      if (!(0, _isUndefined2.default)(ChildUnion._switchOn.values)) {\n        (0, _each2.default)(ChildUnion._switchOn.values(), function (aSwitch) {\n          // Add enum-based constrocutors\n          ChildUnion[aSwitch.name] = function (value) {\n            return new ChildUnion(aSwitch, value);\n          };\n\n          // Add enum-based \"set\" helpers\n          // (note: normally I'd use an arrow function but the use of `this`\n          // here might rely on it NOT being an arrow function. so just keep it.)\n          ChildUnion.prototype[aSwitch.name] = function set(value) {\n            return this.set(aSwitch, value);\n          };\n        });\n      }\n\n      // Add arm accessor helpers\n      (0, _each2.default)(ChildUnion._arms, function (type, armsName) {\n        if (type === _void.Void) {\n          return;\n        }\n\n        ChildUnion.prototype[armsName] = function get() {\n          return this.get(armsName);\n        };\n      });\n\n      return ChildUnion;\n    }\n  }]);\n\n  return Union;\n}();\n\n(0, _ioMixin2.default)(Union);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/union.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Union = undefined;
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _each = __webpack_require__(6073);
+
+var _each2 = _interopRequireDefault(_each);
+
+var _isUndefined = __webpack_require__(2353);
+
+var _isUndefined2 = _interopRequireDefault(_isUndefined);
+
+var _isString = __webpack_require__(7037);
+
+var _isString2 = _interopRequireDefault(_isString);
+
+var _void = __webpack_require__(9317);
+
+var _reference = __webpack_require__(6357);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Union = exports.Union = function () {
+  function Union(aSwitch, value) {
+    _classCallCheck(this, Union);
+
+    this.set(aSwitch, value);
+  }
+
+  _createClass(Union, [{
+    key: 'set',
+    value: function set(aSwitch, value) {
+      if ((0, _isString2.default)(aSwitch)) {
+        aSwitch = this.constructor._switchOn.fromName(aSwitch);
+      }
+
+      this._switch = aSwitch;
+      this._arm = this.constructor.armForSwitch(this._switch);
+      this._armType = this.constructor.armTypeForArm(this._arm);
+      this._value = value;
+    }
+  }, {
+    key: 'get',
+    value: function get() {
+      var armName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._arm;
+
+      if (this._arm !== _void.Void && this._arm !== armName) {
+        throw new Error(armName + ' not set');
+      }
+      return this._value;
+    }
+  }, {
+    key: 'switch',
+    value: function _switch() {
+      return this._switch;
+    }
+  }, {
+    key: 'arm',
+    value: function arm() {
+      return this._arm;
+    }
+  }, {
+    key: 'armType',
+    value: function armType() {
+      return this._armType;
+    }
+  }, {
+    key: 'value',
+    value: function value() {
+      return this._value;
+    }
+  }], [{
+    key: 'armForSwitch',
+    value: function armForSwitch(aSwitch) {
+      if (this._switches.has(aSwitch)) {
+        return this._switches.get(aSwitch);
+      }
+      if (this._defaultArm) {
+        return this._defaultArm;
+      }
+      throw new Error('Bad union switch: ' + aSwitch);
+    }
+  }, {
+    key: 'armTypeForArm',
+    value: function armTypeForArm(arm) {
+      if (arm === _void.Void) {
+        return _void.Void;
+      }
+      return this._arms[arm];
+    }
+  }, {
+    key: 'read',
+    value: function read(io) {
+      var aSwitch = this._switchOn.read(io);
+      var arm = this.armForSwitch(aSwitch);
+      var armType = this.armTypeForArm(arm);
+      var value = void 0;
+      if (!(0, _isUndefined2.default)(armType)) {
+        value = armType.read(io);
+      } else {
+        value = arm.read(io);
+      }
+      return new this(aSwitch, value);
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      if (!(value instanceof this)) {
+        throw new Error('XDR Write Error: ' + value + ' is not a ' + this.unionName);
+      }
+
+      this._switchOn.write(value.switch(), io);
+      value.armType().write(value.value(), io);
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      return value instanceof this;
+    }
+  }, {
+    key: 'create',
+    value: function create(context, name, config) {
+      var ChildUnion = function (_Union) {
+        _inherits(ChildUnion, _Union);
+
+        function ChildUnion() {
+          _classCallCheck(this, ChildUnion);
+
+          return _possibleConstructorReturn(this, (ChildUnion.__proto__ || Object.getPrototypeOf(ChildUnion)).apply(this, arguments));
+        }
+
+        return ChildUnion;
+      }(Union);
+
+      ChildUnion.unionName = name;
+      context.results[name] = ChildUnion;
+
+      if (config.switchOn instanceof _reference.Reference) {
+        ChildUnion._switchOn = config.switchOn.resolve(context);
+      } else {
+        ChildUnion._switchOn = config.switchOn;
+      }
+
+      ChildUnion._switches = new Map();
+      ChildUnion._arms = {};
+
+      (0, _each2.default)(config.arms, function (value, armsName) {
+        if (value instanceof _reference.Reference) {
+          value = value.resolve(context);
+        }
+
+        ChildUnion._arms[armsName] = value;
+      });
+
+      // resolve default arm
+      var defaultArm = config.defaultArm;
+      if (defaultArm instanceof _reference.Reference) {
+        defaultArm = defaultArm.resolve(context);
+      }
+
+      ChildUnion._defaultArm = defaultArm;
+
+      (0, _each2.default)(config.switches, function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            aSwitch = _ref2[0],
+            armName = _ref2[1];
+
+        if ((0, _isString2.default)(aSwitch)) {
+          aSwitch = ChildUnion._switchOn.fromName(aSwitch);
+        }
+
+        ChildUnion._switches.set(aSwitch, armName);
+      });
+
+      // add enum-based helpers
+      // NOTE: we don't have good notation for "is a subclass of XDR.Enum",
+      //  and so we use the following check (does _switchOn have a `values`
+      //  attribute) to approximate the intent.
+      if (!(0, _isUndefined2.default)(ChildUnion._switchOn.values)) {
+        (0, _each2.default)(ChildUnion._switchOn.values(), function (aSwitch) {
+          // Add enum-based constrocutors
+          ChildUnion[aSwitch.name] = function (value) {
+            return new ChildUnion(aSwitch, value);
+          };
+
+          // Add enum-based "set" helpers
+          // (note: normally I'd use an arrow function but the use of `this`
+          // here might rely on it NOT being an arrow function. so just keep it.)
+          ChildUnion.prototype[aSwitch.name] = function set(value) {
+            return this.set(aSwitch, value);
+          };
+        });
+      }
+
+      // Add arm accessor helpers
+      (0, _each2.default)(ChildUnion._arms, function (type, armsName) {
+        if (type === _void.Void) {
+          return;
+        }
+
+        ChildUnion.prototype[armsName] = function get() {
+          return this.get(armsName);
+        };
+      });
+
+      return ChildUnion;
+    }
+  }]);
+
+  return Union;
+}();
+
+(0, _ioMixin2.default)(Union);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/unsigned-hyper.js":
-/*!***************************************************!*\
-  !*** ./node_modules/js-xdr/lib/unsigned-hyper.js ***!
-  \***************************************************/
+/***/ 8663:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.UnsignedHyper = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if (\"value\" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };\n\nvar _long = __webpack_require__(/*! long */ \"./node_modules/long/dist/Long.js\");\n\nvar _long2 = _interopRequireDefault(_long);\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nvar UnsignedHyper = exports.UnsignedHyper = function (_Long) {\n  _inherits(UnsignedHyper, _Long);\n\n  _createClass(UnsignedHyper, null, [{\n    key: 'read',\n    value: function read(io) {\n      var high = io.readInt32BE();\n      var low = io.readInt32BE();\n      return this.fromBits(low, high);\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      if (!(value instanceof this)) {\n        throw new Error('XDR Write Error: ' + value + ' is not an UnsignedHyper');\n      }\n\n      io.writeInt32BE(value.high);\n      io.writeInt32BE(value.low);\n    }\n  }, {\n    key: 'fromString',\n    value: function fromString(string) {\n      if (!/^\\d+$/.test(string)) {\n        throw new Error('Invalid hyper string: ' + string);\n      }\n      var result = _get(UnsignedHyper.__proto__ || Object.getPrototypeOf(UnsignedHyper), 'fromString', this).call(this, string, true);\n      return new this(result.low, result.high);\n    }\n  }, {\n    key: 'fromBits',\n    value: function fromBits(low, high) {\n      var result = _get(UnsignedHyper.__proto__ || Object.getPrototypeOf(UnsignedHyper), 'fromBits', this).call(this, low, high, true);\n      return new this(result.low, result.high);\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      return value instanceof this;\n    }\n  }]);\n\n  function UnsignedHyper(low, high) {\n    _classCallCheck(this, UnsignedHyper);\n\n    return _possibleConstructorReturn(this, (UnsignedHyper.__proto__ || Object.getPrototypeOf(UnsignedHyper)).call(this, low, high, true));\n  }\n\n  return UnsignedHyper;\n}(_long2.default);\n\n(0, _ioMixin2.default)(UnsignedHyper);\n\nUnsignedHyper.MAX_VALUE = new UnsignedHyper(_long2.default.MAX_UNSIGNED_VALUE.low, _long2.default.MAX_UNSIGNED_VALUE.high);\n\nUnsignedHyper.MIN_VALUE = new UnsignedHyper(_long2.default.MIN_VALUE.low, _long2.default.MIN_VALUE.high);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/unsigned-hyper.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.UnsignedHyper = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _long = __webpack_require__(1102);
+
+var _long2 = _interopRequireDefault(_long);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var UnsignedHyper = exports.UnsignedHyper = function (_Long) {
+  _inherits(UnsignedHyper, _Long);
+
+  _createClass(UnsignedHyper, null, [{
+    key: 'read',
+    value: function read(io) {
+      var high = io.readInt32BE();
+      var low = io.readInt32BE();
+      return this.fromBits(low, high);
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      if (!(value instanceof this)) {
+        throw new Error('XDR Write Error: ' + value + ' is not an UnsignedHyper');
+      }
+
+      io.writeInt32BE(value.high);
+      io.writeInt32BE(value.low);
+    }
+  }, {
+    key: 'fromString',
+    value: function fromString(string) {
+      if (!/^\d+$/.test(string)) {
+        throw new Error('Invalid hyper string: ' + string);
+      }
+      var result = _get(UnsignedHyper.__proto__ || Object.getPrototypeOf(UnsignedHyper), 'fromString', this).call(this, string, true);
+      return new this(result.low, result.high);
+    }
+  }, {
+    key: 'fromBits',
+    value: function fromBits(low, high) {
+      var result = _get(UnsignedHyper.__proto__ || Object.getPrototypeOf(UnsignedHyper), 'fromBits', this).call(this, low, high, true);
+      return new this(result.low, result.high);
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      return value instanceof this;
+    }
+  }]);
+
+  function UnsignedHyper(low, high) {
+    _classCallCheck(this, UnsignedHyper);
+
+    return _possibleConstructorReturn(this, (UnsignedHyper.__proto__ || Object.getPrototypeOf(UnsignedHyper)).call(this, low, high, true));
+  }
+
+  return UnsignedHyper;
+}(_long2.default);
+
+(0, _ioMixin2.default)(UnsignedHyper);
+
+UnsignedHyper.MAX_VALUE = new UnsignedHyper(_long2.default.MAX_UNSIGNED_VALUE.low, _long2.default.MAX_UNSIGNED_VALUE.high);
+
+UnsignedHyper.MIN_VALUE = new UnsignedHyper(_long2.default.MIN_VALUE.low, _long2.default.MIN_VALUE.high);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/unsigned-int.js":
-/*!*************************************************!*\
-  !*** ./node_modules/js-xdr/lib/unsigned-int.js ***!
-  \*************************************************/
+/***/ 7981:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.UnsignedInt = undefined;\n\nvar _isNumber = __webpack_require__(/*! lodash/isNumber */ \"./node_modules/lodash/isNumber.js\");\n\nvar _isNumber2 = _interopRequireDefault(_isNumber);\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar UnsignedInt = exports.UnsignedInt = {\n  read: function read(io) {\n    return io.readUInt32BE();\n  },\n  write: function write(value, io) {\n    if (!(0, _isNumber2.default)(value)) {\n      throw new Error('XDR Write Error: not a number');\n    }\n\n    if (Math.floor(value) !== value) {\n      throw new Error('XDR Write Error: not an integer');\n    }\n\n    if (value < 0) {\n      throw new Error('XDR Write Error: negative number ' + value);\n    }\n\n    io.writeUInt32BE(value);\n  },\n  isValid: function isValid(value) {\n    if (!(0, _isNumber2.default)(value)) {\n      return false;\n    }\n    if (Math.floor(value) !== value) {\n      return false;\n    }\n\n    return value >= UnsignedInt.MIN_VALUE && value <= UnsignedInt.MAX_VALUE;\n  }\n};\n\nUnsignedInt.MAX_VALUE = Math.pow(2, 32) - 1;\nUnsignedInt.MIN_VALUE = 0;\n\n(0, _ioMixin2.default)(UnsignedInt);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/unsigned-int.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.UnsignedInt = undefined;
+
+var _isNumber = __webpack_require__(1763);
+
+var _isNumber2 = _interopRequireDefault(_isNumber);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var UnsignedInt = exports.UnsignedInt = {
+  read: function read(io) {
+    return io.readUInt32BE();
+  },
+  write: function write(value, io) {
+    if (!(0, _isNumber2.default)(value)) {
+      throw new Error('XDR Write Error: not a number');
+    }
+
+    if (Math.floor(value) !== value) {
+      throw new Error('XDR Write Error: not an integer');
+    }
+
+    if (value < 0) {
+      throw new Error('XDR Write Error: negative number ' + value);
+    }
+
+    io.writeUInt32BE(value);
+  },
+  isValid: function isValid(value) {
+    if (!(0, _isNumber2.default)(value)) {
+      return false;
+    }
+    if (Math.floor(value) !== value) {
+      return false;
+    }
+
+    return value >= UnsignedInt.MIN_VALUE && value <= UnsignedInt.MAX_VALUE;
+  }
+};
+
+UnsignedInt.MAX_VALUE = Math.pow(2, 32) - 1;
+UnsignedInt.MIN_VALUE = 0;
+
+(0, _ioMixin2.default)(UnsignedInt);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/util.js":
-/*!*****************************************!*\
-  !*** ./node_modules/js-xdr/lib/util.js ***!
-  \*****************************************/
+/***/ 2230:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.calculatePadding = calculatePadding;\nexports.slicePadding = slicePadding;\n\nvar _every = __webpack_require__(/*! lodash/every */ \"./node_modules/lodash/every.js\");\n\nvar _every2 = _interopRequireDefault(_every);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction calculatePadding(length) {\n  switch (length % 4) {\n    case 0:\n      return 0;\n    case 1:\n      return 3;\n    case 2:\n      return 2;\n    case 3:\n      return 1;\n    default:\n      return null;\n  }\n}\nfunction slicePadding(io, length) {\n  var padding = io.slice(length);\n  var allZero = (0, _every2.default)(padding.buffer(), function (byte) {\n    return byte === 0;\n  });\n\n  if (allZero !== true) {\n    throw new Error('XDR Read Error: invalid padding');\n  }\n}\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/util.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.calculatePadding = calculatePadding;
+exports.slicePadding = slicePadding;
+
+var _every = __webpack_require__(711);
+
+var _every2 = _interopRequireDefault(_every);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function calculatePadding(length) {
+  switch (length % 4) {
+    case 0:
+      return 0;
+    case 1:
+      return 3;
+    case 2:
+      return 2;
+    case 3:
+      return 1;
+    default:
+      return null;
+  }
+}
+function slicePadding(io, length) {
+  var padding = io.slice(length);
+  var allZero = (0, _every2.default)(padding.buffer(), function (byte) {
+    return byte === 0;
+  });
+
+  if (allZero !== true) {
+    throw new Error('XDR Read Error: invalid padding');
+  }
+}
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/var-array.js":
-/*!**********************************************!*\
-  !*** ./node_modules/js-xdr/lib/var-array.js ***!
-  \**********************************************/
+/***/ 9758:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.VarArray = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _every = __webpack_require__(/*! lodash/every */ \"./node_modules/lodash/every.js\");\n\nvar _every2 = _interopRequireDefault(_every);\n\nvar _each = __webpack_require__(/*! lodash/each */ \"./node_modules/lodash/each.js\");\n\nvar _each2 = _interopRequireDefault(_each);\n\nvar _times = __webpack_require__(/*! lodash/times */ \"./node_modules/lodash/times.js\");\n\nvar _times2 = _interopRequireDefault(_times);\n\nvar _isArray = __webpack_require__(/*! lodash/isArray */ \"./node_modules/lodash/isArray.js\");\n\nvar _isArray2 = _interopRequireDefault(_isArray);\n\nvar _unsignedInt = __webpack_require__(/*! ./unsigned-int */ \"./node_modules/js-xdr/lib/unsigned-int.js\");\n\nvar _int = __webpack_require__(/*! ./int */ \"./node_modules/js-xdr/lib/int.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar VarArray = exports.VarArray = function () {\n  function VarArray(childType) {\n    var maxLength = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _unsignedInt.UnsignedInt.MAX_VALUE;\n\n    _classCallCheck(this, VarArray);\n\n    this._childType = childType;\n    this._maxLength = maxLength;\n  }\n\n  _createClass(VarArray, [{\n    key: 'read',\n    value: function read(io) {\n      var _this = this;\n\n      var length = _int.Int.read(io);\n\n      if (length > this._maxLength) {\n        throw new Error('XDR Read Error: Saw ' + length + ' length VarArray,' + ('max allowed is ' + this._maxLength));\n      }\n\n      return (0, _times2.default)(length, function () {\n        return _this._childType.read(io);\n      });\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      var _this2 = this;\n\n      if (!(0, _isArray2.default)(value)) {\n        throw new Error('XDR Write Error: value is not array');\n      }\n\n      if (value.length > this._maxLength) {\n        throw new Error('XDR Write Error: Got array of size ' + value.length + ',' + ('max allowed is ' + this._maxLength));\n      }\n\n      _int.Int.write(value.length, io);\n      (0, _each2.default)(value, function (child) {\n        return _this2._childType.write(child, io);\n      });\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      var _this3 = this;\n\n      if (!(0, _isArray2.default)(value)) {\n        return false;\n      }\n      if (value.length > this._maxLength) {\n        return false;\n      }\n\n      return (0, _every2.default)(value, function (child) {\n        return _this3._childType.isValid(child);\n      });\n    }\n  }]);\n\n  return VarArray;\n}();\n\n(0, _ioMixin2.default)(VarArray.prototype);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/var-array.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.VarArray = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _every = __webpack_require__(711);
+
+var _every2 = _interopRequireDefault(_every);
+
+var _each = __webpack_require__(6073);
+
+var _each2 = _interopRequireDefault(_each);
+
+var _times = __webpack_require__(8913);
+
+var _times2 = _interopRequireDefault(_times);
+
+var _isArray = __webpack_require__(1469);
+
+var _isArray2 = _interopRequireDefault(_isArray);
+
+var _unsignedInt = __webpack_require__(7981);
+
+var _int = __webpack_require__(3983);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var VarArray = exports.VarArray = function () {
+  function VarArray(childType) {
+    var maxLength = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _unsignedInt.UnsignedInt.MAX_VALUE;
+
+    _classCallCheck(this, VarArray);
+
+    this._childType = childType;
+    this._maxLength = maxLength;
+  }
+
+  _createClass(VarArray, [{
+    key: 'read',
+    value: function read(io) {
+      var _this = this;
+
+      var length = _int.Int.read(io);
+
+      if (length > this._maxLength) {
+        throw new Error('XDR Read Error: Saw ' + length + ' length VarArray,' + ('max allowed is ' + this._maxLength));
+      }
+
+      return (0, _times2.default)(length, function () {
+        return _this._childType.read(io);
+      });
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      var _this2 = this;
+
+      if (!(0, _isArray2.default)(value)) {
+        throw new Error('XDR Write Error: value is not array');
+      }
+
+      if (value.length > this._maxLength) {
+        throw new Error('XDR Write Error: Got array of size ' + value.length + ',' + ('max allowed is ' + this._maxLength));
+      }
+
+      _int.Int.write(value.length, io);
+      (0, _each2.default)(value, function (child) {
+        return _this2._childType.write(child, io);
+      });
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      var _this3 = this;
+
+      if (!(0, _isArray2.default)(value)) {
+        return false;
+      }
+      if (value.length > this._maxLength) {
+        return false;
+      }
+
+      return (0, _every2.default)(value, function (child) {
+        return _this3._childType.isValid(child);
+      });
+    }
+  }]);
+
+  return VarArray;
+}();
+
+(0, _ioMixin2.default)(VarArray.prototype);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/var-opaque.js":
-/*!***********************************************!*\
-  !*** ./node_modules/js-xdr/lib/var-opaque.js ***!
-  \***********************************************/
+/***/ 8886:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.VarOpaque = undefined;\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _int = __webpack_require__(/*! ./int */ \"./node_modules/js-xdr/lib/int.js\");\n\nvar _unsignedInt = __webpack_require__(/*! ./unsigned-int */ \"./node_modules/js-xdr/lib/unsigned-int.js\");\n\nvar _util = __webpack_require__(/*! ./util */ \"./node_modules/js-xdr/lib/util.js\");\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar VarOpaque = exports.VarOpaque = function () {\n  function VarOpaque() {\n    var maxLength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _unsignedInt.UnsignedInt.MAX_VALUE;\n\n    _classCallCheck(this, VarOpaque);\n\n    this._maxLength = maxLength;\n  }\n\n  _createClass(VarOpaque, [{\n    key: 'read',\n    value: function read(io) {\n      var length = _int.Int.read(io);\n\n      if (length > this._maxLength) {\n        throw new Error('XDR Read Error: Saw ' + length + ' length VarOpaque,' + ('max allowed is ' + this._maxLength));\n      }\n      var padding = (0, _util.calculatePadding)(length);\n      var result = io.slice(length);\n      (0, _util.slicePadding)(io, padding);\n      return result.buffer();\n    }\n  }, {\n    key: 'write',\n    value: function write(value, io) {\n      if (value.length > this._maxLength) {\n        throw new Error('XDR Write Error: Got ' + value.length + ' bytes,' + ('max allows is ' + this._maxLength));\n      }\n      _int.Int.write(value.length, io);\n      io.writeBufferPadded(value);\n    }\n  }, {\n    key: 'isValid',\n    value: function isValid(value) {\n      return Buffer.isBuffer(value) && value.length <= this._maxLength;\n    }\n  }]);\n\n  return VarOpaque;\n}();\n\n(0, _ioMixin2.default)(VarOpaque.prototype);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/var-opaque.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.VarOpaque = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _int = __webpack_require__(3983);
+
+var _unsignedInt = __webpack_require__(7981);
+
+var _util = __webpack_require__(2230);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var VarOpaque = exports.VarOpaque = function () {
+  function VarOpaque() {
+    var maxLength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _unsignedInt.UnsignedInt.MAX_VALUE;
+
+    _classCallCheck(this, VarOpaque);
+
+    this._maxLength = maxLength;
+  }
+
+  _createClass(VarOpaque, [{
+    key: 'read',
+    value: function read(io) {
+      var length = _int.Int.read(io);
+
+      if (length > this._maxLength) {
+        throw new Error('XDR Read Error: Saw ' + length + ' length VarOpaque,' + ('max allowed is ' + this._maxLength));
+      }
+      var padding = (0, _util.calculatePadding)(length);
+      var result = io.slice(length);
+      (0, _util.slicePadding)(io, padding);
+      return result.buffer();
+    }
+  }, {
+    key: 'write',
+    value: function write(value, io) {
+      if (value.length > this._maxLength) {
+        throw new Error('XDR Write Error: Got ' + value.length + ' bytes,' + ('max allows is ' + this._maxLength));
+      }
+      _int.Int.write(value.length, io);
+      io.writeBufferPadded(value);
+    }
+  }, {
+    key: 'isValid',
+    value: function isValid(value) {
+      return Buffer.isBuffer(value) && value.length <= this._maxLength;
+    }
+  }]);
+
+  return VarOpaque;
+}();
+
+(0, _ioMixin2.default)(VarOpaque.prototype);
 
 /***/ }),
 
-/***/ "./node_modules/js-xdr/lib/void.js":
-/*!*****************************************!*\
-  !*** ./node_modules/js-xdr/lib/void.js ***!
-  \*****************************************/
+/***/ 9317:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\nexports.Void = undefined;\n\nvar _isUndefined = __webpack_require__(/*! lodash/isUndefined */ \"./node_modules/lodash/isUndefined.js\");\n\nvar _isUndefined2 = _interopRequireDefault(_isUndefined);\n\nvar _ioMixin = __webpack_require__(/*! ./io-mixin */ \"./node_modules/js-xdr/lib/io-mixin.js\");\n\nvar _ioMixin2 = _interopRequireDefault(_ioMixin);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar Void = exports.Void = {\n  /* jshint unused: false */\n\n  read: function read() {\n    return undefined;\n  },\n  write: function write(value) {\n    if (!(0, _isUndefined2.default)(value)) {\n      throw new Error('XDR Write Error: trying to write value to a void slot');\n    }\n  },\n  isValid: function isValid(value) {\n    return (0, _isUndefined2.default)(value);\n  }\n};\n\n(0, _ioMixin2.default)(Void);\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/js-xdr/lib/void.js?");
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Void = undefined;
+
+var _isUndefined = __webpack_require__(2353);
+
+var _isUndefined2 = _interopRequireDefault(_isUndefined);
+
+var _ioMixin = __webpack_require__(8666);
+
+var _ioMixin2 = _interopRequireDefault(_ioMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Void = exports.Void = {
+  /* jshint unused: false */
+
+  read: function read() {
+    return undefined;
+  },
+  write: function write(value) {
+    if (!(0, _isUndefined2.default)(value)) {
+      throw new Error('XDR Write Error: trying to write value to a void slot');
+    }
+  },
+  isValid: function isValid(value) {
+    return (0, _isUndefined2.default)(value);
+  }
+};
+
+(0, _ioMixin2.default)(Void);
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_DataView.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_DataView.js ***!
-  \******************************************/
+/***/ 8552:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getNative = __webpack_require__(/*! ./_getNative */ \"./node_modules/lodash/_getNative.js\"),\n    root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\");\n\n/* Built-in method references that are verified to be native. */\nvar DataView = getNative(root, 'DataView');\n\nmodule.exports = DataView;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_DataView.js?");
+var getNative = __webpack_require__(852),
+    root = __webpack_require__(5639);
+
+/* Built-in method references that are verified to be native. */
+var DataView = getNative(root, 'DataView');
+
+module.exports = DataView;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_Hash.js":
-/*!**************************************!*\
-  !*** ./node_modules/lodash/_Hash.js ***!
-  \**************************************/
+/***/ 1989:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var hashClear = __webpack_require__(/*! ./_hashClear */ \"./node_modules/lodash/_hashClear.js\"),\n    hashDelete = __webpack_require__(/*! ./_hashDelete */ \"./node_modules/lodash/_hashDelete.js\"),\n    hashGet = __webpack_require__(/*! ./_hashGet */ \"./node_modules/lodash/_hashGet.js\"),\n    hashHas = __webpack_require__(/*! ./_hashHas */ \"./node_modules/lodash/_hashHas.js\"),\n    hashSet = __webpack_require__(/*! ./_hashSet */ \"./node_modules/lodash/_hashSet.js\");\n\n/**\n * Creates a hash object.\n *\n * @private\n * @constructor\n * @param {Array} [entries] The key-value pairs to cache.\n */\nfunction Hash(entries) {\n  var index = -1,\n      length = entries == null ? 0 : entries.length;\n\n  this.clear();\n  while (++index < length) {\n    var entry = entries[index];\n    this.set(entry[0], entry[1]);\n  }\n}\n\n// Add methods to `Hash`.\nHash.prototype.clear = hashClear;\nHash.prototype['delete'] = hashDelete;\nHash.prototype.get = hashGet;\nHash.prototype.has = hashHas;\nHash.prototype.set = hashSet;\n\nmodule.exports = Hash;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_Hash.js?");
+var hashClear = __webpack_require__(1789),
+    hashDelete = __webpack_require__(401),
+    hashGet = __webpack_require__(7667),
+    hashHas = __webpack_require__(1327),
+    hashSet = __webpack_require__(1866);
+
+/**
+ * Creates a hash object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function Hash(entries) {
+  var index = -1,
+      length = entries == null ? 0 : entries.length;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+// Add methods to `Hash`.
+Hash.prototype.clear = hashClear;
+Hash.prototype['delete'] = hashDelete;
+Hash.prototype.get = hashGet;
+Hash.prototype.has = hashHas;
+Hash.prototype.set = hashSet;
+
+module.exports = Hash;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_ListCache.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_ListCache.js ***!
-  \*******************************************/
+/***/ 8407:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var listCacheClear = __webpack_require__(/*! ./_listCacheClear */ \"./node_modules/lodash/_listCacheClear.js\"),\n    listCacheDelete = __webpack_require__(/*! ./_listCacheDelete */ \"./node_modules/lodash/_listCacheDelete.js\"),\n    listCacheGet = __webpack_require__(/*! ./_listCacheGet */ \"./node_modules/lodash/_listCacheGet.js\"),\n    listCacheHas = __webpack_require__(/*! ./_listCacheHas */ \"./node_modules/lodash/_listCacheHas.js\"),\n    listCacheSet = __webpack_require__(/*! ./_listCacheSet */ \"./node_modules/lodash/_listCacheSet.js\");\n\n/**\n * Creates an list cache object.\n *\n * @private\n * @constructor\n * @param {Array} [entries] The key-value pairs to cache.\n */\nfunction ListCache(entries) {\n  var index = -1,\n      length = entries == null ? 0 : entries.length;\n\n  this.clear();\n  while (++index < length) {\n    var entry = entries[index];\n    this.set(entry[0], entry[1]);\n  }\n}\n\n// Add methods to `ListCache`.\nListCache.prototype.clear = listCacheClear;\nListCache.prototype['delete'] = listCacheDelete;\nListCache.prototype.get = listCacheGet;\nListCache.prototype.has = listCacheHas;\nListCache.prototype.set = listCacheSet;\n\nmodule.exports = ListCache;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_ListCache.js?");
+var listCacheClear = __webpack_require__(7040),
+    listCacheDelete = __webpack_require__(4125),
+    listCacheGet = __webpack_require__(2117),
+    listCacheHas = __webpack_require__(7529),
+    listCacheSet = __webpack_require__(4705);
+
+/**
+ * Creates an list cache object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function ListCache(entries) {
+  var index = -1,
+      length = entries == null ? 0 : entries.length;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+// Add methods to `ListCache`.
+ListCache.prototype.clear = listCacheClear;
+ListCache.prototype['delete'] = listCacheDelete;
+ListCache.prototype.get = listCacheGet;
+ListCache.prototype.has = listCacheHas;
+ListCache.prototype.set = listCacheSet;
+
+module.exports = ListCache;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_Map.js":
-/*!*************************************!*\
-  !*** ./node_modules/lodash/_Map.js ***!
-  \*************************************/
+/***/ 7071:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getNative = __webpack_require__(/*! ./_getNative */ \"./node_modules/lodash/_getNative.js\"),\n    root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\");\n\n/* Built-in method references that are verified to be native. */\nvar Map = getNative(root, 'Map');\n\nmodule.exports = Map;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_Map.js?");
+var getNative = __webpack_require__(852),
+    root = __webpack_require__(5639);
+
+/* Built-in method references that are verified to be native. */
+var Map = getNative(root, 'Map');
+
+module.exports = Map;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_MapCache.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_MapCache.js ***!
-  \******************************************/
+/***/ 3369:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var mapCacheClear = __webpack_require__(/*! ./_mapCacheClear */ \"./node_modules/lodash/_mapCacheClear.js\"),\n    mapCacheDelete = __webpack_require__(/*! ./_mapCacheDelete */ \"./node_modules/lodash/_mapCacheDelete.js\"),\n    mapCacheGet = __webpack_require__(/*! ./_mapCacheGet */ \"./node_modules/lodash/_mapCacheGet.js\"),\n    mapCacheHas = __webpack_require__(/*! ./_mapCacheHas */ \"./node_modules/lodash/_mapCacheHas.js\"),\n    mapCacheSet = __webpack_require__(/*! ./_mapCacheSet */ \"./node_modules/lodash/_mapCacheSet.js\");\n\n/**\n * Creates a map cache object to store key-value pairs.\n *\n * @private\n * @constructor\n * @param {Array} [entries] The key-value pairs to cache.\n */\nfunction MapCache(entries) {\n  var index = -1,\n      length = entries == null ? 0 : entries.length;\n\n  this.clear();\n  while (++index < length) {\n    var entry = entries[index];\n    this.set(entry[0], entry[1]);\n  }\n}\n\n// Add methods to `MapCache`.\nMapCache.prototype.clear = mapCacheClear;\nMapCache.prototype['delete'] = mapCacheDelete;\nMapCache.prototype.get = mapCacheGet;\nMapCache.prototype.has = mapCacheHas;\nMapCache.prototype.set = mapCacheSet;\n\nmodule.exports = MapCache;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_MapCache.js?");
+var mapCacheClear = __webpack_require__(4785),
+    mapCacheDelete = __webpack_require__(1285),
+    mapCacheGet = __webpack_require__(6000),
+    mapCacheHas = __webpack_require__(9916),
+    mapCacheSet = __webpack_require__(5265);
+
+/**
+ * Creates a map cache object to store key-value pairs.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function MapCache(entries) {
+  var index = -1,
+      length = entries == null ? 0 : entries.length;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+// Add methods to `MapCache`.
+MapCache.prototype.clear = mapCacheClear;
+MapCache.prototype['delete'] = mapCacheDelete;
+MapCache.prototype.get = mapCacheGet;
+MapCache.prototype.has = mapCacheHas;
+MapCache.prototype.set = mapCacheSet;
+
+module.exports = MapCache;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_Promise.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_Promise.js ***!
-  \*****************************************/
+/***/ 3818:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getNative = __webpack_require__(/*! ./_getNative */ \"./node_modules/lodash/_getNative.js\"),\n    root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\");\n\n/* Built-in method references that are verified to be native. */\nvar Promise = getNative(root, 'Promise');\n\nmodule.exports = Promise;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_Promise.js?");
+var getNative = __webpack_require__(852),
+    root = __webpack_require__(5639);
+
+/* Built-in method references that are verified to be native. */
+var Promise = getNative(root, 'Promise');
+
+module.exports = Promise;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_Set.js":
-/*!*************************************!*\
-  !*** ./node_modules/lodash/_Set.js ***!
-  \*************************************/
+/***/ 8525:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getNative = __webpack_require__(/*! ./_getNative */ \"./node_modules/lodash/_getNative.js\"),\n    root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\");\n\n/* Built-in method references that are verified to be native. */\nvar Set = getNative(root, 'Set');\n\nmodule.exports = Set;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_Set.js?");
+var getNative = __webpack_require__(852),
+    root = __webpack_require__(5639);
+
+/* Built-in method references that are verified to be native. */
+var Set = getNative(root, 'Set');
+
+module.exports = Set;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_SetCache.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_SetCache.js ***!
-  \******************************************/
+/***/ 8668:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var MapCache = __webpack_require__(/*! ./_MapCache */ \"./node_modules/lodash/_MapCache.js\"),\n    setCacheAdd = __webpack_require__(/*! ./_setCacheAdd */ \"./node_modules/lodash/_setCacheAdd.js\"),\n    setCacheHas = __webpack_require__(/*! ./_setCacheHas */ \"./node_modules/lodash/_setCacheHas.js\");\n\n/**\n *\n * Creates an array cache object to store unique values.\n *\n * @private\n * @constructor\n * @param {Array} [values] The values to cache.\n */\nfunction SetCache(values) {\n  var index = -1,\n      length = values == null ? 0 : values.length;\n\n  this.__data__ = new MapCache;\n  while (++index < length) {\n    this.add(values[index]);\n  }\n}\n\n// Add methods to `SetCache`.\nSetCache.prototype.add = SetCache.prototype.push = setCacheAdd;\nSetCache.prototype.has = setCacheHas;\n\nmodule.exports = SetCache;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_SetCache.js?");
+var MapCache = __webpack_require__(3369),
+    setCacheAdd = __webpack_require__(619),
+    setCacheHas = __webpack_require__(2385);
+
+/**
+ *
+ * Creates an array cache object to store unique values.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [values] The values to cache.
+ */
+function SetCache(values) {
+  var index = -1,
+      length = values == null ? 0 : values.length;
+
+  this.__data__ = new MapCache;
+  while (++index < length) {
+    this.add(values[index]);
+  }
+}
+
+// Add methods to `SetCache`.
+SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+SetCache.prototype.has = setCacheHas;
+
+module.exports = SetCache;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_Stack.js":
-/*!***************************************!*\
-  !*** ./node_modules/lodash/_Stack.js ***!
-  \***************************************/
+/***/ 6384:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var ListCache = __webpack_require__(/*! ./_ListCache */ \"./node_modules/lodash/_ListCache.js\"),\n    stackClear = __webpack_require__(/*! ./_stackClear */ \"./node_modules/lodash/_stackClear.js\"),\n    stackDelete = __webpack_require__(/*! ./_stackDelete */ \"./node_modules/lodash/_stackDelete.js\"),\n    stackGet = __webpack_require__(/*! ./_stackGet */ \"./node_modules/lodash/_stackGet.js\"),\n    stackHas = __webpack_require__(/*! ./_stackHas */ \"./node_modules/lodash/_stackHas.js\"),\n    stackSet = __webpack_require__(/*! ./_stackSet */ \"./node_modules/lodash/_stackSet.js\");\n\n/**\n * Creates a stack cache object to store key-value pairs.\n *\n * @private\n * @constructor\n * @param {Array} [entries] The key-value pairs to cache.\n */\nfunction Stack(entries) {\n  var data = this.__data__ = new ListCache(entries);\n  this.size = data.size;\n}\n\n// Add methods to `Stack`.\nStack.prototype.clear = stackClear;\nStack.prototype['delete'] = stackDelete;\nStack.prototype.get = stackGet;\nStack.prototype.has = stackHas;\nStack.prototype.set = stackSet;\n\nmodule.exports = Stack;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_Stack.js?");
+var ListCache = __webpack_require__(8407),
+    stackClear = __webpack_require__(7465),
+    stackDelete = __webpack_require__(5984),
+    stackGet = __webpack_require__(7599),
+    stackHas = __webpack_require__(4758),
+    stackSet = __webpack_require__(4309);
+
+/**
+ * Creates a stack cache object to store key-value pairs.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function Stack(entries) {
+  var data = this.__data__ = new ListCache(entries);
+  this.size = data.size;
+}
+
+// Add methods to `Stack`.
+Stack.prototype.clear = stackClear;
+Stack.prototype['delete'] = stackDelete;
+Stack.prototype.get = stackGet;
+Stack.prototype.has = stackHas;
+Stack.prototype.set = stackSet;
+
+module.exports = Stack;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_Symbol.js":
-/*!****************************************!*\
-  !*** ./node_modules/lodash/_Symbol.js ***!
-  \****************************************/
+/***/ 2705:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\");\n\n/** Built-in value references. */\nvar Symbol = root.Symbol;\n\nmodule.exports = Symbol;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_Symbol.js?");
+var root = __webpack_require__(5639);
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_Uint8Array.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_Uint8Array.js ***!
-  \********************************************/
+/***/ 1149:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\");\n\n/** Built-in value references. */\nvar Uint8Array = root.Uint8Array;\n\nmodule.exports = Uint8Array;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_Uint8Array.js?");
+var root = __webpack_require__(5639);
+
+/** Built-in value references. */
+var Uint8Array = root.Uint8Array;
+
+module.exports = Uint8Array;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_WeakMap.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_WeakMap.js ***!
-  \*****************************************/
+/***/ 577:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getNative = __webpack_require__(/*! ./_getNative */ \"./node_modules/lodash/_getNative.js\"),\n    root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\");\n\n/* Built-in method references that are verified to be native. */\nvar WeakMap = getNative(root, 'WeakMap');\n\nmodule.exports = WeakMap;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_WeakMap.js?");
+var getNative = __webpack_require__(852),
+    root = __webpack_require__(5639);
+
+/* Built-in method references that are verified to be native. */
+var WeakMap = getNative(root, 'WeakMap');
+
+module.exports = WeakMap;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_apply.js":
-/*!***************************************!*\
-  !*** ./node_modules/lodash/_apply.js ***!
-  \***************************************/
+/***/ 6874:
 /***/ ((module) => {
 
-eval("/**\n * A faster alternative to `Function#apply`, this function invokes `func`\n * with the `this` binding of `thisArg` and the arguments of `args`.\n *\n * @private\n * @param {Function} func The function to invoke.\n * @param {*} thisArg The `this` binding of `func`.\n * @param {Array} args The arguments to invoke `func` with.\n * @returns {*} Returns the result of `func`.\n */\nfunction apply(func, thisArg, args) {\n  switch (args.length) {\n    case 0: return func.call(thisArg);\n    case 1: return func.call(thisArg, args[0]);\n    case 2: return func.call(thisArg, args[0], args[1]);\n    case 3: return func.call(thisArg, args[0], args[1], args[2]);\n  }\n  return func.apply(thisArg, args);\n}\n\nmodule.exports = apply;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_apply.js?");
+/**
+ * A faster alternative to `Function#apply`, this function invokes `func`
+ * with the `this` binding of `thisArg` and the arguments of `args`.
+ *
+ * @private
+ * @param {Function} func The function to invoke.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {Array} args The arguments to invoke `func` with.
+ * @returns {*} Returns the result of `func`.
+ */
+function apply(func, thisArg, args) {
+  switch (args.length) {
+    case 0: return func.call(thisArg);
+    case 1: return func.call(thisArg, args[0]);
+    case 2: return func.call(thisArg, args[0], args[1]);
+    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
+
+module.exports = apply;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_arrayEach.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_arrayEach.js ***!
-  \*******************************************/
+/***/ 7412:
 /***/ ((module) => {
 
-eval("/**\n * A specialized version of `_.forEach` for arrays without support for\n * iteratee shorthands.\n *\n * @private\n * @param {Array} [array] The array to iterate over.\n * @param {Function} iteratee The function invoked per iteration.\n * @returns {Array} Returns `array`.\n */\nfunction arrayEach(array, iteratee) {\n  var index = -1,\n      length = array == null ? 0 : array.length;\n\n  while (++index < length) {\n    if (iteratee(array[index], index, array) === false) {\n      break;\n    }\n  }\n  return array;\n}\n\nmodule.exports = arrayEach;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_arrayEach.js?");
+/**
+ * A specialized version of `_.forEach` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns `array`.
+ */
+function arrayEach(array, iteratee) {
+  var index = -1,
+      length = array == null ? 0 : array.length;
+
+  while (++index < length) {
+    if (iteratee(array[index], index, array) === false) {
+      break;
+    }
+  }
+  return array;
+}
+
+module.exports = arrayEach;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_arrayEvery.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_arrayEvery.js ***!
-  \********************************************/
+/***/ 6193:
 /***/ ((module) => {
 
-eval("/**\n * A specialized version of `_.every` for arrays without support for\n * iteratee shorthands.\n *\n * @private\n * @param {Array} [array] The array to iterate over.\n * @param {Function} predicate The function invoked per iteration.\n * @returns {boolean} Returns `true` if all elements pass the predicate check,\n *  else `false`.\n */\nfunction arrayEvery(array, predicate) {\n  var index = -1,\n      length = array == null ? 0 : array.length;\n\n  while (++index < length) {\n    if (!predicate(array[index], index, array)) {\n      return false;\n    }\n  }\n  return true;\n}\n\nmodule.exports = arrayEvery;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_arrayEvery.js?");
+/**
+ * A specialized version of `_.every` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {boolean} Returns `true` if all elements pass the predicate check,
+ *  else `false`.
+ */
+function arrayEvery(array, predicate) {
+  var index = -1,
+      length = array == null ? 0 : array.length;
+
+  while (++index < length) {
+    if (!predicate(array[index], index, array)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+module.exports = arrayEvery;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_arrayFilter.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_arrayFilter.js ***!
-  \*********************************************/
+/***/ 4963:
 /***/ ((module) => {
 
-eval("/**\n * A specialized version of `_.filter` for arrays without support for\n * iteratee shorthands.\n *\n * @private\n * @param {Array} [array] The array to iterate over.\n * @param {Function} predicate The function invoked per iteration.\n * @returns {Array} Returns the new filtered array.\n */\nfunction arrayFilter(array, predicate) {\n  var index = -1,\n      length = array == null ? 0 : array.length,\n      resIndex = 0,\n      result = [];\n\n  while (++index < length) {\n    var value = array[index];\n    if (predicate(value, index, array)) {\n      result[resIndex++] = value;\n    }\n  }\n  return result;\n}\n\nmodule.exports = arrayFilter;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_arrayFilter.js?");
+/**
+ * A specialized version of `_.filter` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the new filtered array.
+ */
+function arrayFilter(array, predicate) {
+  var index = -1,
+      length = array == null ? 0 : array.length,
+      resIndex = 0,
+      result = [];
+
+  while (++index < length) {
+    var value = array[index];
+    if (predicate(value, index, array)) {
+      result[resIndex++] = value;
+    }
+  }
+  return result;
+}
+
+module.exports = arrayFilter;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_arrayLikeKeys.js":
-/*!***********************************************!*\
-  !*** ./node_modules/lodash/_arrayLikeKeys.js ***!
-  \***********************************************/
+/***/ 4636:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseTimes = __webpack_require__(/*! ./_baseTimes */ \"./node_modules/lodash/_baseTimes.js\"),\n    isArguments = __webpack_require__(/*! ./isArguments */ \"./node_modules/lodash/isArguments.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    isBuffer = __webpack_require__(/*! ./isBuffer */ \"./node_modules/lodash/isBuffer.js\"),\n    isIndex = __webpack_require__(/*! ./_isIndex */ \"./node_modules/lodash/_isIndex.js\"),\n    isTypedArray = __webpack_require__(/*! ./isTypedArray */ \"./node_modules/lodash/isTypedArray.js\");\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * Creates an array of the enumerable property names of the array-like `value`.\n *\n * @private\n * @param {*} value The value to query.\n * @param {boolean} inherited Specify returning inherited property names.\n * @returns {Array} Returns the array of property names.\n */\nfunction arrayLikeKeys(value, inherited) {\n  var isArr = isArray(value),\n      isArg = !isArr && isArguments(value),\n      isBuff = !isArr && !isArg && isBuffer(value),\n      isType = !isArr && !isArg && !isBuff && isTypedArray(value),\n      skipIndexes = isArr || isArg || isBuff || isType,\n      result = skipIndexes ? baseTimes(value.length, String) : [],\n      length = result.length;\n\n  for (var key in value) {\n    if ((inherited || hasOwnProperty.call(value, key)) &&\n        !(skipIndexes && (\n           // Safari 9 has enumerable `arguments.length` in strict mode.\n           key == 'length' ||\n           // Node.js 0.10 has enumerable non-index properties on buffers.\n           (isBuff && (key == 'offset' || key == 'parent')) ||\n           // PhantomJS 2 has enumerable non-index properties on typed arrays.\n           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||\n           // Skip index properties.\n           isIndex(key, length)\n        ))) {\n      result.push(key);\n    }\n  }\n  return result;\n}\n\nmodule.exports = arrayLikeKeys;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_arrayLikeKeys.js?");
+var baseTimes = __webpack_require__(2545),
+    isArguments = __webpack_require__(5694),
+    isArray = __webpack_require__(1469),
+    isBuffer = __webpack_require__(4144),
+    isIndex = __webpack_require__(5776),
+    isTypedArray = __webpack_require__(6719);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Creates an array of the enumerable property names of the array-like `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @param {boolean} inherited Specify returning inherited property names.
+ * @returns {Array} Returns the array of property names.
+ */
+function arrayLikeKeys(value, inherited) {
+  var isArr = isArray(value),
+      isArg = !isArr && isArguments(value),
+      isBuff = !isArr && !isArg && isBuffer(value),
+      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
+      skipIndexes = isArr || isArg || isBuff || isType,
+      result = skipIndexes ? baseTimes(value.length, String) : [],
+      length = result.length;
+
+  for (var key in value) {
+    if ((inherited || hasOwnProperty.call(value, key)) &&
+        !(skipIndexes && (
+           // Safari 9 has enumerable `arguments.length` in strict mode.
+           key == 'length' ||
+           // Node.js 0.10 has enumerable non-index properties on buffers.
+           (isBuff && (key == 'offset' || key == 'parent')) ||
+           // PhantomJS 2 has enumerable non-index properties on typed arrays.
+           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
+           // Skip index properties.
+           isIndex(key, length)
+        ))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = arrayLikeKeys;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_arrayMap.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_arrayMap.js ***!
-  \******************************************/
+/***/ 9932:
 /***/ ((module) => {
 
-eval("/**\n * A specialized version of `_.map` for arrays without support for iteratee\n * shorthands.\n *\n * @private\n * @param {Array} [array] The array to iterate over.\n * @param {Function} iteratee The function invoked per iteration.\n * @returns {Array} Returns the new mapped array.\n */\nfunction arrayMap(array, iteratee) {\n  var index = -1,\n      length = array == null ? 0 : array.length,\n      result = Array(length);\n\n  while (++index < length) {\n    result[index] = iteratee(array[index], index, array);\n  }\n  return result;\n}\n\nmodule.exports = arrayMap;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_arrayMap.js?");
+/**
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function arrayMap(array, iteratee) {
+  var index = -1,
+      length = array == null ? 0 : array.length,
+      result = Array(length);
+
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
+  }
+  return result;
+}
+
+module.exports = arrayMap;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_arrayPush.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_arrayPush.js ***!
-  \*******************************************/
+/***/ 2488:
 /***/ ((module) => {
 
-eval("/**\n * Appends the elements of `values` to `array`.\n *\n * @private\n * @param {Array} array The array to modify.\n * @param {Array} values The values to append.\n * @returns {Array} Returns `array`.\n */\nfunction arrayPush(array, values) {\n  var index = -1,\n      length = values.length,\n      offset = array.length;\n\n  while (++index < length) {\n    array[offset + index] = values[index];\n  }\n  return array;\n}\n\nmodule.exports = arrayPush;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_arrayPush.js?");
+/**
+ * Appends the elements of `values` to `array`.
+ *
+ * @private
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to append.
+ * @returns {Array} Returns `array`.
+ */
+function arrayPush(array, values) {
+  var index = -1,
+      length = values.length,
+      offset = array.length;
+
+  while (++index < length) {
+    array[offset + index] = values[index];
+  }
+  return array;
+}
+
+module.exports = arrayPush;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_arraySome.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_arraySome.js ***!
-  \*******************************************/
+/***/ 2908:
 /***/ ((module) => {
 
-eval("/**\n * A specialized version of `_.some` for arrays without support for iteratee\n * shorthands.\n *\n * @private\n * @param {Array} [array] The array to iterate over.\n * @param {Function} predicate The function invoked per iteration.\n * @returns {boolean} Returns `true` if any element passes the predicate check,\n *  else `false`.\n */\nfunction arraySome(array, predicate) {\n  var index = -1,\n      length = array == null ? 0 : array.length;\n\n  while (++index < length) {\n    if (predicate(array[index], index, array)) {\n      return true;\n    }\n  }\n  return false;\n}\n\nmodule.exports = arraySome;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_arraySome.js?");
+/**
+ * A specialized version of `_.some` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {boolean} Returns `true` if any element passes the predicate check,
+ *  else `false`.
+ */
+function arraySome(array, predicate) {
+  var index = -1,
+      length = array == null ? 0 : array.length;
+
+  while (++index < length) {
+    if (predicate(array[index], index, array)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+module.exports = arraySome;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_assignValue.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_assignValue.js ***!
-  \*********************************************/
+/***/ 4865:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseAssignValue = __webpack_require__(/*! ./_baseAssignValue */ \"./node_modules/lodash/_baseAssignValue.js\"),\n    eq = __webpack_require__(/*! ./eq */ \"./node_modules/lodash/eq.js\");\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * Assigns `value` to `key` of `object` if the existing value is not equivalent\n * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)\n * for equality comparisons.\n *\n * @private\n * @param {Object} object The object to modify.\n * @param {string} key The key of the property to assign.\n * @param {*} value The value to assign.\n */\nfunction assignValue(object, key, value) {\n  var objValue = object[key];\n  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||\n      (value === undefined && !(key in object))) {\n    baseAssignValue(object, key, value);\n  }\n}\n\nmodule.exports = assignValue;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_assignValue.js?");
+var baseAssignValue = __webpack_require__(9465),
+    eq = __webpack_require__(7813);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Assigns `value` to `key` of `object` if the existing value is not equivalent
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {string} key The key of the property to assign.
+ * @param {*} value The value to assign.
+ */
+function assignValue(object, key, value) {
+  var objValue = object[key];
+  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
+      (value === undefined && !(key in object))) {
+    baseAssignValue(object, key, value);
+  }
+}
+
+module.exports = assignValue;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_assocIndexOf.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_assocIndexOf.js ***!
-  \**********************************************/
+/***/ 8470:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var eq = __webpack_require__(/*! ./eq */ \"./node_modules/lodash/eq.js\");\n\n/**\n * Gets the index at which the `key` is found in `array` of key-value pairs.\n *\n * @private\n * @param {Array} array The array to inspect.\n * @param {*} key The key to search for.\n * @returns {number} Returns the index of the matched value, else `-1`.\n */\nfunction assocIndexOf(array, key) {\n  var length = array.length;\n  while (length--) {\n    if (eq(array[length][0], key)) {\n      return length;\n    }\n  }\n  return -1;\n}\n\nmodule.exports = assocIndexOf;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_assocIndexOf.js?");
+var eq = __webpack_require__(7813);
+
+/**
+ * Gets the index at which the `key` is found in `array` of key-value pairs.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} key The key to search for.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function assocIndexOf(array, key) {
+  var length = array.length;
+  while (length--) {
+    if (eq(array[length][0], key)) {
+      return length;
+    }
+  }
+  return -1;
+}
+
+module.exports = assocIndexOf;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseAssignValue.js":
-/*!*************************************************!*\
-  !*** ./node_modules/lodash/_baseAssignValue.js ***!
-  \*************************************************/
+/***/ 9465:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var defineProperty = __webpack_require__(/*! ./_defineProperty */ \"./node_modules/lodash/_defineProperty.js\");\n\n/**\n * The base implementation of `assignValue` and `assignMergeValue` without\n * value checks.\n *\n * @private\n * @param {Object} object The object to modify.\n * @param {string} key The key of the property to assign.\n * @param {*} value The value to assign.\n */\nfunction baseAssignValue(object, key, value) {\n  if (key == '__proto__' && defineProperty) {\n    defineProperty(object, key, {\n      'configurable': true,\n      'enumerable': true,\n      'value': value,\n      'writable': true\n    });\n  } else {\n    object[key] = value;\n  }\n}\n\nmodule.exports = baseAssignValue;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseAssignValue.js?");
+var defineProperty = __webpack_require__(8777);
+
+/**
+ * The base implementation of `assignValue` and `assignMergeValue` without
+ * value checks.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {string} key The key of the property to assign.
+ * @param {*} value The value to assign.
+ */
+function baseAssignValue(object, key, value) {
+  if (key == '__proto__' && defineProperty) {
+    defineProperty(object, key, {
+      'configurable': true,
+      'enumerable': true,
+      'value': value,
+      'writable': true
+    });
+  } else {
+    object[key] = value;
+  }
+}
+
+module.exports = baseAssignValue;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseEach.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_baseEach.js ***!
-  \******************************************/
+/***/ 9881:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseForOwn = __webpack_require__(/*! ./_baseForOwn */ \"./node_modules/lodash/_baseForOwn.js\"),\n    createBaseEach = __webpack_require__(/*! ./_createBaseEach */ \"./node_modules/lodash/_createBaseEach.js\");\n\n/**\n * The base implementation of `_.forEach` without support for iteratee shorthands.\n *\n * @private\n * @param {Array|Object} collection The collection to iterate over.\n * @param {Function} iteratee The function invoked per iteration.\n * @returns {Array|Object} Returns `collection`.\n */\nvar baseEach = createBaseEach(baseForOwn);\n\nmodule.exports = baseEach;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseEach.js?");
+var baseForOwn = __webpack_require__(7816),
+    createBaseEach = __webpack_require__(9291);
+
+/**
+ * The base implementation of `_.forEach` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array|Object} Returns `collection`.
+ */
+var baseEach = createBaseEach(baseForOwn);
+
+module.exports = baseEach;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseEvery.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_baseEvery.js ***!
-  \*******************************************/
+/***/ 3239:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseEach = __webpack_require__(/*! ./_baseEach */ \"./node_modules/lodash/_baseEach.js\");\n\n/**\n * The base implementation of `_.every` without support for iteratee shorthands.\n *\n * @private\n * @param {Array|Object} collection The collection to iterate over.\n * @param {Function} predicate The function invoked per iteration.\n * @returns {boolean} Returns `true` if all elements pass the predicate check,\n *  else `false`\n */\nfunction baseEvery(collection, predicate) {\n  var result = true;\n  baseEach(collection, function(value, index, collection) {\n    result = !!predicate(value, index, collection);\n    return result;\n  });\n  return result;\n}\n\nmodule.exports = baseEvery;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseEvery.js?");
+var baseEach = __webpack_require__(9881);
+
+/**
+ * The base implementation of `_.every` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {boolean} Returns `true` if all elements pass the predicate check,
+ *  else `false`
+ */
+function baseEvery(collection, predicate) {
+  var result = true;
+  baseEach(collection, function(value, index, collection) {
+    result = !!predicate(value, index, collection);
+    return result;
+  });
+  return result;
+}
+
+module.exports = baseEvery;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseFor.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_baseFor.js ***!
-  \*****************************************/
+/***/ 8483:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var createBaseFor = __webpack_require__(/*! ./_createBaseFor */ \"./node_modules/lodash/_createBaseFor.js\");\n\n/**\n * The base implementation of `baseForOwn` which iterates over `object`\n * properties returned by `keysFunc` and invokes `iteratee` for each property.\n * Iteratee functions may exit iteration early by explicitly returning `false`.\n *\n * @private\n * @param {Object} object The object to iterate over.\n * @param {Function} iteratee The function invoked per iteration.\n * @param {Function} keysFunc The function to get the keys of `object`.\n * @returns {Object} Returns `object`.\n */\nvar baseFor = createBaseFor();\n\nmodule.exports = baseFor;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseFor.js?");
+var createBaseFor = __webpack_require__(5063);
+
+/**
+ * The base implementation of `baseForOwn` which iterates over `object`
+ * properties returned by `keysFunc` and invokes `iteratee` for each property.
+ * Iteratee functions may exit iteration early by explicitly returning `false`.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @param {Function} keysFunc The function to get the keys of `object`.
+ * @returns {Object} Returns `object`.
+ */
+var baseFor = createBaseFor();
+
+module.exports = baseFor;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseForOwn.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_baseForOwn.js ***!
-  \********************************************/
+/***/ 7816:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseFor = __webpack_require__(/*! ./_baseFor */ \"./node_modules/lodash/_baseFor.js\"),\n    keys = __webpack_require__(/*! ./keys */ \"./node_modules/lodash/keys.js\");\n\n/**\n * The base implementation of `_.forOwn` without support for iteratee shorthands.\n *\n * @private\n * @param {Object} object The object to iterate over.\n * @param {Function} iteratee The function invoked per iteration.\n * @returns {Object} Returns `object`.\n */\nfunction baseForOwn(object, iteratee) {\n  return object && baseFor(object, iteratee, keys);\n}\n\nmodule.exports = baseForOwn;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseForOwn.js?");
+var baseFor = __webpack_require__(8483),
+    keys = __webpack_require__(3674);
+
+/**
+ * The base implementation of `_.forOwn` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Object} Returns `object`.
+ */
+function baseForOwn(object, iteratee) {
+  return object && baseFor(object, iteratee, keys);
+}
+
+module.exports = baseForOwn;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseGet.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_baseGet.js ***!
-  \*****************************************/
+/***/ 7786:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var castPath = __webpack_require__(/*! ./_castPath */ \"./node_modules/lodash/_castPath.js\"),\n    toKey = __webpack_require__(/*! ./_toKey */ \"./node_modules/lodash/_toKey.js\");\n\n/**\n * The base implementation of `_.get` without support for default values.\n *\n * @private\n * @param {Object} object The object to query.\n * @param {Array|string} path The path of the property to get.\n * @returns {*} Returns the resolved value.\n */\nfunction baseGet(object, path) {\n  path = castPath(path, object);\n\n  var index = 0,\n      length = path.length;\n\n  while (object != null && index < length) {\n    object = object[toKey(path[index++])];\n  }\n  return (index && index == length) ? object : undefined;\n}\n\nmodule.exports = baseGet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseGet.js?");
+var castPath = __webpack_require__(1811),
+    toKey = __webpack_require__(327);
+
+/**
+ * The base implementation of `_.get` without support for default values.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @returns {*} Returns the resolved value.
+ */
+function baseGet(object, path) {
+  path = castPath(path, object);
+
+  var index = 0,
+      length = path.length;
+
+  while (object != null && index < length) {
+    object = object[toKey(path[index++])];
+  }
+  return (index && index == length) ? object : undefined;
+}
+
+module.exports = baseGet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseGetAllKeys.js":
-/*!************************************************!*\
-  !*** ./node_modules/lodash/_baseGetAllKeys.js ***!
-  \************************************************/
+/***/ 8866:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var arrayPush = __webpack_require__(/*! ./_arrayPush */ \"./node_modules/lodash/_arrayPush.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\");\n\n/**\n * The base implementation of `getAllKeys` and `getAllKeysIn` which uses\n * `keysFunc` and `symbolsFunc` to get the enumerable property names and\n * symbols of `object`.\n *\n * @private\n * @param {Object} object The object to query.\n * @param {Function} keysFunc The function to get the keys of `object`.\n * @param {Function} symbolsFunc The function to get the symbols of `object`.\n * @returns {Array} Returns the array of property names and symbols.\n */\nfunction baseGetAllKeys(object, keysFunc, symbolsFunc) {\n  var result = keysFunc(object);\n  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));\n}\n\nmodule.exports = baseGetAllKeys;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseGetAllKeys.js?");
+var arrayPush = __webpack_require__(2488),
+    isArray = __webpack_require__(1469);
+
+/**
+ * The base implementation of `getAllKeys` and `getAllKeysIn` which uses
+ * `keysFunc` and `symbolsFunc` to get the enumerable property names and
+ * symbols of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Function} keysFunc The function to get the keys of `object`.
+ * @param {Function} symbolsFunc The function to get the symbols of `object`.
+ * @returns {Array} Returns the array of property names and symbols.
+ */
+function baseGetAllKeys(object, keysFunc, symbolsFunc) {
+  var result = keysFunc(object);
+  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
+}
+
+module.exports = baseGetAllKeys;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseGetTag.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_baseGetTag.js ***!
-  \********************************************/
+/***/ 4239:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var Symbol = __webpack_require__(/*! ./_Symbol */ \"./node_modules/lodash/_Symbol.js\"),\n    getRawTag = __webpack_require__(/*! ./_getRawTag */ \"./node_modules/lodash/_getRawTag.js\"),\n    objectToString = __webpack_require__(/*! ./_objectToString */ \"./node_modules/lodash/_objectToString.js\");\n\n/** `Object#toString` result references. */\nvar nullTag = '[object Null]',\n    undefinedTag = '[object Undefined]';\n\n/** Built-in value references. */\nvar symToStringTag = Symbol ? Symbol.toStringTag : undefined;\n\n/**\n * The base implementation of `getTag` without fallbacks for buggy environments.\n *\n * @private\n * @param {*} value The value to query.\n * @returns {string} Returns the `toStringTag`.\n */\nfunction baseGetTag(value) {\n  if (value == null) {\n    return value === undefined ? undefinedTag : nullTag;\n  }\n  return (symToStringTag && symToStringTag in Object(value))\n    ? getRawTag(value)\n    : objectToString(value);\n}\n\nmodule.exports = baseGetTag;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseGetTag.js?");
+var Symbol = __webpack_require__(2705),
+    getRawTag = __webpack_require__(9607),
+    objectToString = __webpack_require__(2333);
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseHasIn.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_baseHasIn.js ***!
-  \*******************************************/
+/***/ 13:
 /***/ ((module) => {
 
-eval("/**\n * The base implementation of `_.hasIn` without support for deep paths.\n *\n * @private\n * @param {Object} [object] The object to query.\n * @param {Array|string} key The key to check.\n * @returns {boolean} Returns `true` if `key` exists, else `false`.\n */\nfunction baseHasIn(object, key) {\n  return object != null && key in Object(object);\n}\n\nmodule.exports = baseHasIn;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseHasIn.js?");
+/**
+ * The base implementation of `_.hasIn` without support for deep paths.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {Array|string} key The key to check.
+ * @returns {boolean} Returns `true` if `key` exists, else `false`.
+ */
+function baseHasIn(object, key) {
+  return object != null && key in Object(object);
+}
+
+module.exports = baseHasIn;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseIsArguments.js":
-/*!*************************************************!*\
-  !*** ./node_modules/lodash/_baseIsArguments.js ***!
-  \*************************************************/
+/***/ 9454:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ \"./node_modules/lodash/_baseGetTag.js\"),\n    isObjectLike = __webpack_require__(/*! ./isObjectLike */ \"./node_modules/lodash/isObjectLike.js\");\n\n/** `Object#toString` result references. */\nvar argsTag = '[object Arguments]';\n\n/**\n * The base implementation of `_.isArguments`.\n *\n * @private\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is an `arguments` object,\n */\nfunction baseIsArguments(value) {\n  return isObjectLike(value) && baseGetTag(value) == argsTag;\n}\n\nmodule.exports = baseIsArguments;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseIsArguments.js?");
+var baseGetTag = __webpack_require__(4239),
+    isObjectLike = __webpack_require__(7005);
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]';
+
+/**
+ * The base implementation of `_.isArguments`.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+ */
+function baseIsArguments(value) {
+  return isObjectLike(value) && baseGetTag(value) == argsTag;
+}
+
+module.exports = baseIsArguments;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseIsEqual.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_baseIsEqual.js ***!
-  \*********************************************/
+/***/ 939:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseIsEqualDeep = __webpack_require__(/*! ./_baseIsEqualDeep */ \"./node_modules/lodash/_baseIsEqualDeep.js\"),\n    isObjectLike = __webpack_require__(/*! ./isObjectLike */ \"./node_modules/lodash/isObjectLike.js\");\n\n/**\n * The base implementation of `_.isEqual` which supports partial comparisons\n * and tracks traversed objects.\n *\n * @private\n * @param {*} value The value to compare.\n * @param {*} other The other value to compare.\n * @param {boolean} bitmask The bitmask flags.\n *  1 - Unordered comparison\n *  2 - Partial comparison\n * @param {Function} [customizer] The function to customize comparisons.\n * @param {Object} [stack] Tracks traversed `value` and `other` objects.\n * @returns {boolean} Returns `true` if the values are equivalent, else `false`.\n */\nfunction baseIsEqual(value, other, bitmask, customizer, stack) {\n  if (value === other) {\n    return true;\n  }\n  if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {\n    return value !== value && other !== other;\n  }\n  return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);\n}\n\nmodule.exports = baseIsEqual;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseIsEqual.js?");
+var baseIsEqualDeep = __webpack_require__(2492),
+    isObjectLike = __webpack_require__(7005);
+
+/**
+ * The base implementation of `_.isEqual` which supports partial comparisons
+ * and tracks traversed objects.
+ *
+ * @private
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @param {boolean} bitmask The bitmask flags.
+ *  1 - Unordered comparison
+ *  2 - Partial comparison
+ * @param {Function} [customizer] The function to customize comparisons.
+ * @param {Object} [stack] Tracks traversed `value` and `other` objects.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ */
+function baseIsEqual(value, other, bitmask, customizer, stack) {
+  if (value === other) {
+    return true;
+  }
+  if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {
+    return value !== value && other !== other;
+  }
+  return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
+}
+
+module.exports = baseIsEqual;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseIsEqualDeep.js":
-/*!*************************************************!*\
-  !*** ./node_modules/lodash/_baseIsEqualDeep.js ***!
-  \*************************************************/
+/***/ 2492:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var Stack = __webpack_require__(/*! ./_Stack */ \"./node_modules/lodash/_Stack.js\"),\n    equalArrays = __webpack_require__(/*! ./_equalArrays */ \"./node_modules/lodash/_equalArrays.js\"),\n    equalByTag = __webpack_require__(/*! ./_equalByTag */ \"./node_modules/lodash/_equalByTag.js\"),\n    equalObjects = __webpack_require__(/*! ./_equalObjects */ \"./node_modules/lodash/_equalObjects.js\"),\n    getTag = __webpack_require__(/*! ./_getTag */ \"./node_modules/lodash/_getTag.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    isBuffer = __webpack_require__(/*! ./isBuffer */ \"./node_modules/lodash/isBuffer.js\"),\n    isTypedArray = __webpack_require__(/*! ./isTypedArray */ \"./node_modules/lodash/isTypedArray.js\");\n\n/** Used to compose bitmasks for value comparisons. */\nvar COMPARE_PARTIAL_FLAG = 1;\n\n/** `Object#toString` result references. */\nvar argsTag = '[object Arguments]',\n    arrayTag = '[object Array]',\n    objectTag = '[object Object]';\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * A specialized version of `baseIsEqual` for arrays and objects which performs\n * deep comparisons and tracks traversed objects enabling objects with circular\n * references to be compared.\n *\n * @private\n * @param {Object} object The object to compare.\n * @param {Object} other The other object to compare.\n * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.\n * @param {Function} customizer The function to customize comparisons.\n * @param {Function} equalFunc The function to determine equivalents of values.\n * @param {Object} [stack] Tracks traversed `object` and `other` objects.\n * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.\n */\nfunction baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {\n  var objIsArr = isArray(object),\n      othIsArr = isArray(other),\n      objTag = objIsArr ? arrayTag : getTag(object),\n      othTag = othIsArr ? arrayTag : getTag(other);\n\n  objTag = objTag == argsTag ? objectTag : objTag;\n  othTag = othTag == argsTag ? objectTag : othTag;\n\n  var objIsObj = objTag == objectTag,\n      othIsObj = othTag == objectTag,\n      isSameTag = objTag == othTag;\n\n  if (isSameTag && isBuffer(object)) {\n    if (!isBuffer(other)) {\n      return false;\n    }\n    objIsArr = true;\n    objIsObj = false;\n  }\n  if (isSameTag && !objIsObj) {\n    stack || (stack = new Stack);\n    return (objIsArr || isTypedArray(object))\n      ? equalArrays(object, other, bitmask, customizer, equalFunc, stack)\n      : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);\n  }\n  if (!(bitmask & COMPARE_PARTIAL_FLAG)) {\n    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),\n        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');\n\n    if (objIsWrapped || othIsWrapped) {\n      var objUnwrapped = objIsWrapped ? object.value() : object,\n          othUnwrapped = othIsWrapped ? other.value() : other;\n\n      stack || (stack = new Stack);\n      return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);\n    }\n  }\n  if (!isSameTag) {\n    return false;\n  }\n  stack || (stack = new Stack);\n  return equalObjects(object, other, bitmask, customizer, equalFunc, stack);\n}\n\nmodule.exports = baseIsEqualDeep;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseIsEqualDeep.js?");
+var Stack = __webpack_require__(6384),
+    equalArrays = __webpack_require__(7114),
+    equalByTag = __webpack_require__(8351),
+    equalObjects = __webpack_require__(6096),
+    getTag = __webpack_require__(4160),
+    isArray = __webpack_require__(1469),
+    isBuffer = __webpack_require__(4144),
+    isTypedArray = __webpack_require__(6719);
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG = 1;
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    arrayTag = '[object Array]',
+    objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * A specialized version of `baseIsEqual` for arrays and objects which performs
+ * deep comparisons and tracks traversed objects enabling objects with circular
+ * references to be compared.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Object} [stack] Tracks traversed `object` and `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
+  var objIsArr = isArray(object),
+      othIsArr = isArray(other),
+      objTag = objIsArr ? arrayTag : getTag(object),
+      othTag = othIsArr ? arrayTag : getTag(other);
+
+  objTag = objTag == argsTag ? objectTag : objTag;
+  othTag = othTag == argsTag ? objectTag : othTag;
+
+  var objIsObj = objTag == objectTag,
+      othIsObj = othTag == objectTag,
+      isSameTag = objTag == othTag;
+
+  if (isSameTag && isBuffer(object)) {
+    if (!isBuffer(other)) {
+      return false;
+    }
+    objIsArr = true;
+    objIsObj = false;
+  }
+  if (isSameTag && !objIsObj) {
+    stack || (stack = new Stack);
+    return (objIsArr || isTypedArray(object))
+      ? equalArrays(object, other, bitmask, customizer, equalFunc, stack)
+      : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
+  }
+  if (!(bitmask & COMPARE_PARTIAL_FLAG)) {
+    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+    if (objIsWrapped || othIsWrapped) {
+      var objUnwrapped = objIsWrapped ? object.value() : object,
+          othUnwrapped = othIsWrapped ? other.value() : other;
+
+      stack || (stack = new Stack);
+      return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
+    }
+  }
+  if (!isSameTag) {
+    return false;
+  }
+  stack || (stack = new Stack);
+  return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
+}
+
+module.exports = baseIsEqualDeep;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseIsMatch.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_baseIsMatch.js ***!
-  \*********************************************/
+/***/ 2958:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var Stack = __webpack_require__(/*! ./_Stack */ \"./node_modules/lodash/_Stack.js\"),\n    baseIsEqual = __webpack_require__(/*! ./_baseIsEqual */ \"./node_modules/lodash/_baseIsEqual.js\");\n\n/** Used to compose bitmasks for value comparisons. */\nvar COMPARE_PARTIAL_FLAG = 1,\n    COMPARE_UNORDERED_FLAG = 2;\n\n/**\n * The base implementation of `_.isMatch` without support for iteratee shorthands.\n *\n * @private\n * @param {Object} object The object to inspect.\n * @param {Object} source The object of property values to match.\n * @param {Array} matchData The property names, values, and compare flags to match.\n * @param {Function} [customizer] The function to customize comparisons.\n * @returns {boolean} Returns `true` if `object` is a match, else `false`.\n */\nfunction baseIsMatch(object, source, matchData, customizer) {\n  var index = matchData.length,\n      length = index,\n      noCustomizer = !customizer;\n\n  if (object == null) {\n    return !length;\n  }\n  object = Object(object);\n  while (index--) {\n    var data = matchData[index];\n    if ((noCustomizer && data[2])\n          ? data[1] !== object[data[0]]\n          : !(data[0] in object)\n        ) {\n      return false;\n    }\n  }\n  while (++index < length) {\n    data = matchData[index];\n    var key = data[0],\n        objValue = object[key],\n        srcValue = data[1];\n\n    if (noCustomizer && data[2]) {\n      if (objValue === undefined && !(key in object)) {\n        return false;\n      }\n    } else {\n      var stack = new Stack;\n      if (customizer) {\n        var result = customizer(objValue, srcValue, key, object, source, stack);\n      }\n      if (!(result === undefined\n            ? baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG, customizer, stack)\n            : result\n          )) {\n        return false;\n      }\n    }\n  }\n  return true;\n}\n\nmodule.exports = baseIsMatch;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseIsMatch.js?");
+var Stack = __webpack_require__(6384),
+    baseIsEqual = __webpack_require__(939);
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG = 1,
+    COMPARE_UNORDERED_FLAG = 2;
+
+/**
+ * The base implementation of `_.isMatch` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Object} object The object to inspect.
+ * @param {Object} source The object of property values to match.
+ * @param {Array} matchData The property names, values, and compare flags to match.
+ * @param {Function} [customizer] The function to customize comparisons.
+ * @returns {boolean} Returns `true` if `object` is a match, else `false`.
+ */
+function baseIsMatch(object, source, matchData, customizer) {
+  var index = matchData.length,
+      length = index,
+      noCustomizer = !customizer;
+
+  if (object == null) {
+    return !length;
+  }
+  object = Object(object);
+  while (index--) {
+    var data = matchData[index];
+    if ((noCustomizer && data[2])
+          ? data[1] !== object[data[0]]
+          : !(data[0] in object)
+        ) {
+      return false;
+    }
+  }
+  while (++index < length) {
+    data = matchData[index];
+    var key = data[0],
+        objValue = object[key],
+        srcValue = data[1];
+
+    if (noCustomizer && data[2]) {
+      if (objValue === undefined && !(key in object)) {
+        return false;
+      }
+    } else {
+      var stack = new Stack;
+      if (customizer) {
+        var result = customizer(objValue, srcValue, key, object, source, stack);
+      }
+      if (!(result === undefined
+            ? baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG, customizer, stack)
+            : result
+          )) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+module.exports = baseIsMatch;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseIsNative.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_baseIsNative.js ***!
-  \**********************************************/
+/***/ 8458:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isFunction = __webpack_require__(/*! ./isFunction */ \"./node_modules/lodash/isFunction.js\"),\n    isMasked = __webpack_require__(/*! ./_isMasked */ \"./node_modules/lodash/_isMasked.js\"),\n    isObject = __webpack_require__(/*! ./isObject */ \"./node_modules/lodash/isObject.js\"),\n    toSource = __webpack_require__(/*! ./_toSource */ \"./node_modules/lodash/_toSource.js\");\n\n/**\n * Used to match `RegExp`\n * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).\n */\nvar reRegExpChar = /[\\\\^$.*+?()[\\]{}|]/g;\n\n/** Used to detect host constructors (Safari). */\nvar reIsHostCtor = /^\\[object .+?Constructor\\]$/;\n\n/** Used for built-in method references. */\nvar funcProto = Function.prototype,\n    objectProto = Object.prototype;\n\n/** Used to resolve the decompiled source of functions. */\nvar funcToString = funcProto.toString;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/** Used to detect if a method is native. */\nvar reIsNative = RegExp('^' +\n  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\\\$&')\n  .replace(/hasOwnProperty|(function).*?(?=\\\\\\()| for .+?(?=\\\\\\])/g, '$1.*?') + '$'\n);\n\n/**\n * The base implementation of `_.isNative` without bad shim checks.\n *\n * @private\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a native function,\n *  else `false`.\n */\nfunction baseIsNative(value) {\n  if (!isObject(value) || isMasked(value)) {\n    return false;\n  }\n  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;\n  return pattern.test(toSource(value));\n}\n\nmodule.exports = baseIsNative;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseIsNative.js?");
+var isFunction = __webpack_require__(3560),
+    isMasked = __webpack_require__(5346),
+    isObject = __webpack_require__(3218),
+    toSource = __webpack_require__(346);
+
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to detect host constructors (Safari). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/**
+ * The base implementation of `_.isNative` without bad shim checks.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
+ */
+function baseIsNative(value) {
+  if (!isObject(value) || isMasked(value)) {
+    return false;
+  }
+  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
+}
+
+module.exports = baseIsNative;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseIsTypedArray.js":
-/*!**************************************************!*\
-  !*** ./node_modules/lodash/_baseIsTypedArray.js ***!
-  \**************************************************/
+/***/ 8749:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ \"./node_modules/lodash/_baseGetTag.js\"),\n    isLength = __webpack_require__(/*! ./isLength */ \"./node_modules/lodash/isLength.js\"),\n    isObjectLike = __webpack_require__(/*! ./isObjectLike */ \"./node_modules/lodash/isObjectLike.js\");\n\n/** `Object#toString` result references. */\nvar argsTag = '[object Arguments]',\n    arrayTag = '[object Array]',\n    boolTag = '[object Boolean]',\n    dateTag = '[object Date]',\n    errorTag = '[object Error]',\n    funcTag = '[object Function]',\n    mapTag = '[object Map]',\n    numberTag = '[object Number]',\n    objectTag = '[object Object]',\n    regexpTag = '[object RegExp]',\n    setTag = '[object Set]',\n    stringTag = '[object String]',\n    weakMapTag = '[object WeakMap]';\n\nvar arrayBufferTag = '[object ArrayBuffer]',\n    dataViewTag = '[object DataView]',\n    float32Tag = '[object Float32Array]',\n    float64Tag = '[object Float64Array]',\n    int8Tag = '[object Int8Array]',\n    int16Tag = '[object Int16Array]',\n    int32Tag = '[object Int32Array]',\n    uint8Tag = '[object Uint8Array]',\n    uint8ClampedTag = '[object Uint8ClampedArray]',\n    uint16Tag = '[object Uint16Array]',\n    uint32Tag = '[object Uint32Array]';\n\n/** Used to identify `toStringTag` values of typed arrays. */\nvar typedArrayTags = {};\ntypedArrayTags[float32Tag] = typedArrayTags[float64Tag] =\ntypedArrayTags[int8Tag] = typedArrayTags[int16Tag] =\ntypedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =\ntypedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =\ntypedArrayTags[uint32Tag] = true;\ntypedArrayTags[argsTag] = typedArrayTags[arrayTag] =\ntypedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =\ntypedArrayTags[dataViewTag] = typedArrayTags[dateTag] =\ntypedArrayTags[errorTag] = typedArrayTags[funcTag] =\ntypedArrayTags[mapTag] = typedArrayTags[numberTag] =\ntypedArrayTags[objectTag] = typedArrayTags[regexpTag] =\ntypedArrayTags[setTag] = typedArrayTags[stringTag] =\ntypedArrayTags[weakMapTag] = false;\n\n/**\n * The base implementation of `_.isTypedArray` without Node.js optimizations.\n *\n * @private\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.\n */\nfunction baseIsTypedArray(value) {\n  return isObjectLike(value) &&\n    isLength(value.length) && !!typedArrayTags[baseGetTag(value)];\n}\n\nmodule.exports = baseIsTypedArray;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseIsTypedArray.js?");
+var baseGetTag = __webpack_require__(4239),
+    isLength = __webpack_require__(1780),
+    isObjectLike = __webpack_require__(7005);
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    arrayTag = '[object Array]',
+    boolTag = '[object Boolean]',
+    dateTag = '[object Date]',
+    errorTag = '[object Error]',
+    funcTag = '[object Function]',
+    mapTag = '[object Map]',
+    numberTag = '[object Number]',
+    objectTag = '[object Object]',
+    regexpTag = '[object RegExp]',
+    setTag = '[object Set]',
+    stringTag = '[object String]',
+    weakMapTag = '[object WeakMap]';
+
+var arrayBufferTag = '[object ArrayBuffer]',
+    dataViewTag = '[object DataView]',
+    float32Tag = '[object Float32Array]',
+    float64Tag = '[object Float64Array]',
+    int8Tag = '[object Int8Array]',
+    int16Tag = '[object Int16Array]',
+    int32Tag = '[object Int32Array]',
+    uint8Tag = '[object Uint8Array]',
+    uint8ClampedTag = '[object Uint8ClampedArray]',
+    uint16Tag = '[object Uint16Array]',
+    uint32Tag = '[object Uint32Array]';
+
+/** Used to identify `toStringTag` values of typed arrays. */
+var typedArrayTags = {};
+typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+typedArrayTags[uint32Tag] = true;
+typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
+typedArrayTags[errorTag] = typedArrayTags[funcTag] =
+typedArrayTags[mapTag] = typedArrayTags[numberTag] =
+typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
+typedArrayTags[setTag] = typedArrayTags[stringTag] =
+typedArrayTags[weakMapTag] = false;
+
+/**
+ * The base implementation of `_.isTypedArray` without Node.js optimizations.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+ */
+function baseIsTypedArray(value) {
+  return isObjectLike(value) &&
+    isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
+}
+
+module.exports = baseIsTypedArray;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseIteratee.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_baseIteratee.js ***!
-  \**********************************************/
+/***/ 7206:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseMatches = __webpack_require__(/*! ./_baseMatches */ \"./node_modules/lodash/_baseMatches.js\"),\n    baseMatchesProperty = __webpack_require__(/*! ./_baseMatchesProperty */ \"./node_modules/lodash/_baseMatchesProperty.js\"),\n    identity = __webpack_require__(/*! ./identity */ \"./node_modules/lodash/identity.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    property = __webpack_require__(/*! ./property */ \"./node_modules/lodash/property.js\");\n\n/**\n * The base implementation of `_.iteratee`.\n *\n * @private\n * @param {*} [value=_.identity] The value to convert to an iteratee.\n * @returns {Function} Returns the iteratee.\n */\nfunction baseIteratee(value) {\n  // Don't store the `typeof` result in a variable to avoid a JIT bug in Safari 9.\n  // See https://bugs.webkit.org/show_bug.cgi?id=156034 for more details.\n  if (typeof value == 'function') {\n    return value;\n  }\n  if (value == null) {\n    return identity;\n  }\n  if (typeof value == 'object') {\n    return isArray(value)\n      ? baseMatchesProperty(value[0], value[1])\n      : baseMatches(value);\n  }\n  return property(value);\n}\n\nmodule.exports = baseIteratee;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseIteratee.js?");
+var baseMatches = __webpack_require__(1573),
+    baseMatchesProperty = __webpack_require__(6432),
+    identity = __webpack_require__(6557),
+    isArray = __webpack_require__(1469),
+    property = __webpack_require__(9601);
+
+/**
+ * The base implementation of `_.iteratee`.
+ *
+ * @private
+ * @param {*} [value=_.identity] The value to convert to an iteratee.
+ * @returns {Function} Returns the iteratee.
+ */
+function baseIteratee(value) {
+  // Don't store the `typeof` result in a variable to avoid a JIT bug in Safari 9.
+  // See https://bugs.webkit.org/show_bug.cgi?id=156034 for more details.
+  if (typeof value == 'function') {
+    return value;
+  }
+  if (value == null) {
+    return identity;
+  }
+  if (typeof value == 'object') {
+    return isArray(value)
+      ? baseMatchesProperty(value[0], value[1])
+      : baseMatches(value);
+  }
+  return property(value);
+}
+
+module.exports = baseIteratee;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseKeys.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_baseKeys.js ***!
-  \******************************************/
+/***/ 280:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isPrototype = __webpack_require__(/*! ./_isPrototype */ \"./node_modules/lodash/_isPrototype.js\"),\n    nativeKeys = __webpack_require__(/*! ./_nativeKeys */ \"./node_modules/lodash/_nativeKeys.js\");\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.\n *\n * @private\n * @param {Object} object The object to query.\n * @returns {Array} Returns the array of property names.\n */\nfunction baseKeys(object) {\n  if (!isPrototype(object)) {\n    return nativeKeys(object);\n  }\n  var result = [];\n  for (var key in Object(object)) {\n    if (hasOwnProperty.call(object, key) && key != 'constructor') {\n      result.push(key);\n    }\n  }\n  return result;\n}\n\nmodule.exports = baseKeys;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseKeys.js?");
+var isPrototype = __webpack_require__(5726),
+    nativeKeys = __webpack_require__(6916);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function baseKeys(object) {
+  if (!isPrototype(object)) {
+    return nativeKeys(object);
+  }
+  var result = [];
+  for (var key in Object(object)) {
+    if (hasOwnProperty.call(object, key) && key != 'constructor') {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = baseKeys;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseKeysIn.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_baseKeysIn.js ***!
-  \********************************************/
+/***/ 313:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isObject = __webpack_require__(/*! ./isObject */ \"./node_modules/lodash/isObject.js\"),\n    isPrototype = __webpack_require__(/*! ./_isPrototype */ \"./node_modules/lodash/_isPrototype.js\"),\n    nativeKeysIn = __webpack_require__(/*! ./_nativeKeysIn */ \"./node_modules/lodash/_nativeKeysIn.js\");\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.\n *\n * @private\n * @param {Object} object The object to query.\n * @returns {Array} Returns the array of property names.\n */\nfunction baseKeysIn(object) {\n  if (!isObject(object)) {\n    return nativeKeysIn(object);\n  }\n  var isProto = isPrototype(object),\n      result = [];\n\n  for (var key in object) {\n    if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {\n      result.push(key);\n    }\n  }\n  return result;\n}\n\nmodule.exports = baseKeysIn;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseKeysIn.js?");
+var isObject = __webpack_require__(3218),
+    isPrototype = __webpack_require__(5726),
+    nativeKeysIn = __webpack_require__(3498);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function baseKeysIn(object) {
+  if (!isObject(object)) {
+    return nativeKeysIn(object);
+  }
+  var isProto = isPrototype(object),
+      result = [];
+
+  for (var key in object) {
+    if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = baseKeysIn;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseMap.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_baseMap.js ***!
-  \*****************************************/
+/***/ 9199:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseEach = __webpack_require__(/*! ./_baseEach */ \"./node_modules/lodash/_baseEach.js\"),\n    isArrayLike = __webpack_require__(/*! ./isArrayLike */ \"./node_modules/lodash/isArrayLike.js\");\n\n/**\n * The base implementation of `_.map` without support for iteratee shorthands.\n *\n * @private\n * @param {Array|Object} collection The collection to iterate over.\n * @param {Function} iteratee The function invoked per iteration.\n * @returns {Array} Returns the new mapped array.\n */\nfunction baseMap(collection, iteratee) {\n  var index = -1,\n      result = isArrayLike(collection) ? Array(collection.length) : [];\n\n  baseEach(collection, function(value, key, collection) {\n    result[++index] = iteratee(value, key, collection);\n  });\n  return result;\n}\n\nmodule.exports = baseMap;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseMap.js?");
+var baseEach = __webpack_require__(9881),
+    isArrayLike = __webpack_require__(8612);
+
+/**
+ * The base implementation of `_.map` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function baseMap(collection, iteratee) {
+  var index = -1,
+      result = isArrayLike(collection) ? Array(collection.length) : [];
+
+  baseEach(collection, function(value, key, collection) {
+    result[++index] = iteratee(value, key, collection);
+  });
+  return result;
+}
+
+module.exports = baseMap;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseMatches.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_baseMatches.js ***!
-  \*********************************************/
+/***/ 1573:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseIsMatch = __webpack_require__(/*! ./_baseIsMatch */ \"./node_modules/lodash/_baseIsMatch.js\"),\n    getMatchData = __webpack_require__(/*! ./_getMatchData */ \"./node_modules/lodash/_getMatchData.js\"),\n    matchesStrictComparable = __webpack_require__(/*! ./_matchesStrictComparable */ \"./node_modules/lodash/_matchesStrictComparable.js\");\n\n/**\n * The base implementation of `_.matches` which doesn't clone `source`.\n *\n * @private\n * @param {Object} source The object of property values to match.\n * @returns {Function} Returns the new spec function.\n */\nfunction baseMatches(source) {\n  var matchData = getMatchData(source);\n  if (matchData.length == 1 && matchData[0][2]) {\n    return matchesStrictComparable(matchData[0][0], matchData[0][1]);\n  }\n  return function(object) {\n    return object === source || baseIsMatch(object, source, matchData);\n  };\n}\n\nmodule.exports = baseMatches;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseMatches.js?");
+var baseIsMatch = __webpack_require__(2958),
+    getMatchData = __webpack_require__(1499),
+    matchesStrictComparable = __webpack_require__(2634);
+
+/**
+ * The base implementation of `_.matches` which doesn't clone `source`.
+ *
+ * @private
+ * @param {Object} source The object of property values to match.
+ * @returns {Function} Returns the new spec function.
+ */
+function baseMatches(source) {
+  var matchData = getMatchData(source);
+  if (matchData.length == 1 && matchData[0][2]) {
+    return matchesStrictComparable(matchData[0][0], matchData[0][1]);
+  }
+  return function(object) {
+    return object === source || baseIsMatch(object, source, matchData);
+  };
+}
+
+module.exports = baseMatches;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseMatchesProperty.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/lodash/_baseMatchesProperty.js ***!
-  \*****************************************************/
+/***/ 6432:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseIsEqual = __webpack_require__(/*! ./_baseIsEqual */ \"./node_modules/lodash/_baseIsEqual.js\"),\n    get = __webpack_require__(/*! ./get */ \"./node_modules/lodash/get.js\"),\n    hasIn = __webpack_require__(/*! ./hasIn */ \"./node_modules/lodash/hasIn.js\"),\n    isKey = __webpack_require__(/*! ./_isKey */ \"./node_modules/lodash/_isKey.js\"),\n    isStrictComparable = __webpack_require__(/*! ./_isStrictComparable */ \"./node_modules/lodash/_isStrictComparable.js\"),\n    matchesStrictComparable = __webpack_require__(/*! ./_matchesStrictComparable */ \"./node_modules/lodash/_matchesStrictComparable.js\"),\n    toKey = __webpack_require__(/*! ./_toKey */ \"./node_modules/lodash/_toKey.js\");\n\n/** Used to compose bitmasks for value comparisons. */\nvar COMPARE_PARTIAL_FLAG = 1,\n    COMPARE_UNORDERED_FLAG = 2;\n\n/**\n * The base implementation of `_.matchesProperty` which doesn't clone `srcValue`.\n *\n * @private\n * @param {string} path The path of the property to get.\n * @param {*} srcValue The value to match.\n * @returns {Function} Returns the new spec function.\n */\nfunction baseMatchesProperty(path, srcValue) {\n  if (isKey(path) && isStrictComparable(srcValue)) {\n    return matchesStrictComparable(toKey(path), srcValue);\n  }\n  return function(object) {\n    var objValue = get(object, path);\n    return (objValue === undefined && objValue === srcValue)\n      ? hasIn(object, path)\n      : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);\n  };\n}\n\nmodule.exports = baseMatchesProperty;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseMatchesProperty.js?");
+var baseIsEqual = __webpack_require__(939),
+    get = __webpack_require__(7361),
+    hasIn = __webpack_require__(9095),
+    isKey = __webpack_require__(5403),
+    isStrictComparable = __webpack_require__(9162),
+    matchesStrictComparable = __webpack_require__(2634),
+    toKey = __webpack_require__(327);
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG = 1,
+    COMPARE_UNORDERED_FLAG = 2;
+
+/**
+ * The base implementation of `_.matchesProperty` which doesn't clone `srcValue`.
+ *
+ * @private
+ * @param {string} path The path of the property to get.
+ * @param {*} srcValue The value to match.
+ * @returns {Function} Returns the new spec function.
+ */
+function baseMatchesProperty(path, srcValue) {
+  if (isKey(path) && isStrictComparable(srcValue)) {
+    return matchesStrictComparable(toKey(path), srcValue);
+  }
+  return function(object) {
+    var objValue = get(object, path);
+    return (objValue === undefined && objValue === srcValue)
+      ? hasIn(object, path)
+      : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+  };
+}
+
+module.exports = baseMatchesProperty;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseProperty.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_baseProperty.js ***!
-  \**********************************************/
+/***/ 371:
 /***/ ((module) => {
 
-eval("/**\n * The base implementation of `_.property` without support for deep paths.\n *\n * @private\n * @param {string} key The key of the property to get.\n * @returns {Function} Returns the new accessor function.\n */\nfunction baseProperty(key) {\n  return function(object) {\n    return object == null ? undefined : object[key];\n  };\n}\n\nmodule.exports = baseProperty;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseProperty.js?");
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+module.exports = baseProperty;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_basePropertyDeep.js":
-/*!**************************************************!*\
-  !*** ./node_modules/lodash/_basePropertyDeep.js ***!
-  \**************************************************/
+/***/ 9152:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGet = __webpack_require__(/*! ./_baseGet */ \"./node_modules/lodash/_baseGet.js\");\n\n/**\n * A specialized version of `baseProperty` which supports deep paths.\n *\n * @private\n * @param {Array|string} path The path of the property to get.\n * @returns {Function} Returns the new accessor function.\n */\nfunction basePropertyDeep(path) {\n  return function(object) {\n    return baseGet(object, path);\n  };\n}\n\nmodule.exports = basePropertyDeep;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_basePropertyDeep.js?");
+var baseGet = __webpack_require__(7786);
+
+/**
+ * A specialized version of `baseProperty` which supports deep paths.
+ *
+ * @private
+ * @param {Array|string} path The path of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function basePropertyDeep(path) {
+  return function(object) {
+    return baseGet(object, path);
+  };
+}
+
+module.exports = basePropertyDeep;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseRest.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_baseRest.js ***!
-  \******************************************/
+/***/ 5976:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var identity = __webpack_require__(/*! ./identity */ \"./node_modules/lodash/identity.js\"),\n    overRest = __webpack_require__(/*! ./_overRest */ \"./node_modules/lodash/_overRest.js\"),\n    setToString = __webpack_require__(/*! ./_setToString */ \"./node_modules/lodash/_setToString.js\");\n\n/**\n * The base implementation of `_.rest` which doesn't validate or coerce arguments.\n *\n * @private\n * @param {Function} func The function to apply a rest parameter to.\n * @param {number} [start=func.length-1] The start position of the rest parameter.\n * @returns {Function} Returns the new function.\n */\nfunction baseRest(func, start) {\n  return setToString(overRest(func, start, identity), func + '');\n}\n\nmodule.exports = baseRest;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseRest.js?");
+var identity = __webpack_require__(6557),
+    overRest = __webpack_require__(5357),
+    setToString = __webpack_require__(61);
+
+/**
+ * The base implementation of `_.rest` which doesn't validate or coerce arguments.
+ *
+ * @private
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @returns {Function} Returns the new function.
+ */
+function baseRest(func, start) {
+  return setToString(overRest(func, start, identity), func + '');
+}
+
+module.exports = baseRest;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseSetToString.js":
-/*!*************************************************!*\
-  !*** ./node_modules/lodash/_baseSetToString.js ***!
-  \*************************************************/
+/***/ 6560:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var constant = __webpack_require__(/*! ./constant */ \"./node_modules/lodash/constant.js\"),\n    defineProperty = __webpack_require__(/*! ./_defineProperty */ \"./node_modules/lodash/_defineProperty.js\"),\n    identity = __webpack_require__(/*! ./identity */ \"./node_modules/lodash/identity.js\");\n\n/**\n * The base implementation of `setToString` without support for hot loop shorting.\n *\n * @private\n * @param {Function} func The function to modify.\n * @param {Function} string The `toString` result.\n * @returns {Function} Returns `func`.\n */\nvar baseSetToString = !defineProperty ? identity : function(func, string) {\n  return defineProperty(func, 'toString', {\n    'configurable': true,\n    'enumerable': false,\n    'value': constant(string),\n    'writable': true\n  });\n};\n\nmodule.exports = baseSetToString;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseSetToString.js?");
+var constant = __webpack_require__(5703),
+    defineProperty = __webpack_require__(8777),
+    identity = __webpack_require__(6557);
+
+/**
+ * The base implementation of `setToString` without support for hot loop shorting.
+ *
+ * @private
+ * @param {Function} func The function to modify.
+ * @param {Function} string The `toString` result.
+ * @returns {Function} Returns `func`.
+ */
+var baseSetToString = !defineProperty ? identity : function(func, string) {
+  return defineProperty(func, 'toString', {
+    'configurable': true,
+    'enumerable': false,
+    'value': constant(string),
+    'writable': true
+  });
+};
+
+module.exports = baseSetToString;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseTimes.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_baseTimes.js ***!
-  \*******************************************/
+/***/ 2545:
 /***/ ((module) => {
 
-eval("/**\n * The base implementation of `_.times` without support for iteratee shorthands\n * or max array length checks.\n *\n * @private\n * @param {number} n The number of times to invoke `iteratee`.\n * @param {Function} iteratee The function invoked per iteration.\n * @returns {Array} Returns the array of results.\n */\nfunction baseTimes(n, iteratee) {\n  var index = -1,\n      result = Array(n);\n\n  while (++index < n) {\n    result[index] = iteratee(index);\n  }\n  return result;\n}\n\nmodule.exports = baseTimes;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseTimes.js?");
+/**
+ * The base implementation of `_.times` without support for iteratee shorthands
+ * or max array length checks.
+ *
+ * @private
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
+ */
+function baseTimes(n, iteratee) {
+  var index = -1,
+      result = Array(n);
+
+  while (++index < n) {
+    result[index] = iteratee(index);
+  }
+  return result;
+}
+
+module.exports = baseTimes;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseToString.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_baseToString.js ***!
-  \**********************************************/
+/***/ 531:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var Symbol = __webpack_require__(/*! ./_Symbol */ \"./node_modules/lodash/_Symbol.js\"),\n    arrayMap = __webpack_require__(/*! ./_arrayMap */ \"./node_modules/lodash/_arrayMap.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    isSymbol = __webpack_require__(/*! ./isSymbol */ \"./node_modules/lodash/isSymbol.js\");\n\n/** Used as references for various `Number` constants. */\nvar INFINITY = 1 / 0;\n\n/** Used to convert symbols to primitives and strings. */\nvar symbolProto = Symbol ? Symbol.prototype : undefined,\n    symbolToString = symbolProto ? symbolProto.toString : undefined;\n\n/**\n * The base implementation of `_.toString` which doesn't convert nullish\n * values to empty strings.\n *\n * @private\n * @param {*} value The value to process.\n * @returns {string} Returns the string.\n */\nfunction baseToString(value) {\n  // Exit early for strings to avoid a performance hit in some environments.\n  if (typeof value == 'string') {\n    return value;\n  }\n  if (isArray(value)) {\n    // Recursively convert values (susceptible to call stack limits).\n    return arrayMap(value, baseToString) + '';\n  }\n  if (isSymbol(value)) {\n    return symbolToString ? symbolToString.call(value) : '';\n  }\n  var result = (value + '');\n  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;\n}\n\nmodule.exports = baseToString;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseToString.js?");
+var Symbol = __webpack_require__(2705),
+    arrayMap = __webpack_require__(9932),
+    isArray = __webpack_require__(1469),
+    isSymbol = __webpack_require__(3448);
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
+
+/** Used to convert symbols to primitives and strings. */
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = symbolProto ? symbolProto.toString : undefined;
+
+/**
+ * The base implementation of `_.toString` which doesn't convert nullish
+ * values to empty strings.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  // Exit early for strings to avoid a performance hit in some environments.
+  if (typeof value == 'string') {
+    return value;
+  }
+  if (isArray(value)) {
+    // Recursively convert values (susceptible to call stack limits).
+    return arrayMap(value, baseToString) + '';
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : '';
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+module.exports = baseToString;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseTrim.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_baseTrim.js ***!
-  \******************************************/
+/***/ 7561:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var trimmedEndIndex = __webpack_require__(/*! ./_trimmedEndIndex */ \"./node_modules/lodash/_trimmedEndIndex.js\");\n\n/** Used to match leading whitespace. */\nvar reTrimStart = /^\\s+/;\n\n/**\n * The base implementation of `_.trim`.\n *\n * @private\n * @param {string} string The string to trim.\n * @returns {string} Returns the trimmed string.\n */\nfunction baseTrim(string) {\n  return string\n    ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')\n    : string;\n}\n\nmodule.exports = baseTrim;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseTrim.js?");
+var trimmedEndIndex = __webpack_require__(7990);
+
+/** Used to match leading whitespace. */
+var reTrimStart = /^\s+/;
+
+/**
+ * The base implementation of `_.trim`.
+ *
+ * @private
+ * @param {string} string The string to trim.
+ * @returns {string} Returns the trimmed string.
+ */
+function baseTrim(string) {
+  return string
+    ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')
+    : string;
+}
+
+module.exports = baseTrim;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseUnary.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_baseUnary.js ***!
-  \*******************************************/
+/***/ 7518:
 /***/ ((module) => {
 
-eval("/**\n * The base implementation of `_.unary` without support for storing metadata.\n *\n * @private\n * @param {Function} func The function to cap arguments for.\n * @returns {Function} Returns the new capped function.\n */\nfunction baseUnary(func) {\n  return function(value) {\n    return func(value);\n  };\n}\n\nmodule.exports = baseUnary;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseUnary.js?");
+/**
+ * The base implementation of `_.unary` without support for storing metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
+}
+
+module.exports = baseUnary;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_baseValues.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_baseValues.js ***!
-  \********************************************/
+/***/ 7415:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var arrayMap = __webpack_require__(/*! ./_arrayMap */ \"./node_modules/lodash/_arrayMap.js\");\n\n/**\n * The base implementation of `_.values` and `_.valuesIn` which creates an\n * array of `object` property values corresponding to the property names\n * of `props`.\n *\n * @private\n * @param {Object} object The object to query.\n * @param {Array} props The property names to get values for.\n * @returns {Object} Returns the array of property values.\n */\nfunction baseValues(object, props) {\n  return arrayMap(props, function(key) {\n    return object[key];\n  });\n}\n\nmodule.exports = baseValues;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_baseValues.js?");
+var arrayMap = __webpack_require__(9932);
+
+/**
+ * The base implementation of `_.values` and `_.valuesIn` which creates an
+ * array of `object` property values corresponding to the property names
+ * of `props`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array} props The property names to get values for.
+ * @returns {Object} Returns the array of property values.
+ */
+function baseValues(object, props) {
+  return arrayMap(props, function(key) {
+    return object[key];
+  });
+}
+
+module.exports = baseValues;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_cacheHas.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_cacheHas.js ***!
-  \******************************************/
+/***/ 4757:
 /***/ ((module) => {
 
-eval("/**\n * Checks if a `cache` value for `key` exists.\n *\n * @private\n * @param {Object} cache The cache to query.\n * @param {string} key The key of the entry to check.\n * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.\n */\nfunction cacheHas(cache, key) {\n  return cache.has(key);\n}\n\nmodule.exports = cacheHas;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_cacheHas.js?");
+/**
+ * Checks if a `cache` value for `key` exists.
+ *
+ * @private
+ * @param {Object} cache The cache to query.
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function cacheHas(cache, key) {
+  return cache.has(key);
+}
+
+module.exports = cacheHas;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_castFunction.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_castFunction.js ***!
-  \**********************************************/
+/***/ 4290:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var identity = __webpack_require__(/*! ./identity */ \"./node_modules/lodash/identity.js\");\n\n/**\n * Casts `value` to `identity` if it's not a function.\n *\n * @private\n * @param {*} value The value to inspect.\n * @returns {Function} Returns cast function.\n */\nfunction castFunction(value) {\n  return typeof value == 'function' ? value : identity;\n}\n\nmodule.exports = castFunction;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_castFunction.js?");
+var identity = __webpack_require__(6557);
+
+/**
+ * Casts `value` to `identity` if it's not a function.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Function} Returns cast function.
+ */
+function castFunction(value) {
+  return typeof value == 'function' ? value : identity;
+}
+
+module.exports = castFunction;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_castPath.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_castPath.js ***!
-  \******************************************/
+/***/ 1811:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    isKey = __webpack_require__(/*! ./_isKey */ \"./node_modules/lodash/_isKey.js\"),\n    stringToPath = __webpack_require__(/*! ./_stringToPath */ \"./node_modules/lodash/_stringToPath.js\"),\n    toString = __webpack_require__(/*! ./toString */ \"./node_modules/lodash/toString.js\");\n\n/**\n * Casts `value` to a path array if it's not one.\n *\n * @private\n * @param {*} value The value to inspect.\n * @param {Object} [object] The object to query keys on.\n * @returns {Array} Returns the cast property path array.\n */\nfunction castPath(value, object) {\n  if (isArray(value)) {\n    return value;\n  }\n  return isKey(value, object) ? [value] : stringToPath(toString(value));\n}\n\nmodule.exports = castPath;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_castPath.js?");
+var isArray = __webpack_require__(1469),
+    isKey = __webpack_require__(5403),
+    stringToPath = __webpack_require__(5514),
+    toString = __webpack_require__(9833);
+
+/**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @param {Object} [object] The object to query keys on.
+ * @returns {Array} Returns the cast property path array.
+ */
+function castPath(value, object) {
+  if (isArray(value)) {
+    return value;
+  }
+  return isKey(value, object) ? [value] : stringToPath(toString(value));
+}
+
+module.exports = castPath;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_copyObject.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_copyObject.js ***!
-  \********************************************/
+/***/ 8363:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var assignValue = __webpack_require__(/*! ./_assignValue */ \"./node_modules/lodash/_assignValue.js\"),\n    baseAssignValue = __webpack_require__(/*! ./_baseAssignValue */ \"./node_modules/lodash/_baseAssignValue.js\");\n\n/**\n * Copies properties of `source` to `object`.\n *\n * @private\n * @param {Object} source The object to copy properties from.\n * @param {Array} props The property identifiers to copy.\n * @param {Object} [object={}] The object to copy properties to.\n * @param {Function} [customizer] The function to customize copied values.\n * @returns {Object} Returns `object`.\n */\nfunction copyObject(source, props, object, customizer) {\n  var isNew = !object;\n  object || (object = {});\n\n  var index = -1,\n      length = props.length;\n\n  while (++index < length) {\n    var key = props[index];\n\n    var newValue = customizer\n      ? customizer(object[key], source[key], key, object, source)\n      : undefined;\n\n    if (newValue === undefined) {\n      newValue = source[key];\n    }\n    if (isNew) {\n      baseAssignValue(object, key, newValue);\n    } else {\n      assignValue(object, key, newValue);\n    }\n  }\n  return object;\n}\n\nmodule.exports = copyObject;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_copyObject.js?");
+var assignValue = __webpack_require__(4865),
+    baseAssignValue = __webpack_require__(9465);
+
+/**
+ * Copies properties of `source` to `object`.
+ *
+ * @private
+ * @param {Object} source The object to copy properties from.
+ * @param {Array} props The property identifiers to copy.
+ * @param {Object} [object={}] The object to copy properties to.
+ * @param {Function} [customizer] The function to customize copied values.
+ * @returns {Object} Returns `object`.
+ */
+function copyObject(source, props, object, customizer) {
+  var isNew = !object;
+  object || (object = {});
+
+  var index = -1,
+      length = props.length;
+
+  while (++index < length) {
+    var key = props[index];
+
+    var newValue = customizer
+      ? customizer(object[key], source[key], key, object, source)
+      : undefined;
+
+    if (newValue === undefined) {
+      newValue = source[key];
+    }
+    if (isNew) {
+      baseAssignValue(object, key, newValue);
+    } else {
+      assignValue(object, key, newValue);
+    }
+  }
+  return object;
+}
+
+module.exports = copyObject;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_coreJsData.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_coreJsData.js ***!
-  \********************************************/
+/***/ 4429:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\");\n\n/** Used to detect overreaching core-js shims. */\nvar coreJsData = root['__core-js_shared__'];\n\nmodule.exports = coreJsData;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_coreJsData.js?");
+var root = __webpack_require__(5639);
+
+/** Used to detect overreaching core-js shims. */
+var coreJsData = root['__core-js_shared__'];
+
+module.exports = coreJsData;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_createAssigner.js":
-/*!************************************************!*\
-  !*** ./node_modules/lodash/_createAssigner.js ***!
-  \************************************************/
+/***/ 1463:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseRest = __webpack_require__(/*! ./_baseRest */ \"./node_modules/lodash/_baseRest.js\"),\n    isIterateeCall = __webpack_require__(/*! ./_isIterateeCall */ \"./node_modules/lodash/_isIterateeCall.js\");\n\n/**\n * Creates a function like `_.assign`.\n *\n * @private\n * @param {Function} assigner The function to assign values.\n * @returns {Function} Returns the new assigner function.\n */\nfunction createAssigner(assigner) {\n  return baseRest(function(object, sources) {\n    var index = -1,\n        length = sources.length,\n        customizer = length > 1 ? sources[length - 1] : undefined,\n        guard = length > 2 ? sources[2] : undefined;\n\n    customizer = (assigner.length > 3 && typeof customizer == 'function')\n      ? (length--, customizer)\n      : undefined;\n\n    if (guard && isIterateeCall(sources[0], sources[1], guard)) {\n      customizer = length < 3 ? undefined : customizer;\n      length = 1;\n    }\n    object = Object(object);\n    while (++index < length) {\n      var source = sources[index];\n      if (source) {\n        assigner(object, source, index, customizer);\n      }\n    }\n    return object;\n  });\n}\n\nmodule.exports = createAssigner;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_createAssigner.js?");
+var baseRest = __webpack_require__(5976),
+    isIterateeCall = __webpack_require__(6612);
+
+/**
+ * Creates a function like `_.assign`.
+ *
+ * @private
+ * @param {Function} assigner The function to assign values.
+ * @returns {Function} Returns the new assigner function.
+ */
+function createAssigner(assigner) {
+  return baseRest(function(object, sources) {
+    var index = -1,
+        length = sources.length,
+        customizer = length > 1 ? sources[length - 1] : undefined,
+        guard = length > 2 ? sources[2] : undefined;
+
+    customizer = (assigner.length > 3 && typeof customizer == 'function')
+      ? (length--, customizer)
+      : undefined;
+
+    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+      customizer = length < 3 ? undefined : customizer;
+      length = 1;
+    }
+    object = Object(object);
+    while (++index < length) {
+      var source = sources[index];
+      if (source) {
+        assigner(object, source, index, customizer);
+      }
+    }
+    return object;
+  });
+}
+
+module.exports = createAssigner;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_createBaseEach.js":
-/*!************************************************!*\
-  !*** ./node_modules/lodash/_createBaseEach.js ***!
-  \************************************************/
+/***/ 9291:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isArrayLike = __webpack_require__(/*! ./isArrayLike */ \"./node_modules/lodash/isArrayLike.js\");\n\n/**\n * Creates a `baseEach` or `baseEachRight` function.\n *\n * @private\n * @param {Function} eachFunc The function to iterate over a collection.\n * @param {boolean} [fromRight] Specify iterating from right to left.\n * @returns {Function} Returns the new base function.\n */\nfunction createBaseEach(eachFunc, fromRight) {\n  return function(collection, iteratee) {\n    if (collection == null) {\n      return collection;\n    }\n    if (!isArrayLike(collection)) {\n      return eachFunc(collection, iteratee);\n    }\n    var length = collection.length,\n        index = fromRight ? length : -1,\n        iterable = Object(collection);\n\n    while ((fromRight ? index-- : ++index < length)) {\n      if (iteratee(iterable[index], index, iterable) === false) {\n        break;\n      }\n    }\n    return collection;\n  };\n}\n\nmodule.exports = createBaseEach;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_createBaseEach.js?");
+var isArrayLike = __webpack_require__(8612);
+
+/**
+ * Creates a `baseEach` or `baseEachRight` function.
+ *
+ * @private
+ * @param {Function} eachFunc The function to iterate over a collection.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new base function.
+ */
+function createBaseEach(eachFunc, fromRight) {
+  return function(collection, iteratee) {
+    if (collection == null) {
+      return collection;
+    }
+    if (!isArrayLike(collection)) {
+      return eachFunc(collection, iteratee);
+    }
+    var length = collection.length,
+        index = fromRight ? length : -1,
+        iterable = Object(collection);
+
+    while ((fromRight ? index-- : ++index < length)) {
+      if (iteratee(iterable[index], index, iterable) === false) {
+        break;
+      }
+    }
+    return collection;
+  };
+}
+
+module.exports = createBaseEach;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_createBaseFor.js":
-/*!***********************************************!*\
-  !*** ./node_modules/lodash/_createBaseFor.js ***!
-  \***********************************************/
+/***/ 5063:
 /***/ ((module) => {
 
-eval("/**\n * Creates a base function for methods like `_.forIn` and `_.forOwn`.\n *\n * @private\n * @param {boolean} [fromRight] Specify iterating from right to left.\n * @returns {Function} Returns the new base function.\n */\nfunction createBaseFor(fromRight) {\n  return function(object, iteratee, keysFunc) {\n    var index = -1,\n        iterable = Object(object),\n        props = keysFunc(object),\n        length = props.length;\n\n    while (length--) {\n      var key = props[fromRight ? length : ++index];\n      if (iteratee(iterable[key], key, iterable) === false) {\n        break;\n      }\n    }\n    return object;\n  };\n}\n\nmodule.exports = createBaseFor;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_createBaseFor.js?");
+/**
+ * Creates a base function for methods like `_.forIn` and `_.forOwn`.
+ *
+ * @private
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new base function.
+ */
+function createBaseFor(fromRight) {
+  return function(object, iteratee, keysFunc) {
+    var index = -1,
+        iterable = Object(object),
+        props = keysFunc(object),
+        length = props.length;
+
+    while (length--) {
+      var key = props[fromRight ? length : ++index];
+      if (iteratee(iterable[key], key, iterable) === false) {
+        break;
+      }
+    }
+    return object;
+  };
+}
+
+module.exports = createBaseFor;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_defineProperty.js":
-/*!************************************************!*\
-  !*** ./node_modules/lodash/_defineProperty.js ***!
-  \************************************************/
+/***/ 8777:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getNative = __webpack_require__(/*! ./_getNative */ \"./node_modules/lodash/_getNative.js\");\n\nvar defineProperty = (function() {\n  try {\n    var func = getNative(Object, 'defineProperty');\n    func({}, '', {});\n    return func;\n  } catch (e) {}\n}());\n\nmodule.exports = defineProperty;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_defineProperty.js?");
+var getNative = __webpack_require__(852);
+
+var defineProperty = (function() {
+  try {
+    var func = getNative(Object, 'defineProperty');
+    func({}, '', {});
+    return func;
+  } catch (e) {}
+}());
+
+module.exports = defineProperty;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_equalArrays.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_equalArrays.js ***!
-  \*********************************************/
+/***/ 7114:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var SetCache = __webpack_require__(/*! ./_SetCache */ \"./node_modules/lodash/_SetCache.js\"),\n    arraySome = __webpack_require__(/*! ./_arraySome */ \"./node_modules/lodash/_arraySome.js\"),\n    cacheHas = __webpack_require__(/*! ./_cacheHas */ \"./node_modules/lodash/_cacheHas.js\");\n\n/** Used to compose bitmasks for value comparisons. */\nvar COMPARE_PARTIAL_FLAG = 1,\n    COMPARE_UNORDERED_FLAG = 2;\n\n/**\n * A specialized version of `baseIsEqualDeep` for arrays with support for\n * partial deep comparisons.\n *\n * @private\n * @param {Array} array The array to compare.\n * @param {Array} other The other array to compare.\n * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.\n * @param {Function} customizer The function to customize comparisons.\n * @param {Function} equalFunc The function to determine equivalents of values.\n * @param {Object} stack Tracks traversed `array` and `other` objects.\n * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.\n */\nfunction equalArrays(array, other, bitmask, customizer, equalFunc, stack) {\n  var isPartial = bitmask & COMPARE_PARTIAL_FLAG,\n      arrLength = array.length,\n      othLength = other.length;\n\n  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {\n    return false;\n  }\n  // Check that cyclic values are equal.\n  var arrStacked = stack.get(array);\n  var othStacked = stack.get(other);\n  if (arrStacked && othStacked) {\n    return arrStacked == other && othStacked == array;\n  }\n  var index = -1,\n      result = true,\n      seen = (bitmask & COMPARE_UNORDERED_FLAG) ? new SetCache : undefined;\n\n  stack.set(array, other);\n  stack.set(other, array);\n\n  // Ignore non-index properties.\n  while (++index < arrLength) {\n    var arrValue = array[index],\n        othValue = other[index];\n\n    if (customizer) {\n      var compared = isPartial\n        ? customizer(othValue, arrValue, index, other, array, stack)\n        : customizer(arrValue, othValue, index, array, other, stack);\n    }\n    if (compared !== undefined) {\n      if (compared) {\n        continue;\n      }\n      result = false;\n      break;\n    }\n    // Recursively compare arrays (susceptible to call stack limits).\n    if (seen) {\n      if (!arraySome(other, function(othValue, othIndex) {\n            if (!cacheHas(seen, othIndex) &&\n                (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {\n              return seen.push(othIndex);\n            }\n          })) {\n        result = false;\n        break;\n      }\n    } else if (!(\n          arrValue === othValue ||\n            equalFunc(arrValue, othValue, bitmask, customizer, stack)\n        )) {\n      result = false;\n      break;\n    }\n  }\n  stack['delete'](array);\n  stack['delete'](other);\n  return result;\n}\n\nmodule.exports = equalArrays;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_equalArrays.js?");
+var SetCache = __webpack_require__(8668),
+    arraySome = __webpack_require__(2908),
+    cacheHas = __webpack_require__(4757);
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG = 1,
+    COMPARE_UNORDERED_FLAG = 2;
+
+/**
+ * A specialized version of `baseIsEqualDeep` for arrays with support for
+ * partial deep comparisons.
+ *
+ * @private
+ * @param {Array} array The array to compare.
+ * @param {Array} other The other array to compare.
+ * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Object} stack Tracks traversed `array` and `other` objects.
+ * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
+ */
+function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
+  var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
+      arrLength = array.length,
+      othLength = other.length;
+
+  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
+    return false;
+  }
+  // Check that cyclic values are equal.
+  var arrStacked = stack.get(array);
+  var othStacked = stack.get(other);
+  if (arrStacked && othStacked) {
+    return arrStacked == other && othStacked == array;
+  }
+  var index = -1,
+      result = true,
+      seen = (bitmask & COMPARE_UNORDERED_FLAG) ? new SetCache : undefined;
+
+  stack.set(array, other);
+  stack.set(other, array);
+
+  // Ignore non-index properties.
+  while (++index < arrLength) {
+    var arrValue = array[index],
+        othValue = other[index];
+
+    if (customizer) {
+      var compared = isPartial
+        ? customizer(othValue, arrValue, index, other, array, stack)
+        : customizer(arrValue, othValue, index, array, other, stack);
+    }
+    if (compared !== undefined) {
+      if (compared) {
+        continue;
+      }
+      result = false;
+      break;
+    }
+    // Recursively compare arrays (susceptible to call stack limits).
+    if (seen) {
+      if (!arraySome(other, function(othValue, othIndex) {
+            if (!cacheHas(seen, othIndex) &&
+                (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
+              return seen.push(othIndex);
+            }
+          })) {
+        result = false;
+        break;
+      }
+    } else if (!(
+          arrValue === othValue ||
+            equalFunc(arrValue, othValue, bitmask, customizer, stack)
+        )) {
+      result = false;
+      break;
+    }
+  }
+  stack['delete'](array);
+  stack['delete'](other);
+  return result;
+}
+
+module.exports = equalArrays;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_equalByTag.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_equalByTag.js ***!
-  \********************************************/
+/***/ 8351:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var Symbol = __webpack_require__(/*! ./_Symbol */ \"./node_modules/lodash/_Symbol.js\"),\n    Uint8Array = __webpack_require__(/*! ./_Uint8Array */ \"./node_modules/lodash/_Uint8Array.js\"),\n    eq = __webpack_require__(/*! ./eq */ \"./node_modules/lodash/eq.js\"),\n    equalArrays = __webpack_require__(/*! ./_equalArrays */ \"./node_modules/lodash/_equalArrays.js\"),\n    mapToArray = __webpack_require__(/*! ./_mapToArray */ \"./node_modules/lodash/_mapToArray.js\"),\n    setToArray = __webpack_require__(/*! ./_setToArray */ \"./node_modules/lodash/_setToArray.js\");\n\n/** Used to compose bitmasks for value comparisons. */\nvar COMPARE_PARTIAL_FLAG = 1,\n    COMPARE_UNORDERED_FLAG = 2;\n\n/** `Object#toString` result references. */\nvar boolTag = '[object Boolean]',\n    dateTag = '[object Date]',\n    errorTag = '[object Error]',\n    mapTag = '[object Map]',\n    numberTag = '[object Number]',\n    regexpTag = '[object RegExp]',\n    setTag = '[object Set]',\n    stringTag = '[object String]',\n    symbolTag = '[object Symbol]';\n\nvar arrayBufferTag = '[object ArrayBuffer]',\n    dataViewTag = '[object DataView]';\n\n/** Used to convert symbols to primitives and strings. */\nvar symbolProto = Symbol ? Symbol.prototype : undefined,\n    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;\n\n/**\n * A specialized version of `baseIsEqualDeep` for comparing objects of\n * the same `toStringTag`.\n *\n * **Note:** This function only supports comparing values with tags of\n * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.\n *\n * @private\n * @param {Object} object The object to compare.\n * @param {Object} other The other object to compare.\n * @param {string} tag The `toStringTag` of the objects to compare.\n * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.\n * @param {Function} customizer The function to customize comparisons.\n * @param {Function} equalFunc The function to determine equivalents of values.\n * @param {Object} stack Tracks traversed `object` and `other` objects.\n * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.\n */\nfunction equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {\n  switch (tag) {\n    case dataViewTag:\n      if ((object.byteLength != other.byteLength) ||\n          (object.byteOffset != other.byteOffset)) {\n        return false;\n      }\n      object = object.buffer;\n      other = other.buffer;\n\n    case arrayBufferTag:\n      if ((object.byteLength != other.byteLength) ||\n          !equalFunc(new Uint8Array(object), new Uint8Array(other))) {\n        return false;\n      }\n      return true;\n\n    case boolTag:\n    case dateTag:\n    case numberTag:\n      // Coerce booleans to `1` or `0` and dates to milliseconds.\n      // Invalid dates are coerced to `NaN`.\n      return eq(+object, +other);\n\n    case errorTag:\n      return object.name == other.name && object.message == other.message;\n\n    case regexpTag:\n    case stringTag:\n      // Coerce regexes to strings and treat strings, primitives and objects,\n      // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring\n      // for more details.\n      return object == (other + '');\n\n    case mapTag:\n      var convert = mapToArray;\n\n    case setTag:\n      var isPartial = bitmask & COMPARE_PARTIAL_FLAG;\n      convert || (convert = setToArray);\n\n      if (object.size != other.size && !isPartial) {\n        return false;\n      }\n      // Assume cyclic values are equal.\n      var stacked = stack.get(object);\n      if (stacked) {\n        return stacked == other;\n      }\n      bitmask |= COMPARE_UNORDERED_FLAG;\n\n      // Recursively compare objects (susceptible to call stack limits).\n      stack.set(object, other);\n      var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);\n      stack['delete'](object);\n      return result;\n\n    case symbolTag:\n      if (symbolValueOf) {\n        return symbolValueOf.call(object) == symbolValueOf.call(other);\n      }\n  }\n  return false;\n}\n\nmodule.exports = equalByTag;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_equalByTag.js?");
+var Symbol = __webpack_require__(2705),
+    Uint8Array = __webpack_require__(1149),
+    eq = __webpack_require__(7813),
+    equalArrays = __webpack_require__(7114),
+    mapToArray = __webpack_require__(8776),
+    setToArray = __webpack_require__(1814);
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG = 1,
+    COMPARE_UNORDERED_FLAG = 2;
+
+/** `Object#toString` result references. */
+var boolTag = '[object Boolean]',
+    dateTag = '[object Date]',
+    errorTag = '[object Error]',
+    mapTag = '[object Map]',
+    numberTag = '[object Number]',
+    regexpTag = '[object RegExp]',
+    setTag = '[object Set]',
+    stringTag = '[object String]',
+    symbolTag = '[object Symbol]';
+
+var arrayBufferTag = '[object ArrayBuffer]',
+    dataViewTag = '[object DataView]';
+
+/** Used to convert symbols to primitives and strings. */
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
+
+/**
+ * A specialized version of `baseIsEqualDeep` for comparing objects of
+ * the same `toStringTag`.
+ *
+ * **Note:** This function only supports comparing values with tags of
+ * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {string} tag The `toStringTag` of the objects to compare.
+ * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Object} stack Tracks traversed `object` and `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
+  switch (tag) {
+    case dataViewTag:
+      if ((object.byteLength != other.byteLength) ||
+          (object.byteOffset != other.byteOffset)) {
+        return false;
+      }
+      object = object.buffer;
+      other = other.buffer;
+
+    case arrayBufferTag:
+      if ((object.byteLength != other.byteLength) ||
+          !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
+        return false;
+      }
+      return true;
+
+    case boolTag:
+    case dateTag:
+    case numberTag:
+      // Coerce booleans to `1` or `0` and dates to milliseconds.
+      // Invalid dates are coerced to `NaN`.
+      return eq(+object, +other);
+
+    case errorTag:
+      return object.name == other.name && object.message == other.message;
+
+    case regexpTag:
+    case stringTag:
+      // Coerce regexes to strings and treat strings, primitives and objects,
+      // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
+      // for more details.
+      return object == (other + '');
+
+    case mapTag:
+      var convert = mapToArray;
+
+    case setTag:
+      var isPartial = bitmask & COMPARE_PARTIAL_FLAG;
+      convert || (convert = setToArray);
+
+      if (object.size != other.size && !isPartial) {
+        return false;
+      }
+      // Assume cyclic values are equal.
+      var stacked = stack.get(object);
+      if (stacked) {
+        return stacked == other;
+      }
+      bitmask |= COMPARE_UNORDERED_FLAG;
+
+      // Recursively compare objects (susceptible to call stack limits).
+      stack.set(object, other);
+      var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
+      stack['delete'](object);
+      return result;
+
+    case symbolTag:
+      if (symbolValueOf) {
+        return symbolValueOf.call(object) == symbolValueOf.call(other);
+      }
+  }
+  return false;
+}
+
+module.exports = equalByTag;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_equalObjects.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_equalObjects.js ***!
-  \**********************************************/
+/***/ 6096:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getAllKeys = __webpack_require__(/*! ./_getAllKeys */ \"./node_modules/lodash/_getAllKeys.js\");\n\n/** Used to compose bitmasks for value comparisons. */\nvar COMPARE_PARTIAL_FLAG = 1;\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * A specialized version of `baseIsEqualDeep` for objects with support for\n * partial deep comparisons.\n *\n * @private\n * @param {Object} object The object to compare.\n * @param {Object} other The other object to compare.\n * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.\n * @param {Function} customizer The function to customize comparisons.\n * @param {Function} equalFunc The function to determine equivalents of values.\n * @param {Object} stack Tracks traversed `object` and `other` objects.\n * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.\n */\nfunction equalObjects(object, other, bitmask, customizer, equalFunc, stack) {\n  var isPartial = bitmask & COMPARE_PARTIAL_FLAG,\n      objProps = getAllKeys(object),\n      objLength = objProps.length,\n      othProps = getAllKeys(other),\n      othLength = othProps.length;\n\n  if (objLength != othLength && !isPartial) {\n    return false;\n  }\n  var index = objLength;\n  while (index--) {\n    var key = objProps[index];\n    if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {\n      return false;\n    }\n  }\n  // Check that cyclic values are equal.\n  var objStacked = stack.get(object);\n  var othStacked = stack.get(other);\n  if (objStacked && othStacked) {\n    return objStacked == other && othStacked == object;\n  }\n  var result = true;\n  stack.set(object, other);\n  stack.set(other, object);\n\n  var skipCtor = isPartial;\n  while (++index < objLength) {\n    key = objProps[index];\n    var objValue = object[key],\n        othValue = other[key];\n\n    if (customizer) {\n      var compared = isPartial\n        ? customizer(othValue, objValue, key, other, object, stack)\n        : customizer(objValue, othValue, key, object, other, stack);\n    }\n    // Recursively compare objects (susceptible to call stack limits).\n    if (!(compared === undefined\n          ? (objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack))\n          : compared\n        )) {\n      result = false;\n      break;\n    }\n    skipCtor || (skipCtor = key == 'constructor');\n  }\n  if (result && !skipCtor) {\n    var objCtor = object.constructor,\n        othCtor = other.constructor;\n\n    // Non `Object` object instances with different constructors are not equal.\n    if (objCtor != othCtor &&\n        ('constructor' in object && 'constructor' in other) &&\n        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&\n          typeof othCtor == 'function' && othCtor instanceof othCtor)) {\n      result = false;\n    }\n  }\n  stack['delete'](object);\n  stack['delete'](other);\n  return result;\n}\n\nmodule.exports = equalObjects;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_equalObjects.js?");
+var getAllKeys = __webpack_require__(8234);
+
+/** Used to compose bitmasks for value comparisons. */
+var COMPARE_PARTIAL_FLAG = 1;
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * A specialized version of `baseIsEqualDeep` for objects with support for
+ * partial deep comparisons.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Object} stack Tracks traversed `object` and `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
+  var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
+      objProps = getAllKeys(object),
+      objLength = objProps.length,
+      othProps = getAllKeys(other),
+      othLength = othProps.length;
+
+  if (objLength != othLength && !isPartial) {
+    return false;
+  }
+  var index = objLength;
+  while (index--) {
+    var key = objProps[index];
+    if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
+      return false;
+    }
+  }
+  // Check that cyclic values are equal.
+  var objStacked = stack.get(object);
+  var othStacked = stack.get(other);
+  if (objStacked && othStacked) {
+    return objStacked == other && othStacked == object;
+  }
+  var result = true;
+  stack.set(object, other);
+  stack.set(other, object);
+
+  var skipCtor = isPartial;
+  while (++index < objLength) {
+    key = objProps[index];
+    var objValue = object[key],
+        othValue = other[key];
+
+    if (customizer) {
+      var compared = isPartial
+        ? customizer(othValue, objValue, key, other, object, stack)
+        : customizer(objValue, othValue, key, object, other, stack);
+    }
+    // Recursively compare objects (susceptible to call stack limits).
+    if (!(compared === undefined
+          ? (objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack))
+          : compared
+        )) {
+      result = false;
+      break;
+    }
+    skipCtor || (skipCtor = key == 'constructor');
+  }
+  if (result && !skipCtor) {
+    var objCtor = object.constructor,
+        othCtor = other.constructor;
+
+    // Non `Object` object instances with different constructors are not equal.
+    if (objCtor != othCtor &&
+        ('constructor' in object && 'constructor' in other) &&
+        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+      result = false;
+    }
+  }
+  stack['delete'](object);
+  stack['delete'](other);
+  return result;
+}
+
+module.exports = equalObjects;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_freeGlobal.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_freeGlobal.js ***!
-  \********************************************/
+/***/ 1957:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("/** Detect free variable `global` from Node.js. */\nvar freeGlobal = typeof __webpack_require__.g == 'object' && __webpack_require__.g && __webpack_require__.g.Object === Object && __webpack_require__.g;\n\nmodule.exports = freeGlobal;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_freeGlobal.js?");
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof __webpack_require__.g == 'object' && __webpack_require__.g && __webpack_require__.g.Object === Object && __webpack_require__.g;
+
+module.exports = freeGlobal;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_getAllKeys.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_getAllKeys.js ***!
-  \********************************************/
+/***/ 8234:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGetAllKeys = __webpack_require__(/*! ./_baseGetAllKeys */ \"./node_modules/lodash/_baseGetAllKeys.js\"),\n    getSymbols = __webpack_require__(/*! ./_getSymbols */ \"./node_modules/lodash/_getSymbols.js\"),\n    keys = __webpack_require__(/*! ./keys */ \"./node_modules/lodash/keys.js\");\n\n/**\n * Creates an array of own enumerable property names and symbols of `object`.\n *\n * @private\n * @param {Object} object The object to query.\n * @returns {Array} Returns the array of property names and symbols.\n */\nfunction getAllKeys(object) {\n  return baseGetAllKeys(object, keys, getSymbols);\n}\n\nmodule.exports = getAllKeys;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_getAllKeys.js?");
+var baseGetAllKeys = __webpack_require__(8866),
+    getSymbols = __webpack_require__(9551),
+    keys = __webpack_require__(3674);
+
+/**
+ * Creates an array of own enumerable property names and symbols of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names and symbols.
+ */
+function getAllKeys(object) {
+  return baseGetAllKeys(object, keys, getSymbols);
+}
+
+module.exports = getAllKeys;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_getMapData.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_getMapData.js ***!
-  \********************************************/
+/***/ 5050:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isKeyable = __webpack_require__(/*! ./_isKeyable */ \"./node_modules/lodash/_isKeyable.js\");\n\n/**\n * Gets the data for `map`.\n *\n * @private\n * @param {Object} map The map to query.\n * @param {string} key The reference key.\n * @returns {*} Returns the map data.\n */\nfunction getMapData(map, key) {\n  var data = map.__data__;\n  return isKeyable(key)\n    ? data[typeof key == 'string' ? 'string' : 'hash']\n    : data.map;\n}\n\nmodule.exports = getMapData;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_getMapData.js?");
+var isKeyable = __webpack_require__(7019);
+
+/**
+ * Gets the data for `map`.
+ *
+ * @private
+ * @param {Object} map The map to query.
+ * @param {string} key The reference key.
+ * @returns {*} Returns the map data.
+ */
+function getMapData(map, key) {
+  var data = map.__data__;
+  return isKeyable(key)
+    ? data[typeof key == 'string' ? 'string' : 'hash']
+    : data.map;
+}
+
+module.exports = getMapData;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_getMatchData.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_getMatchData.js ***!
-  \**********************************************/
+/***/ 1499:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isStrictComparable = __webpack_require__(/*! ./_isStrictComparable */ \"./node_modules/lodash/_isStrictComparable.js\"),\n    keys = __webpack_require__(/*! ./keys */ \"./node_modules/lodash/keys.js\");\n\n/**\n * Gets the property names, values, and compare flags of `object`.\n *\n * @private\n * @param {Object} object The object to query.\n * @returns {Array} Returns the match data of `object`.\n */\nfunction getMatchData(object) {\n  var result = keys(object),\n      length = result.length;\n\n  while (length--) {\n    var key = result[length],\n        value = object[key];\n\n    result[length] = [key, value, isStrictComparable(value)];\n  }\n  return result;\n}\n\nmodule.exports = getMatchData;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_getMatchData.js?");
+var isStrictComparable = __webpack_require__(9162),
+    keys = __webpack_require__(3674);
+
+/**
+ * Gets the property names, values, and compare flags of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the match data of `object`.
+ */
+function getMatchData(object) {
+  var result = keys(object),
+      length = result.length;
+
+  while (length--) {
+    var key = result[length],
+        value = object[key];
+
+    result[length] = [key, value, isStrictComparable(value)];
+  }
+  return result;
+}
+
+module.exports = getMatchData;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_getNative.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_getNative.js ***!
-  \*******************************************/
+/***/ 852:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseIsNative = __webpack_require__(/*! ./_baseIsNative */ \"./node_modules/lodash/_baseIsNative.js\"),\n    getValue = __webpack_require__(/*! ./_getValue */ \"./node_modules/lodash/_getValue.js\");\n\n/**\n * Gets the native function at `key` of `object`.\n *\n * @private\n * @param {Object} object The object to query.\n * @param {string} key The key of the method to get.\n * @returns {*} Returns the function if it's native, else `undefined`.\n */\nfunction getNative(object, key) {\n  var value = getValue(object, key);\n  return baseIsNative(value) ? value : undefined;\n}\n\nmodule.exports = getNative;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_getNative.js?");
+var baseIsNative = __webpack_require__(8458),
+    getValue = __webpack_require__(7801);
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = getValue(object, key);
+  return baseIsNative(value) ? value : undefined;
+}
+
+module.exports = getNative;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_getRawTag.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_getRawTag.js ***!
-  \*******************************************/
+/***/ 9607:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var Symbol = __webpack_require__(/*! ./_Symbol */ \"./node_modules/lodash/_Symbol.js\");\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * Used to resolve the\n * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)\n * of values.\n */\nvar nativeObjectToString = objectProto.toString;\n\n/** Built-in value references. */\nvar symToStringTag = Symbol ? Symbol.toStringTag : undefined;\n\n/**\n * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.\n *\n * @private\n * @param {*} value The value to query.\n * @returns {string} Returns the raw `toStringTag`.\n */\nfunction getRawTag(value) {\n  var isOwn = hasOwnProperty.call(value, symToStringTag),\n      tag = value[symToStringTag];\n\n  try {\n    value[symToStringTag] = undefined;\n    var unmasked = true;\n  } catch (e) {}\n\n  var result = nativeObjectToString.call(value);\n  if (unmasked) {\n    if (isOwn) {\n      value[symToStringTag] = tag;\n    } else {\n      delete value[symToStringTag];\n    }\n  }\n  return result;\n}\n\nmodule.exports = getRawTag;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_getRawTag.js?");
+var Symbol = __webpack_require__(2705);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+module.exports = getRawTag;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_getSymbols.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_getSymbols.js ***!
-  \********************************************/
+/***/ 9551:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var arrayFilter = __webpack_require__(/*! ./_arrayFilter */ \"./node_modules/lodash/_arrayFilter.js\"),\n    stubArray = __webpack_require__(/*! ./stubArray */ \"./node_modules/lodash/stubArray.js\");\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Built-in value references. */\nvar propertyIsEnumerable = objectProto.propertyIsEnumerable;\n\n/* Built-in method references for those with the same name as other `lodash` methods. */\nvar nativeGetSymbols = Object.getOwnPropertySymbols;\n\n/**\n * Creates an array of the own enumerable symbols of `object`.\n *\n * @private\n * @param {Object} object The object to query.\n * @returns {Array} Returns the array of symbols.\n */\nvar getSymbols = !nativeGetSymbols ? stubArray : function(object) {\n  if (object == null) {\n    return [];\n  }\n  object = Object(object);\n  return arrayFilter(nativeGetSymbols(object), function(symbol) {\n    return propertyIsEnumerable.call(object, symbol);\n  });\n};\n\nmodule.exports = getSymbols;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_getSymbols.js?");
+var arrayFilter = __webpack_require__(4963),
+    stubArray = __webpack_require__(479);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeGetSymbols = Object.getOwnPropertySymbols;
+
+/**
+ * Creates an array of the own enumerable symbols of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of symbols.
+ */
+var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
+  if (object == null) {
+    return [];
+  }
+  object = Object(object);
+  return arrayFilter(nativeGetSymbols(object), function(symbol) {
+    return propertyIsEnumerable.call(object, symbol);
+  });
+};
+
+module.exports = getSymbols;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_getTag.js":
-/*!****************************************!*\
-  !*** ./node_modules/lodash/_getTag.js ***!
-  \****************************************/
+/***/ 4160:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var DataView = __webpack_require__(/*! ./_DataView */ \"./node_modules/lodash/_DataView.js\"),\n    Map = __webpack_require__(/*! ./_Map */ \"./node_modules/lodash/_Map.js\"),\n    Promise = __webpack_require__(/*! ./_Promise */ \"./node_modules/lodash/_Promise.js\"),\n    Set = __webpack_require__(/*! ./_Set */ \"./node_modules/lodash/_Set.js\"),\n    WeakMap = __webpack_require__(/*! ./_WeakMap */ \"./node_modules/lodash/_WeakMap.js\"),\n    baseGetTag = __webpack_require__(/*! ./_baseGetTag */ \"./node_modules/lodash/_baseGetTag.js\"),\n    toSource = __webpack_require__(/*! ./_toSource */ \"./node_modules/lodash/_toSource.js\");\n\n/** `Object#toString` result references. */\nvar mapTag = '[object Map]',\n    objectTag = '[object Object]',\n    promiseTag = '[object Promise]',\n    setTag = '[object Set]',\n    weakMapTag = '[object WeakMap]';\n\nvar dataViewTag = '[object DataView]';\n\n/** Used to detect maps, sets, and weakmaps. */\nvar dataViewCtorString = toSource(DataView),\n    mapCtorString = toSource(Map),\n    promiseCtorString = toSource(Promise),\n    setCtorString = toSource(Set),\n    weakMapCtorString = toSource(WeakMap);\n\n/**\n * Gets the `toStringTag` of `value`.\n *\n * @private\n * @param {*} value The value to query.\n * @returns {string} Returns the `toStringTag`.\n */\nvar getTag = baseGetTag;\n\n// Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.\nif ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||\n    (Map && getTag(new Map) != mapTag) ||\n    (Promise && getTag(Promise.resolve()) != promiseTag) ||\n    (Set && getTag(new Set) != setTag) ||\n    (WeakMap && getTag(new WeakMap) != weakMapTag)) {\n  getTag = function(value) {\n    var result = baseGetTag(value),\n        Ctor = result == objectTag ? value.constructor : undefined,\n        ctorString = Ctor ? toSource(Ctor) : '';\n\n    if (ctorString) {\n      switch (ctorString) {\n        case dataViewCtorString: return dataViewTag;\n        case mapCtorString: return mapTag;\n        case promiseCtorString: return promiseTag;\n        case setCtorString: return setTag;\n        case weakMapCtorString: return weakMapTag;\n      }\n    }\n    return result;\n  };\n}\n\nmodule.exports = getTag;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_getTag.js?");
+var DataView = __webpack_require__(8552),
+    Map = __webpack_require__(7071),
+    Promise = __webpack_require__(3818),
+    Set = __webpack_require__(8525),
+    WeakMap = __webpack_require__(577),
+    baseGetTag = __webpack_require__(4239),
+    toSource = __webpack_require__(346);
+
+/** `Object#toString` result references. */
+var mapTag = '[object Map]',
+    objectTag = '[object Object]',
+    promiseTag = '[object Promise]',
+    setTag = '[object Set]',
+    weakMapTag = '[object WeakMap]';
+
+var dataViewTag = '[object DataView]';
+
+/** Used to detect maps, sets, and weakmaps. */
+var dataViewCtorString = toSource(DataView),
+    mapCtorString = toSource(Map),
+    promiseCtorString = toSource(Promise),
+    setCtorString = toSource(Set),
+    weakMapCtorString = toSource(WeakMap);
+
+/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+var getTag = baseGetTag;
+
+// Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
+if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
+    (Map && getTag(new Map) != mapTag) ||
+    (Promise && getTag(Promise.resolve()) != promiseTag) ||
+    (Set && getTag(new Set) != setTag) ||
+    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
+  getTag = function(value) {
+    var result = baseGetTag(value),
+        Ctor = result == objectTag ? value.constructor : undefined,
+        ctorString = Ctor ? toSource(Ctor) : '';
+
+    if (ctorString) {
+      switch (ctorString) {
+        case dataViewCtorString: return dataViewTag;
+        case mapCtorString: return mapTag;
+        case promiseCtorString: return promiseTag;
+        case setCtorString: return setTag;
+        case weakMapCtorString: return weakMapTag;
+      }
+    }
+    return result;
+  };
+}
+
+module.exports = getTag;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_getValue.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_getValue.js ***!
-  \******************************************/
+/***/ 7801:
 /***/ ((module) => {
 
-eval("/**\n * Gets the value at `key` of `object`.\n *\n * @private\n * @param {Object} [object] The object to query.\n * @param {string} key The key of the property to get.\n * @returns {*} Returns the property value.\n */\nfunction getValue(object, key) {\n  return object == null ? undefined : object[key];\n}\n\nmodule.exports = getValue;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_getValue.js?");
+/**
+ * Gets the value at `key` of `object`.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {string} key The key of the property to get.
+ * @returns {*} Returns the property value.
+ */
+function getValue(object, key) {
+  return object == null ? undefined : object[key];
+}
+
+module.exports = getValue;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_hasPath.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_hasPath.js ***!
-  \*****************************************/
+/***/ 222:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var castPath = __webpack_require__(/*! ./_castPath */ \"./node_modules/lodash/_castPath.js\"),\n    isArguments = __webpack_require__(/*! ./isArguments */ \"./node_modules/lodash/isArguments.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    isIndex = __webpack_require__(/*! ./_isIndex */ \"./node_modules/lodash/_isIndex.js\"),\n    isLength = __webpack_require__(/*! ./isLength */ \"./node_modules/lodash/isLength.js\"),\n    toKey = __webpack_require__(/*! ./_toKey */ \"./node_modules/lodash/_toKey.js\");\n\n/**\n * Checks if `path` exists on `object`.\n *\n * @private\n * @param {Object} object The object to query.\n * @param {Array|string} path The path to check.\n * @param {Function} hasFunc The function to check properties.\n * @returns {boolean} Returns `true` if `path` exists, else `false`.\n */\nfunction hasPath(object, path, hasFunc) {\n  path = castPath(path, object);\n\n  var index = -1,\n      length = path.length,\n      result = false;\n\n  while (++index < length) {\n    var key = toKey(path[index]);\n    if (!(result = object != null && hasFunc(object, key))) {\n      break;\n    }\n    object = object[key];\n  }\n  if (result || ++index != length) {\n    return result;\n  }\n  length = object == null ? 0 : object.length;\n  return !!length && isLength(length) && isIndex(key, length) &&\n    (isArray(object) || isArguments(object));\n}\n\nmodule.exports = hasPath;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_hasPath.js?");
+var castPath = __webpack_require__(1811),
+    isArguments = __webpack_require__(5694),
+    isArray = __webpack_require__(1469),
+    isIndex = __webpack_require__(5776),
+    isLength = __webpack_require__(1780),
+    toKey = __webpack_require__(327);
+
+/**
+ * Checks if `path` exists on `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path to check.
+ * @param {Function} hasFunc The function to check properties.
+ * @returns {boolean} Returns `true` if `path` exists, else `false`.
+ */
+function hasPath(object, path, hasFunc) {
+  path = castPath(path, object);
+
+  var index = -1,
+      length = path.length,
+      result = false;
+
+  while (++index < length) {
+    var key = toKey(path[index]);
+    if (!(result = object != null && hasFunc(object, key))) {
+      break;
+    }
+    object = object[key];
+  }
+  if (result || ++index != length) {
+    return result;
+  }
+  length = object == null ? 0 : object.length;
+  return !!length && isLength(length) && isIndex(key, length) &&
+    (isArray(object) || isArguments(object));
+}
+
+module.exports = hasPath;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_hashClear.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_hashClear.js ***!
-  \*******************************************/
+/***/ 1789:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var nativeCreate = __webpack_require__(/*! ./_nativeCreate */ \"./node_modules/lodash/_nativeCreate.js\");\n\n/**\n * Removes all key-value entries from the hash.\n *\n * @private\n * @name clear\n * @memberOf Hash\n */\nfunction hashClear() {\n  this.__data__ = nativeCreate ? nativeCreate(null) : {};\n  this.size = 0;\n}\n\nmodule.exports = hashClear;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_hashClear.js?");
+var nativeCreate = __webpack_require__(4536);
+
+/**
+ * Removes all key-value entries from the hash.
+ *
+ * @private
+ * @name clear
+ * @memberOf Hash
+ */
+function hashClear() {
+  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+  this.size = 0;
+}
+
+module.exports = hashClear;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_hashDelete.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_hashDelete.js ***!
-  \********************************************/
+/***/ 401:
 /***/ ((module) => {
 
-eval("/**\n * Removes `key` and its value from the hash.\n *\n * @private\n * @name delete\n * @memberOf Hash\n * @param {Object} hash The hash to modify.\n * @param {string} key The key of the value to remove.\n * @returns {boolean} Returns `true` if the entry was removed, else `false`.\n */\nfunction hashDelete(key) {\n  var result = this.has(key) && delete this.__data__[key];\n  this.size -= result ? 1 : 0;\n  return result;\n}\n\nmodule.exports = hashDelete;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_hashDelete.js?");
+/**
+ * Removes `key` and its value from the hash.
+ *
+ * @private
+ * @name delete
+ * @memberOf Hash
+ * @param {Object} hash The hash to modify.
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function hashDelete(key) {
+  var result = this.has(key) && delete this.__data__[key];
+  this.size -= result ? 1 : 0;
+  return result;
+}
+
+module.exports = hashDelete;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_hashGet.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_hashGet.js ***!
-  \*****************************************/
+/***/ 7667:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var nativeCreate = __webpack_require__(/*! ./_nativeCreate */ \"./node_modules/lodash/_nativeCreate.js\");\n\n/** Used to stand-in for `undefined` hash values. */\nvar HASH_UNDEFINED = '__lodash_hash_undefined__';\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * Gets the hash value for `key`.\n *\n * @private\n * @name get\n * @memberOf Hash\n * @param {string} key The key of the value to get.\n * @returns {*} Returns the entry value.\n */\nfunction hashGet(key) {\n  var data = this.__data__;\n  if (nativeCreate) {\n    var result = data[key];\n    return result === HASH_UNDEFINED ? undefined : result;\n  }\n  return hasOwnProperty.call(data, key) ? data[key] : undefined;\n}\n\nmodule.exports = hashGet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_hashGet.js?");
+var nativeCreate = __webpack_require__(4536);
+
+/** Used to stand-in for `undefined` hash values. */
+var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Gets the hash value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf Hash
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function hashGet(key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key) ? data[key] : undefined;
+}
+
+module.exports = hashGet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_hashHas.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_hashHas.js ***!
-  \*****************************************/
+/***/ 1327:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var nativeCreate = __webpack_require__(/*! ./_nativeCreate */ \"./node_modules/lodash/_nativeCreate.js\");\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/**\n * Checks if a hash value for `key` exists.\n *\n * @private\n * @name has\n * @memberOf Hash\n * @param {string} key The key of the entry to check.\n * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.\n */\nfunction hashHas(key) {\n  var data = this.__data__;\n  return nativeCreate ? (data[key] !== undefined) : hasOwnProperty.call(data, key);\n}\n\nmodule.exports = hashHas;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_hashHas.js?");
+var nativeCreate = __webpack_require__(4536);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Checks if a hash value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf Hash
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function hashHas(key) {
+  var data = this.__data__;
+  return nativeCreate ? (data[key] !== undefined) : hasOwnProperty.call(data, key);
+}
+
+module.exports = hashHas;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_hashSet.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_hashSet.js ***!
-  \*****************************************/
+/***/ 1866:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var nativeCreate = __webpack_require__(/*! ./_nativeCreate */ \"./node_modules/lodash/_nativeCreate.js\");\n\n/** Used to stand-in for `undefined` hash values. */\nvar HASH_UNDEFINED = '__lodash_hash_undefined__';\n\n/**\n * Sets the hash `key` to `value`.\n *\n * @private\n * @name set\n * @memberOf Hash\n * @param {string} key The key of the value to set.\n * @param {*} value The value to set.\n * @returns {Object} Returns the hash instance.\n */\nfunction hashSet(key, value) {\n  var data = this.__data__;\n  this.size += this.has(key) ? 0 : 1;\n  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;\n  return this;\n}\n\nmodule.exports = hashSet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_hashSet.js?");
+var nativeCreate = __webpack_require__(4536);
+
+/** Used to stand-in for `undefined` hash values. */
+var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+/**
+ * Sets the hash `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf Hash
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the hash instance.
+ */
+function hashSet(key, value) {
+  var data = this.__data__;
+  this.size += this.has(key) ? 0 : 1;
+  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+  return this;
+}
+
+module.exports = hashSet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_isIndex.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_isIndex.js ***!
-  \*****************************************/
+/***/ 5776:
 /***/ ((module) => {
 
-eval("/** Used as references for various `Number` constants. */\nvar MAX_SAFE_INTEGER = 9007199254740991;\n\n/** Used to detect unsigned integer values. */\nvar reIsUint = /^(?:0|[1-9]\\d*)$/;\n\n/**\n * Checks if `value` is a valid array-like index.\n *\n * @private\n * @param {*} value The value to check.\n * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.\n * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.\n */\nfunction isIndex(value, length) {\n  var type = typeof value;\n  length = length == null ? MAX_SAFE_INTEGER : length;\n\n  return !!length &&\n    (type == 'number' ||\n      (type != 'symbol' && reIsUint.test(value))) &&\n        (value > -1 && value % 1 == 0 && value < length);\n}\n\nmodule.exports = isIndex;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_isIndex.js?");
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  var type = typeof value;
+  length = length == null ? MAX_SAFE_INTEGER : length;
+
+  return !!length &&
+    (type == 'number' ||
+      (type != 'symbol' && reIsUint.test(value))) &&
+        (value > -1 && value % 1 == 0 && value < length);
+}
+
+module.exports = isIndex;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_isIterateeCall.js":
-/*!************************************************!*\
-  !*** ./node_modules/lodash/_isIterateeCall.js ***!
-  \************************************************/
+/***/ 6612:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var eq = __webpack_require__(/*! ./eq */ \"./node_modules/lodash/eq.js\"),\n    isArrayLike = __webpack_require__(/*! ./isArrayLike */ \"./node_modules/lodash/isArrayLike.js\"),\n    isIndex = __webpack_require__(/*! ./_isIndex */ \"./node_modules/lodash/_isIndex.js\"),\n    isObject = __webpack_require__(/*! ./isObject */ \"./node_modules/lodash/isObject.js\");\n\n/**\n * Checks if the given arguments are from an iteratee call.\n *\n * @private\n * @param {*} value The potential iteratee value argument.\n * @param {*} index The potential iteratee index or key argument.\n * @param {*} object The potential iteratee object argument.\n * @returns {boolean} Returns `true` if the arguments are from an iteratee call,\n *  else `false`.\n */\nfunction isIterateeCall(value, index, object) {\n  if (!isObject(object)) {\n    return false;\n  }\n  var type = typeof index;\n  if (type == 'number'\n        ? (isArrayLike(object) && isIndex(index, object.length))\n        : (type == 'string' && index in object)\n      ) {\n    return eq(object[index], value);\n  }\n  return false;\n}\n\nmodule.exports = isIterateeCall;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_isIterateeCall.js?");
+var eq = __webpack_require__(7813),
+    isArrayLike = __webpack_require__(8612),
+    isIndex = __webpack_require__(5776),
+    isObject = __webpack_require__(3218);
+
+/**
+ * Checks if the given arguments are from an iteratee call.
+ *
+ * @private
+ * @param {*} value The potential iteratee value argument.
+ * @param {*} index The potential iteratee index or key argument.
+ * @param {*} object The potential iteratee object argument.
+ * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
+ *  else `false`.
+ */
+function isIterateeCall(value, index, object) {
+  if (!isObject(object)) {
+    return false;
+  }
+  var type = typeof index;
+  if (type == 'number'
+        ? (isArrayLike(object) && isIndex(index, object.length))
+        : (type == 'string' && index in object)
+      ) {
+    return eq(object[index], value);
+  }
+  return false;
+}
+
+module.exports = isIterateeCall;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_isKey.js":
-/*!***************************************!*\
-  !*** ./node_modules/lodash/_isKey.js ***!
-  \***************************************/
+/***/ 5403:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    isSymbol = __webpack_require__(/*! ./isSymbol */ \"./node_modules/lodash/isSymbol.js\");\n\n/** Used to match property names within property paths. */\nvar reIsDeepProp = /\\.|\\[(?:[^[\\]]*|([\"'])(?:(?!\\1)[^\\\\]|\\\\.)*?\\1)\\]/,\n    reIsPlainProp = /^\\w*$/;\n\n/**\n * Checks if `value` is a property name and not a property path.\n *\n * @private\n * @param {*} value The value to check.\n * @param {Object} [object] The object to query keys on.\n * @returns {boolean} Returns `true` if `value` is a property name, else `false`.\n */\nfunction isKey(value, object) {\n  if (isArray(value)) {\n    return false;\n  }\n  var type = typeof value;\n  if (type == 'number' || type == 'symbol' || type == 'boolean' ||\n      value == null || isSymbol(value)) {\n    return true;\n  }\n  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||\n    (object != null && value in Object(object));\n}\n\nmodule.exports = isKey;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_isKey.js?");
+var isArray = __webpack_require__(1469),
+    isSymbol = __webpack_require__(3448);
+
+/** Used to match property names within property paths. */
+var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
+    reIsPlainProp = /^\w*$/;
+
+/**
+ * Checks if `value` is a property name and not a property path.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {Object} [object] The object to query keys on.
+ * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
+ */
+function isKey(value, object) {
+  if (isArray(value)) {
+    return false;
+  }
+  var type = typeof value;
+  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+      value == null || isSymbol(value)) {
+    return true;
+  }
+  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+    (object != null && value in Object(object));
+}
+
+module.exports = isKey;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_isKeyable.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/_isKeyable.js ***!
-  \*******************************************/
+/***/ 7019:
 /***/ ((module) => {
 
-eval("/**\n * Checks if `value` is suitable for use as unique object key.\n *\n * @private\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is suitable, else `false`.\n */\nfunction isKeyable(value) {\n  var type = typeof value;\n  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')\n    ? (value !== '__proto__')\n    : (value === null);\n}\n\nmodule.exports = isKeyable;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_isKeyable.js?");
+/**
+ * Checks if `value` is suitable for use as unique object key.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
+ */
+function isKeyable(value) {
+  var type = typeof value;
+  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+    ? (value !== '__proto__')
+    : (value === null);
+}
+
+module.exports = isKeyable;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_isMasked.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_isMasked.js ***!
-  \******************************************/
+/***/ 5346:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var coreJsData = __webpack_require__(/*! ./_coreJsData */ \"./node_modules/lodash/_coreJsData.js\");\n\n/** Used to detect methods masquerading as native. */\nvar maskSrcKey = (function() {\n  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');\n  return uid ? ('Symbol(src)_1.' + uid) : '';\n}());\n\n/**\n * Checks if `func` has its source masked.\n *\n * @private\n * @param {Function} func The function to check.\n * @returns {boolean} Returns `true` if `func` is masked, else `false`.\n */\nfunction isMasked(func) {\n  return !!maskSrcKey && (maskSrcKey in func);\n}\n\nmodule.exports = isMasked;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_isMasked.js?");
+var coreJsData = __webpack_require__(4429);
+
+/** Used to detect methods masquerading as native. */
+var maskSrcKey = (function() {
+  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+  return uid ? ('Symbol(src)_1.' + uid) : '';
+}());
+
+/**
+ * Checks if `func` has its source masked.
+ *
+ * @private
+ * @param {Function} func The function to check.
+ * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+ */
+function isMasked(func) {
+  return !!maskSrcKey && (maskSrcKey in func);
+}
+
+module.exports = isMasked;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_isPrototype.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_isPrototype.js ***!
-  \*********************************************/
+/***/ 5726:
 /***/ ((module) => {
 
-eval("/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/**\n * Checks if `value` is likely a prototype object.\n *\n * @private\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.\n */\nfunction isPrototype(value) {\n  var Ctor = value && value.constructor,\n      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;\n\n  return value === proto;\n}\n\nmodule.exports = isPrototype;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_isPrototype.js?");
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Checks if `value` is likely a prototype object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+ */
+function isPrototype(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+  return value === proto;
+}
+
+module.exports = isPrototype;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_isStrictComparable.js":
-/*!****************************************************!*\
-  !*** ./node_modules/lodash/_isStrictComparable.js ***!
-  \****************************************************/
+/***/ 9162:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isObject = __webpack_require__(/*! ./isObject */ \"./node_modules/lodash/isObject.js\");\n\n/**\n * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.\n *\n * @private\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` if suitable for strict\n *  equality comparisons, else `false`.\n */\nfunction isStrictComparable(value) {\n  return value === value && !isObject(value);\n}\n\nmodule.exports = isStrictComparable;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_isStrictComparable.js?");
+var isObject = __webpack_require__(3218);
+
+/**
+ * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` if suitable for strict
+ *  equality comparisons, else `false`.
+ */
+function isStrictComparable(value) {
+  return value === value && !isObject(value);
+}
+
+module.exports = isStrictComparable;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_listCacheClear.js":
-/*!************************************************!*\
-  !*** ./node_modules/lodash/_listCacheClear.js ***!
-  \************************************************/
+/***/ 7040:
 /***/ ((module) => {
 
-eval("/**\n * Removes all key-value entries from the list cache.\n *\n * @private\n * @name clear\n * @memberOf ListCache\n */\nfunction listCacheClear() {\n  this.__data__ = [];\n  this.size = 0;\n}\n\nmodule.exports = listCacheClear;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_listCacheClear.js?");
+/**
+ * Removes all key-value entries from the list cache.
+ *
+ * @private
+ * @name clear
+ * @memberOf ListCache
+ */
+function listCacheClear() {
+  this.__data__ = [];
+  this.size = 0;
+}
+
+module.exports = listCacheClear;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_listCacheDelete.js":
-/*!*************************************************!*\
-  !*** ./node_modules/lodash/_listCacheDelete.js ***!
-  \*************************************************/
+/***/ 4125:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var assocIndexOf = __webpack_require__(/*! ./_assocIndexOf */ \"./node_modules/lodash/_assocIndexOf.js\");\n\n/** Used for built-in method references. */\nvar arrayProto = Array.prototype;\n\n/** Built-in value references. */\nvar splice = arrayProto.splice;\n\n/**\n * Removes `key` and its value from the list cache.\n *\n * @private\n * @name delete\n * @memberOf ListCache\n * @param {string} key The key of the value to remove.\n * @returns {boolean} Returns `true` if the entry was removed, else `false`.\n */\nfunction listCacheDelete(key) {\n  var data = this.__data__,\n      index = assocIndexOf(data, key);\n\n  if (index < 0) {\n    return false;\n  }\n  var lastIndex = data.length - 1;\n  if (index == lastIndex) {\n    data.pop();\n  } else {\n    splice.call(data, index, 1);\n  }\n  --this.size;\n  return true;\n}\n\nmodule.exports = listCacheDelete;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_listCacheDelete.js?");
+var assocIndexOf = __webpack_require__(8470);
+
+/** Used for built-in method references. */
+var arrayProto = Array.prototype;
+
+/** Built-in value references. */
+var splice = arrayProto.splice;
+
+/**
+ * Removes `key` and its value from the list cache.
+ *
+ * @private
+ * @name delete
+ * @memberOf ListCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function listCacheDelete(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    return false;
+  }
+  var lastIndex = data.length - 1;
+  if (index == lastIndex) {
+    data.pop();
+  } else {
+    splice.call(data, index, 1);
+  }
+  --this.size;
+  return true;
+}
+
+module.exports = listCacheDelete;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_listCacheGet.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_listCacheGet.js ***!
-  \**********************************************/
+/***/ 2117:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var assocIndexOf = __webpack_require__(/*! ./_assocIndexOf */ \"./node_modules/lodash/_assocIndexOf.js\");\n\n/**\n * Gets the list cache value for `key`.\n *\n * @private\n * @name get\n * @memberOf ListCache\n * @param {string} key The key of the value to get.\n * @returns {*} Returns the entry value.\n */\nfunction listCacheGet(key) {\n  var data = this.__data__,\n      index = assocIndexOf(data, key);\n\n  return index < 0 ? undefined : data[index][1];\n}\n\nmodule.exports = listCacheGet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_listCacheGet.js?");
+var assocIndexOf = __webpack_require__(8470);
+
+/**
+ * Gets the list cache value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf ListCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function listCacheGet(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  return index < 0 ? undefined : data[index][1];
+}
+
+module.exports = listCacheGet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_listCacheHas.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_listCacheHas.js ***!
-  \**********************************************/
+/***/ 7529:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var assocIndexOf = __webpack_require__(/*! ./_assocIndexOf */ \"./node_modules/lodash/_assocIndexOf.js\");\n\n/**\n * Checks if a list cache value for `key` exists.\n *\n * @private\n * @name has\n * @memberOf ListCache\n * @param {string} key The key of the entry to check.\n * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.\n */\nfunction listCacheHas(key) {\n  return assocIndexOf(this.__data__, key) > -1;\n}\n\nmodule.exports = listCacheHas;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_listCacheHas.js?");
+var assocIndexOf = __webpack_require__(8470);
+
+/**
+ * Checks if a list cache value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf ListCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function listCacheHas(key) {
+  return assocIndexOf(this.__data__, key) > -1;
+}
+
+module.exports = listCacheHas;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_listCacheSet.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_listCacheSet.js ***!
-  \**********************************************/
+/***/ 4705:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var assocIndexOf = __webpack_require__(/*! ./_assocIndexOf */ \"./node_modules/lodash/_assocIndexOf.js\");\n\n/**\n * Sets the list cache `key` to `value`.\n *\n * @private\n * @name set\n * @memberOf ListCache\n * @param {string} key The key of the value to set.\n * @param {*} value The value to set.\n * @returns {Object} Returns the list cache instance.\n */\nfunction listCacheSet(key, value) {\n  var data = this.__data__,\n      index = assocIndexOf(data, key);\n\n  if (index < 0) {\n    ++this.size;\n    data.push([key, value]);\n  } else {\n    data[index][1] = value;\n  }\n  return this;\n}\n\nmodule.exports = listCacheSet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_listCacheSet.js?");
+var assocIndexOf = __webpack_require__(8470);
+
+/**
+ * Sets the list cache `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf ListCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the list cache instance.
+ */
+function listCacheSet(key, value) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    ++this.size;
+    data.push([key, value]);
+  } else {
+    data[index][1] = value;
+  }
+  return this;
+}
+
+module.exports = listCacheSet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_mapCacheClear.js":
-/*!***********************************************!*\
-  !*** ./node_modules/lodash/_mapCacheClear.js ***!
-  \***********************************************/
+/***/ 4785:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var Hash = __webpack_require__(/*! ./_Hash */ \"./node_modules/lodash/_Hash.js\"),\n    ListCache = __webpack_require__(/*! ./_ListCache */ \"./node_modules/lodash/_ListCache.js\"),\n    Map = __webpack_require__(/*! ./_Map */ \"./node_modules/lodash/_Map.js\");\n\n/**\n * Removes all key-value entries from the map.\n *\n * @private\n * @name clear\n * @memberOf MapCache\n */\nfunction mapCacheClear() {\n  this.size = 0;\n  this.__data__ = {\n    'hash': new Hash,\n    'map': new (Map || ListCache),\n    'string': new Hash\n  };\n}\n\nmodule.exports = mapCacheClear;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_mapCacheClear.js?");
+var Hash = __webpack_require__(1989),
+    ListCache = __webpack_require__(8407),
+    Map = __webpack_require__(7071);
+
+/**
+ * Removes all key-value entries from the map.
+ *
+ * @private
+ * @name clear
+ * @memberOf MapCache
+ */
+function mapCacheClear() {
+  this.size = 0;
+  this.__data__ = {
+    'hash': new Hash,
+    'map': new (Map || ListCache),
+    'string': new Hash
+  };
+}
+
+module.exports = mapCacheClear;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_mapCacheDelete.js":
-/*!************************************************!*\
-  !*** ./node_modules/lodash/_mapCacheDelete.js ***!
-  \************************************************/
+/***/ 1285:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getMapData = __webpack_require__(/*! ./_getMapData */ \"./node_modules/lodash/_getMapData.js\");\n\n/**\n * Removes `key` and its value from the map.\n *\n * @private\n * @name delete\n * @memberOf MapCache\n * @param {string} key The key of the value to remove.\n * @returns {boolean} Returns `true` if the entry was removed, else `false`.\n */\nfunction mapCacheDelete(key) {\n  var result = getMapData(this, key)['delete'](key);\n  this.size -= result ? 1 : 0;\n  return result;\n}\n\nmodule.exports = mapCacheDelete;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_mapCacheDelete.js?");
+var getMapData = __webpack_require__(5050);
+
+/**
+ * Removes `key` and its value from the map.
+ *
+ * @private
+ * @name delete
+ * @memberOf MapCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function mapCacheDelete(key) {
+  var result = getMapData(this, key)['delete'](key);
+  this.size -= result ? 1 : 0;
+  return result;
+}
+
+module.exports = mapCacheDelete;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_mapCacheGet.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_mapCacheGet.js ***!
-  \*********************************************/
+/***/ 6000:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getMapData = __webpack_require__(/*! ./_getMapData */ \"./node_modules/lodash/_getMapData.js\");\n\n/**\n * Gets the map value for `key`.\n *\n * @private\n * @name get\n * @memberOf MapCache\n * @param {string} key The key of the value to get.\n * @returns {*} Returns the entry value.\n */\nfunction mapCacheGet(key) {\n  return getMapData(this, key).get(key);\n}\n\nmodule.exports = mapCacheGet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_mapCacheGet.js?");
+var getMapData = __webpack_require__(5050);
+
+/**
+ * Gets the map value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf MapCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function mapCacheGet(key) {
+  return getMapData(this, key).get(key);
+}
+
+module.exports = mapCacheGet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_mapCacheHas.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_mapCacheHas.js ***!
-  \*********************************************/
+/***/ 9916:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getMapData = __webpack_require__(/*! ./_getMapData */ \"./node_modules/lodash/_getMapData.js\");\n\n/**\n * Checks if a map value for `key` exists.\n *\n * @private\n * @name has\n * @memberOf MapCache\n * @param {string} key The key of the entry to check.\n * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.\n */\nfunction mapCacheHas(key) {\n  return getMapData(this, key).has(key);\n}\n\nmodule.exports = mapCacheHas;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_mapCacheHas.js?");
+var getMapData = __webpack_require__(5050);
+
+/**
+ * Checks if a map value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf MapCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function mapCacheHas(key) {
+  return getMapData(this, key).has(key);
+}
+
+module.exports = mapCacheHas;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_mapCacheSet.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_mapCacheSet.js ***!
-  \*********************************************/
+/***/ 5265:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getMapData = __webpack_require__(/*! ./_getMapData */ \"./node_modules/lodash/_getMapData.js\");\n\n/**\n * Sets the map `key` to `value`.\n *\n * @private\n * @name set\n * @memberOf MapCache\n * @param {string} key The key of the value to set.\n * @param {*} value The value to set.\n * @returns {Object} Returns the map cache instance.\n */\nfunction mapCacheSet(key, value) {\n  var data = getMapData(this, key),\n      size = data.size;\n\n  data.set(key, value);\n  this.size += data.size == size ? 0 : 1;\n  return this;\n}\n\nmodule.exports = mapCacheSet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_mapCacheSet.js?");
+var getMapData = __webpack_require__(5050);
+
+/**
+ * Sets the map `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf MapCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the map cache instance.
+ */
+function mapCacheSet(key, value) {
+  var data = getMapData(this, key),
+      size = data.size;
+
+  data.set(key, value);
+  this.size += data.size == size ? 0 : 1;
+  return this;
+}
+
+module.exports = mapCacheSet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_mapToArray.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_mapToArray.js ***!
-  \********************************************/
+/***/ 8776:
 /***/ ((module) => {
 
-eval("/**\n * Converts `map` to its key-value pairs.\n *\n * @private\n * @param {Object} map The map to convert.\n * @returns {Array} Returns the key-value pairs.\n */\nfunction mapToArray(map) {\n  var index = -1,\n      result = Array(map.size);\n\n  map.forEach(function(value, key) {\n    result[++index] = [key, value];\n  });\n  return result;\n}\n\nmodule.exports = mapToArray;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_mapToArray.js?");
+/**
+ * Converts `map` to its key-value pairs.
+ *
+ * @private
+ * @param {Object} map The map to convert.
+ * @returns {Array} Returns the key-value pairs.
+ */
+function mapToArray(map) {
+  var index = -1,
+      result = Array(map.size);
+
+  map.forEach(function(value, key) {
+    result[++index] = [key, value];
+  });
+  return result;
+}
+
+module.exports = mapToArray;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_matchesStrictComparable.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/lodash/_matchesStrictComparable.js ***!
-  \*********************************************************/
+/***/ 2634:
 /***/ ((module) => {
 
-eval("/**\n * A specialized version of `matchesProperty` for source values suitable\n * for strict equality comparisons, i.e. `===`.\n *\n * @private\n * @param {string} key The key of the property to get.\n * @param {*} srcValue The value to match.\n * @returns {Function} Returns the new spec function.\n */\nfunction matchesStrictComparable(key, srcValue) {\n  return function(object) {\n    if (object == null) {\n      return false;\n    }\n    return object[key] === srcValue &&\n      (srcValue !== undefined || (key in Object(object)));\n  };\n}\n\nmodule.exports = matchesStrictComparable;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_matchesStrictComparable.js?");
+/**
+ * A specialized version of `matchesProperty` for source values suitable
+ * for strict equality comparisons, i.e. `===`.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @param {*} srcValue The value to match.
+ * @returns {Function} Returns the new spec function.
+ */
+function matchesStrictComparable(key, srcValue) {
+  return function(object) {
+    if (object == null) {
+      return false;
+    }
+    return object[key] === srcValue &&
+      (srcValue !== undefined || (key in Object(object)));
+  };
+}
+
+module.exports = matchesStrictComparable;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_memoizeCapped.js":
-/*!***********************************************!*\
-  !*** ./node_modules/lodash/_memoizeCapped.js ***!
-  \***********************************************/
+/***/ 4523:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var memoize = __webpack_require__(/*! ./memoize */ \"./node_modules/lodash/memoize.js\");\n\n/** Used as the maximum memoize cache size. */\nvar MAX_MEMOIZE_SIZE = 500;\n\n/**\n * A specialized version of `_.memoize` which clears the memoized function's\n * cache when it exceeds `MAX_MEMOIZE_SIZE`.\n *\n * @private\n * @param {Function} func The function to have its output memoized.\n * @returns {Function} Returns the new memoized function.\n */\nfunction memoizeCapped(func) {\n  var result = memoize(func, function(key) {\n    if (cache.size === MAX_MEMOIZE_SIZE) {\n      cache.clear();\n    }\n    return key;\n  });\n\n  var cache = result.cache;\n  return result;\n}\n\nmodule.exports = memoizeCapped;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_memoizeCapped.js?");
+var memoize = __webpack_require__(8306);
+
+/** Used as the maximum memoize cache size. */
+var MAX_MEMOIZE_SIZE = 500;
+
+/**
+ * A specialized version of `_.memoize` which clears the memoized function's
+ * cache when it exceeds `MAX_MEMOIZE_SIZE`.
+ *
+ * @private
+ * @param {Function} func The function to have its output memoized.
+ * @returns {Function} Returns the new memoized function.
+ */
+function memoizeCapped(func) {
+  var result = memoize(func, function(key) {
+    if (cache.size === MAX_MEMOIZE_SIZE) {
+      cache.clear();
+    }
+    return key;
+  });
+
+  var cache = result.cache;
+  return result;
+}
+
+module.exports = memoizeCapped;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_nativeCreate.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_nativeCreate.js ***!
-  \**********************************************/
+/***/ 4536:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var getNative = __webpack_require__(/*! ./_getNative */ \"./node_modules/lodash/_getNative.js\");\n\n/* Built-in method references that are verified to be native. */\nvar nativeCreate = getNative(Object, 'create');\n\nmodule.exports = nativeCreate;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_nativeCreate.js?");
+var getNative = __webpack_require__(852);
+
+/* Built-in method references that are verified to be native. */
+var nativeCreate = getNative(Object, 'create');
+
+module.exports = nativeCreate;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_nativeKeys.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_nativeKeys.js ***!
-  \********************************************/
+/***/ 6916:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var overArg = __webpack_require__(/*! ./_overArg */ \"./node_modules/lodash/_overArg.js\");\n\n/* Built-in method references for those with the same name as other `lodash` methods. */\nvar nativeKeys = overArg(Object.keys, Object);\n\nmodule.exports = nativeKeys;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_nativeKeys.js?");
+var overArg = __webpack_require__(5569);
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeKeys = overArg(Object.keys, Object);
+
+module.exports = nativeKeys;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_nativeKeysIn.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_nativeKeysIn.js ***!
-  \**********************************************/
+/***/ 3498:
 /***/ ((module) => {
 
-eval("/**\n * This function is like\n * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)\n * except that it includes inherited enumerable properties.\n *\n * @private\n * @param {Object} object The object to query.\n * @returns {Array} Returns the array of property names.\n */\nfunction nativeKeysIn(object) {\n  var result = [];\n  if (object != null) {\n    for (var key in Object(object)) {\n      result.push(key);\n    }\n  }\n  return result;\n}\n\nmodule.exports = nativeKeysIn;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_nativeKeysIn.js?");
+/**
+ * This function is like
+ * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+ * except that it includes inherited enumerable properties.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function nativeKeysIn(object) {
+  var result = [];
+  if (object != null) {
+    for (var key in Object(object)) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = nativeKeysIn;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_nodeUtil.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_nodeUtil.js ***!
-  \******************************************/
+/***/ 1167:
 /***/ ((module, exports, __webpack_require__) => {
 
-eval("/* module decorator */ module = __webpack_require__.nmd(module);\nvar freeGlobal = __webpack_require__(/*! ./_freeGlobal */ \"./node_modules/lodash/_freeGlobal.js\");\n\n/** Detect free variable `exports`. */\nvar freeExports =  true && exports && !exports.nodeType && exports;\n\n/** Detect free variable `module`. */\nvar freeModule = freeExports && \"object\" == 'object' && module && !module.nodeType && module;\n\n/** Detect the popular CommonJS extension `module.exports`. */\nvar moduleExports = freeModule && freeModule.exports === freeExports;\n\n/** Detect free variable `process` from Node.js. */\nvar freeProcess = moduleExports && freeGlobal.process;\n\n/** Used to access faster Node.js helpers. */\nvar nodeUtil = (function() {\n  try {\n    // Use `util.types` for Node.js 10+.\n    var types = freeModule && freeModule.require && freeModule.require('util').types;\n\n    if (types) {\n      return types;\n    }\n\n    // Legacy `process.binding('util')` for Node.js < 10.\n    return freeProcess && freeProcess.binding && freeProcess.binding('util');\n  } catch (e) {}\n}());\n\nmodule.exports = nodeUtil;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_nodeUtil.js?");
+/* module decorator */ module = __webpack_require__.nmd(module);
+var freeGlobal = __webpack_require__(1957);
+
+/** Detect free variable `exports`. */
+var freeExports =  true && exports && !exports.nodeType && exports;
+
+/** Detect free variable `module`. */
+var freeModule = freeExports && "object" == 'object' && module && !module.nodeType && module;
+
+/** Detect the popular CommonJS extension `module.exports`. */
+var moduleExports = freeModule && freeModule.exports === freeExports;
+
+/** Detect free variable `process` from Node.js. */
+var freeProcess = moduleExports && freeGlobal.process;
+
+/** Used to access faster Node.js helpers. */
+var nodeUtil = (function() {
+  try {
+    // Use `util.types` for Node.js 10+.
+    var types = freeModule && freeModule.require && freeModule.require('util').types;
+
+    if (types) {
+      return types;
+    }
+
+    // Legacy `process.binding('util')` for Node.js < 10.
+    return freeProcess && freeProcess.binding && freeProcess.binding('util');
+  } catch (e) {}
+}());
+
+module.exports = nodeUtil;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_objectToString.js":
-/*!************************************************!*\
-  !*** ./node_modules/lodash/_objectToString.js ***!
-  \************************************************/
+/***/ 2333:
 /***/ ((module) => {
 
-eval("/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/**\n * Used to resolve the\n * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)\n * of values.\n */\nvar nativeObjectToString = objectProto.toString;\n\n/**\n * Converts `value` to a string using `Object.prototype.toString`.\n *\n * @private\n * @param {*} value The value to convert.\n * @returns {string} Returns the converted string.\n */\nfunction objectToString(value) {\n  return nativeObjectToString.call(value);\n}\n\nmodule.exports = objectToString;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_objectToString.js?");
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_overArg.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/_overArg.js ***!
-  \*****************************************/
+/***/ 5569:
 /***/ ((module) => {
 
-eval("/**\n * Creates a unary function that invokes `func` with its argument transformed.\n *\n * @private\n * @param {Function} func The function to wrap.\n * @param {Function} transform The argument transform.\n * @returns {Function} Returns the new function.\n */\nfunction overArg(func, transform) {\n  return function(arg) {\n    return func(transform(arg));\n  };\n}\n\nmodule.exports = overArg;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_overArg.js?");
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+module.exports = overArg;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_overRest.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_overRest.js ***!
-  \******************************************/
+/***/ 5357:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var apply = __webpack_require__(/*! ./_apply */ \"./node_modules/lodash/_apply.js\");\n\n/* Built-in method references for those with the same name as other `lodash` methods. */\nvar nativeMax = Math.max;\n\n/**\n * A specialized version of `baseRest` which transforms the rest array.\n *\n * @private\n * @param {Function} func The function to apply a rest parameter to.\n * @param {number} [start=func.length-1] The start position of the rest parameter.\n * @param {Function} transform The rest array transform.\n * @returns {Function} Returns the new function.\n */\nfunction overRest(func, start, transform) {\n  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);\n  return function() {\n    var args = arguments,\n        index = -1,\n        length = nativeMax(args.length - start, 0),\n        array = Array(length);\n\n    while (++index < length) {\n      array[index] = args[start + index];\n    }\n    index = -1;\n    var otherArgs = Array(start + 1);\n    while (++index < start) {\n      otherArgs[index] = args[index];\n    }\n    otherArgs[start] = transform(array);\n    return apply(func, this, otherArgs);\n  };\n}\n\nmodule.exports = overRest;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_overRest.js?");
+var apply = __webpack_require__(6874);
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+
+/**
+ * A specialized version of `baseRest` which transforms the rest array.
+ *
+ * @private
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @param {Function} transform The rest array transform.
+ * @returns {Function} Returns the new function.
+ */
+function overRest(func, start, transform) {
+  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+  return function() {
+    var args = arguments,
+        index = -1,
+        length = nativeMax(args.length - start, 0),
+        array = Array(length);
+
+    while (++index < length) {
+      array[index] = args[start + index];
+    }
+    index = -1;
+    var otherArgs = Array(start + 1);
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = transform(array);
+    return apply(func, this, otherArgs);
+  };
+}
+
+module.exports = overRest;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_root.js":
-/*!**************************************!*\
-  !*** ./node_modules/lodash/_root.js ***!
-  \**************************************/
+/***/ 5639:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var freeGlobal = __webpack_require__(/*! ./_freeGlobal */ \"./node_modules/lodash/_freeGlobal.js\");\n\n/** Detect free variable `self`. */\nvar freeSelf = typeof self == 'object' && self && self.Object === Object && self;\n\n/** Used as a reference to the global object. */\nvar root = freeGlobal || freeSelf || Function('return this')();\n\nmodule.exports = root;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_root.js?");
+var freeGlobal = __webpack_require__(1957);
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_setCacheAdd.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_setCacheAdd.js ***!
-  \*********************************************/
+/***/ 619:
 /***/ ((module) => {
 
-eval("/** Used to stand-in for `undefined` hash values. */\nvar HASH_UNDEFINED = '__lodash_hash_undefined__';\n\n/**\n * Adds `value` to the array cache.\n *\n * @private\n * @name add\n * @memberOf SetCache\n * @alias push\n * @param {*} value The value to cache.\n * @returns {Object} Returns the cache instance.\n */\nfunction setCacheAdd(value) {\n  this.__data__.set(value, HASH_UNDEFINED);\n  return this;\n}\n\nmodule.exports = setCacheAdd;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_setCacheAdd.js?");
+/** Used to stand-in for `undefined` hash values. */
+var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+/**
+ * Adds `value` to the array cache.
+ *
+ * @private
+ * @name add
+ * @memberOf SetCache
+ * @alias push
+ * @param {*} value The value to cache.
+ * @returns {Object} Returns the cache instance.
+ */
+function setCacheAdd(value) {
+  this.__data__.set(value, HASH_UNDEFINED);
+  return this;
+}
+
+module.exports = setCacheAdd;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_setCacheHas.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_setCacheHas.js ***!
-  \*********************************************/
+/***/ 2385:
 /***/ ((module) => {
 
-eval("/**\n * Checks if `value` is in the array cache.\n *\n * @private\n * @name has\n * @memberOf SetCache\n * @param {*} value The value to search for.\n * @returns {number} Returns `true` if `value` is found, else `false`.\n */\nfunction setCacheHas(value) {\n  return this.__data__.has(value);\n}\n\nmodule.exports = setCacheHas;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_setCacheHas.js?");
+/**
+ * Checks if `value` is in the array cache.
+ *
+ * @private
+ * @name has
+ * @memberOf SetCache
+ * @param {*} value The value to search for.
+ * @returns {number} Returns `true` if `value` is found, else `false`.
+ */
+function setCacheHas(value) {
+  return this.__data__.has(value);
+}
+
+module.exports = setCacheHas;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_setToArray.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_setToArray.js ***!
-  \********************************************/
+/***/ 1814:
 /***/ ((module) => {
 
-eval("/**\n * Converts `set` to an array of its values.\n *\n * @private\n * @param {Object} set The set to convert.\n * @returns {Array} Returns the values.\n */\nfunction setToArray(set) {\n  var index = -1,\n      result = Array(set.size);\n\n  set.forEach(function(value) {\n    result[++index] = value;\n  });\n  return result;\n}\n\nmodule.exports = setToArray;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_setToArray.js?");
+/**
+ * Converts `set` to an array of its values.
+ *
+ * @private
+ * @param {Object} set The set to convert.
+ * @returns {Array} Returns the values.
+ */
+function setToArray(set) {
+  var index = -1,
+      result = Array(set.size);
+
+  set.forEach(function(value) {
+    result[++index] = value;
+  });
+  return result;
+}
+
+module.exports = setToArray;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_setToString.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_setToString.js ***!
-  \*********************************************/
+/***/ 61:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseSetToString = __webpack_require__(/*! ./_baseSetToString */ \"./node_modules/lodash/_baseSetToString.js\"),\n    shortOut = __webpack_require__(/*! ./_shortOut */ \"./node_modules/lodash/_shortOut.js\");\n\n/**\n * Sets the `toString` method of `func` to return `string`.\n *\n * @private\n * @param {Function} func The function to modify.\n * @param {Function} string The `toString` result.\n * @returns {Function} Returns `func`.\n */\nvar setToString = shortOut(baseSetToString);\n\nmodule.exports = setToString;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_setToString.js?");
+var baseSetToString = __webpack_require__(6560),
+    shortOut = __webpack_require__(1275);
+
+/**
+ * Sets the `toString` method of `func` to return `string`.
+ *
+ * @private
+ * @param {Function} func The function to modify.
+ * @param {Function} string The `toString` result.
+ * @returns {Function} Returns `func`.
+ */
+var setToString = shortOut(baseSetToString);
+
+module.exports = setToString;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_shortOut.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_shortOut.js ***!
-  \******************************************/
+/***/ 1275:
 /***/ ((module) => {
 
-eval("/** Used to detect hot functions by number of calls within a span of milliseconds. */\nvar HOT_COUNT = 800,\n    HOT_SPAN = 16;\n\n/* Built-in method references for those with the same name as other `lodash` methods. */\nvar nativeNow = Date.now;\n\n/**\n * Creates a function that'll short out and invoke `identity` instead\n * of `func` when it's called `HOT_COUNT` or more times in `HOT_SPAN`\n * milliseconds.\n *\n * @private\n * @param {Function} func The function to restrict.\n * @returns {Function} Returns the new shortable function.\n */\nfunction shortOut(func) {\n  var count = 0,\n      lastCalled = 0;\n\n  return function() {\n    var stamp = nativeNow(),\n        remaining = HOT_SPAN - (stamp - lastCalled);\n\n    lastCalled = stamp;\n    if (remaining > 0) {\n      if (++count >= HOT_COUNT) {\n        return arguments[0];\n      }\n    } else {\n      count = 0;\n    }\n    return func.apply(undefined, arguments);\n  };\n}\n\nmodule.exports = shortOut;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_shortOut.js?");
+/** Used to detect hot functions by number of calls within a span of milliseconds. */
+var HOT_COUNT = 800,
+    HOT_SPAN = 16;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeNow = Date.now;
+
+/**
+ * Creates a function that'll short out and invoke `identity` instead
+ * of `func` when it's called `HOT_COUNT` or more times in `HOT_SPAN`
+ * milliseconds.
+ *
+ * @private
+ * @param {Function} func The function to restrict.
+ * @returns {Function} Returns the new shortable function.
+ */
+function shortOut(func) {
+  var count = 0,
+      lastCalled = 0;
+
+  return function() {
+    var stamp = nativeNow(),
+        remaining = HOT_SPAN - (stamp - lastCalled);
+
+    lastCalled = stamp;
+    if (remaining > 0) {
+      if (++count >= HOT_COUNT) {
+        return arguments[0];
+      }
+    } else {
+      count = 0;
+    }
+    return func.apply(undefined, arguments);
+  };
+}
+
+module.exports = shortOut;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_stackClear.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/_stackClear.js ***!
-  \********************************************/
+/***/ 7465:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var ListCache = __webpack_require__(/*! ./_ListCache */ \"./node_modules/lodash/_ListCache.js\");\n\n/**\n * Removes all key-value entries from the stack.\n *\n * @private\n * @name clear\n * @memberOf Stack\n */\nfunction stackClear() {\n  this.__data__ = new ListCache;\n  this.size = 0;\n}\n\nmodule.exports = stackClear;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_stackClear.js?");
+var ListCache = __webpack_require__(8407);
+
+/**
+ * Removes all key-value entries from the stack.
+ *
+ * @private
+ * @name clear
+ * @memberOf Stack
+ */
+function stackClear() {
+  this.__data__ = new ListCache;
+  this.size = 0;
+}
+
+module.exports = stackClear;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_stackDelete.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/_stackDelete.js ***!
-  \*********************************************/
+/***/ 5984:
 /***/ ((module) => {
 
-eval("/**\n * Removes `key` and its value from the stack.\n *\n * @private\n * @name delete\n * @memberOf Stack\n * @param {string} key The key of the value to remove.\n * @returns {boolean} Returns `true` if the entry was removed, else `false`.\n */\nfunction stackDelete(key) {\n  var data = this.__data__,\n      result = data['delete'](key);\n\n  this.size = data.size;\n  return result;\n}\n\nmodule.exports = stackDelete;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_stackDelete.js?");
+/**
+ * Removes `key` and its value from the stack.
+ *
+ * @private
+ * @name delete
+ * @memberOf Stack
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function stackDelete(key) {
+  var data = this.__data__,
+      result = data['delete'](key);
+
+  this.size = data.size;
+  return result;
+}
+
+module.exports = stackDelete;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_stackGet.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_stackGet.js ***!
-  \******************************************/
+/***/ 7599:
 /***/ ((module) => {
 
-eval("/**\n * Gets the stack value for `key`.\n *\n * @private\n * @name get\n * @memberOf Stack\n * @param {string} key The key of the value to get.\n * @returns {*} Returns the entry value.\n */\nfunction stackGet(key) {\n  return this.__data__.get(key);\n}\n\nmodule.exports = stackGet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_stackGet.js?");
+/**
+ * Gets the stack value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf Stack
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function stackGet(key) {
+  return this.__data__.get(key);
+}
+
+module.exports = stackGet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_stackHas.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_stackHas.js ***!
-  \******************************************/
+/***/ 4758:
 /***/ ((module) => {
 
-eval("/**\n * Checks if a stack value for `key` exists.\n *\n * @private\n * @name has\n * @memberOf Stack\n * @param {string} key The key of the entry to check.\n * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.\n */\nfunction stackHas(key) {\n  return this.__data__.has(key);\n}\n\nmodule.exports = stackHas;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_stackHas.js?");
+/**
+ * Checks if a stack value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf Stack
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function stackHas(key) {
+  return this.__data__.has(key);
+}
+
+module.exports = stackHas;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_stackSet.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_stackSet.js ***!
-  \******************************************/
+/***/ 4309:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var ListCache = __webpack_require__(/*! ./_ListCache */ \"./node_modules/lodash/_ListCache.js\"),\n    Map = __webpack_require__(/*! ./_Map */ \"./node_modules/lodash/_Map.js\"),\n    MapCache = __webpack_require__(/*! ./_MapCache */ \"./node_modules/lodash/_MapCache.js\");\n\n/** Used as the size to enable large array optimizations. */\nvar LARGE_ARRAY_SIZE = 200;\n\n/**\n * Sets the stack `key` to `value`.\n *\n * @private\n * @name set\n * @memberOf Stack\n * @param {string} key The key of the value to set.\n * @param {*} value The value to set.\n * @returns {Object} Returns the stack cache instance.\n */\nfunction stackSet(key, value) {\n  var data = this.__data__;\n  if (data instanceof ListCache) {\n    var pairs = data.__data__;\n    if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {\n      pairs.push([key, value]);\n      this.size = ++data.size;\n      return this;\n    }\n    data = this.__data__ = new MapCache(pairs);\n  }\n  data.set(key, value);\n  this.size = data.size;\n  return this;\n}\n\nmodule.exports = stackSet;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_stackSet.js?");
+var ListCache = __webpack_require__(8407),
+    Map = __webpack_require__(7071),
+    MapCache = __webpack_require__(3369);
+
+/** Used as the size to enable large array optimizations. */
+var LARGE_ARRAY_SIZE = 200;
+
+/**
+ * Sets the stack `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf Stack
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the stack cache instance.
+ */
+function stackSet(key, value) {
+  var data = this.__data__;
+  if (data instanceof ListCache) {
+    var pairs = data.__data__;
+    if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
+      pairs.push([key, value]);
+      this.size = ++data.size;
+      return this;
+    }
+    data = this.__data__ = new MapCache(pairs);
+  }
+  data.set(key, value);
+  this.size = data.size;
+  return this;
+}
+
+module.exports = stackSet;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_stringToPath.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash/_stringToPath.js ***!
-  \**********************************************/
+/***/ 5514:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var memoizeCapped = __webpack_require__(/*! ./_memoizeCapped */ \"./node_modules/lodash/_memoizeCapped.js\");\n\n/** Used to match property names within property paths. */\nvar rePropName = /[^.[\\]]+|\\[(?:(-?\\d+(?:\\.\\d+)?)|([\"'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2)\\]|(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))/g;\n\n/** Used to match backslashes in property paths. */\nvar reEscapeChar = /\\\\(\\\\)?/g;\n\n/**\n * Converts `string` to a property path array.\n *\n * @private\n * @param {string} string The string to convert.\n * @returns {Array} Returns the property path array.\n */\nvar stringToPath = memoizeCapped(function(string) {\n  var result = [];\n  if (string.charCodeAt(0) === 46 /* . */) {\n    result.push('');\n  }\n  string.replace(rePropName, function(match, number, quote, subString) {\n    result.push(quote ? subString.replace(reEscapeChar, '$1') : (number || match));\n  });\n  return result;\n});\n\nmodule.exports = stringToPath;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_stringToPath.js?");
+var memoizeCapped = __webpack_require__(4523);
+
+/** Used to match property names within property paths. */
+var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+
+/** Used to match backslashes in property paths. */
+var reEscapeChar = /\\(\\)?/g;
+
+/**
+ * Converts `string` to a property path array.
+ *
+ * @private
+ * @param {string} string The string to convert.
+ * @returns {Array} Returns the property path array.
+ */
+var stringToPath = memoizeCapped(function(string) {
+  var result = [];
+  if (string.charCodeAt(0) === 46 /* . */) {
+    result.push('');
+  }
+  string.replace(rePropName, function(match, number, quote, subString) {
+    result.push(quote ? subString.replace(reEscapeChar, '$1') : (number || match));
+  });
+  return result;
+});
+
+module.exports = stringToPath;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_toKey.js":
-/*!***************************************!*\
-  !*** ./node_modules/lodash/_toKey.js ***!
-  \***************************************/
+/***/ 327:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isSymbol = __webpack_require__(/*! ./isSymbol */ \"./node_modules/lodash/isSymbol.js\");\n\n/** Used as references for various `Number` constants. */\nvar INFINITY = 1 / 0;\n\n/**\n * Converts `value` to a string key if it's not a string or symbol.\n *\n * @private\n * @param {*} value The value to inspect.\n * @returns {string|symbol} Returns the key.\n */\nfunction toKey(value) {\n  if (typeof value == 'string' || isSymbol(value)) {\n    return value;\n  }\n  var result = (value + '');\n  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;\n}\n\nmodule.exports = toKey;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_toKey.js?");
+var isSymbol = __webpack_require__(3448);
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
+
+/**
+ * Converts `value` to a string key if it's not a string or symbol.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {string|symbol} Returns the key.
+ */
+function toKey(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+module.exports = toKey;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_toSource.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/_toSource.js ***!
-  \******************************************/
+/***/ 346:
 /***/ ((module) => {
 
-eval("/** Used for built-in method references. */\nvar funcProto = Function.prototype;\n\n/** Used to resolve the decompiled source of functions. */\nvar funcToString = funcProto.toString;\n\n/**\n * Converts `func` to its source code.\n *\n * @private\n * @param {Function} func The function to convert.\n * @returns {string} Returns the source code.\n */\nfunction toSource(func) {\n  if (func != null) {\n    try {\n      return funcToString.call(func);\n    } catch (e) {}\n    try {\n      return (func + '');\n    } catch (e) {}\n  }\n  return '';\n}\n\nmodule.exports = toSource;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_toSource.js?");
+/** Used for built-in method references. */
+var funcProto = Function.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/**
+ * Converts `func` to its source code.
+ *
+ * @private
+ * @param {Function} func The function to convert.
+ * @returns {string} Returns the source code.
+ */
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString.call(func);
+    } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
+  }
+  return '';
+}
+
+module.exports = toSource;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/_trimmedEndIndex.js":
-/*!*************************************************!*\
-  !*** ./node_modules/lodash/_trimmedEndIndex.js ***!
-  \*************************************************/
+/***/ 7990:
 /***/ ((module) => {
 
-eval("/** Used to match a single whitespace character. */\nvar reWhitespace = /\\s/;\n\n/**\n * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace\n * character of `string`.\n *\n * @private\n * @param {string} string The string to inspect.\n * @returns {number} Returns the index of the last non-whitespace character.\n */\nfunction trimmedEndIndex(string) {\n  var index = string.length;\n\n  while (index-- && reWhitespace.test(string.charAt(index))) {}\n  return index;\n}\n\nmodule.exports = trimmedEndIndex;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/_trimmedEndIndex.js?");
+/** Used to match a single whitespace character. */
+var reWhitespace = /\s/;
+
+/**
+ * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
+ * character of `string`.
+ *
+ * @private
+ * @param {string} string The string to inspect.
+ * @returns {number} Returns the index of the last non-whitespace character.
+ */
+function trimmedEndIndex(string) {
+  var index = string.length;
+
+  while (index-- && reWhitespace.test(string.charAt(index))) {}
+  return index;
+}
+
+module.exports = trimmedEndIndex;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/assignIn.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/assignIn.js ***!
-  \*****************************************/
+/***/ 3045:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var copyObject = __webpack_require__(/*! ./_copyObject */ \"./node_modules/lodash/_copyObject.js\"),\n    createAssigner = __webpack_require__(/*! ./_createAssigner */ \"./node_modules/lodash/_createAssigner.js\"),\n    keysIn = __webpack_require__(/*! ./keysIn */ \"./node_modules/lodash/keysIn.js\");\n\n/**\n * This method is like `_.assign` except that it iterates over own and\n * inherited source properties.\n *\n * **Note:** This method mutates `object`.\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @alias extend\n * @category Object\n * @param {Object} object The destination object.\n * @param {...Object} [sources] The source objects.\n * @returns {Object} Returns `object`.\n * @see _.assign\n * @example\n *\n * function Foo() {\n *   this.a = 1;\n * }\n *\n * function Bar() {\n *   this.c = 3;\n * }\n *\n * Foo.prototype.b = 2;\n * Bar.prototype.d = 4;\n *\n * _.assignIn({ 'a': 0 }, new Foo, new Bar);\n * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }\n */\nvar assignIn = createAssigner(function(object, source) {\n  copyObject(source, keysIn(source), object);\n});\n\nmodule.exports = assignIn;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/assignIn.js?");
+var copyObject = __webpack_require__(8363),
+    createAssigner = __webpack_require__(1463),
+    keysIn = __webpack_require__(1704);
+
+/**
+ * This method is like `_.assign` except that it iterates over own and
+ * inherited source properties.
+ *
+ * **Note:** This method mutates `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @alias extend
+ * @category Object
+ * @param {Object} object The destination object.
+ * @param {...Object} [sources] The source objects.
+ * @returns {Object} Returns `object`.
+ * @see _.assign
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * function Bar() {
+ *   this.c = 3;
+ * }
+ *
+ * Foo.prototype.b = 2;
+ * Bar.prototype.d = 4;
+ *
+ * _.assignIn({ 'a': 0 }, new Foo, new Bar);
+ * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
+ */
+var assignIn = createAssigner(function(object, source) {
+  copyObject(source, keysIn(source), object);
+});
+
+module.exports = assignIn;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/constant.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/constant.js ***!
-  \*****************************************/
+/***/ 5703:
 /***/ ((module) => {
 
-eval("/**\n * Creates a function that returns `value`.\n *\n * @static\n * @memberOf _\n * @since 2.4.0\n * @category Util\n * @param {*} value The value to return from the new function.\n * @returns {Function} Returns the new constant function.\n * @example\n *\n * var objects = _.times(2, _.constant({ 'a': 1 }));\n *\n * console.log(objects);\n * // => [{ 'a': 1 }, { 'a': 1 }]\n *\n * console.log(objects[0] === objects[1]);\n * // => true\n */\nfunction constant(value) {\n  return function() {\n    return value;\n  };\n}\n\nmodule.exports = constant;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/constant.js?");
+/**
+ * Creates a function that returns `value`.
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Util
+ * @param {*} value The value to return from the new function.
+ * @returns {Function} Returns the new constant function.
+ * @example
+ *
+ * var objects = _.times(2, _.constant({ 'a': 1 }));
+ *
+ * console.log(objects);
+ * // => [{ 'a': 1 }, { 'a': 1 }]
+ *
+ * console.log(objects[0] === objects[1]);
+ * // => true
+ */
+function constant(value) {
+  return function() {
+    return value;
+  };
+}
+
+module.exports = constant;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/each.js":
-/*!*************************************!*\
-  !*** ./node_modules/lodash/each.js ***!
-  \*************************************/
+/***/ 6073:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("module.exports = __webpack_require__(/*! ./forEach */ \"./node_modules/lodash/forEach.js\");\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/each.js?");
+module.exports = __webpack_require__(4486);
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/eq.js":
-/*!***********************************!*\
-  !*** ./node_modules/lodash/eq.js ***!
-  \***********************************/
+/***/ 7813:
 /***/ ((module) => {
 
-eval("/**\n * Performs a\n * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)\n * comparison between two values to determine if they are equivalent.\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Lang\n * @param {*} value The value to compare.\n * @param {*} other The other value to compare.\n * @returns {boolean} Returns `true` if the values are equivalent, else `false`.\n * @example\n *\n * var object = { 'a': 1 };\n * var other = { 'a': 1 };\n *\n * _.eq(object, object);\n * // => true\n *\n * _.eq(object, other);\n * // => false\n *\n * _.eq('a', 'a');\n * // => true\n *\n * _.eq('a', Object('a'));\n * // => false\n *\n * _.eq(NaN, NaN);\n * // => true\n */\nfunction eq(value, other) {\n  return value === other || (value !== value && other !== other);\n}\n\nmodule.exports = eq;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/eq.js?");
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+module.exports = eq;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/every.js":
-/*!**************************************!*\
-  !*** ./node_modules/lodash/every.js ***!
-  \**************************************/
+/***/ 711:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var arrayEvery = __webpack_require__(/*! ./_arrayEvery */ \"./node_modules/lodash/_arrayEvery.js\"),\n    baseEvery = __webpack_require__(/*! ./_baseEvery */ \"./node_modules/lodash/_baseEvery.js\"),\n    baseIteratee = __webpack_require__(/*! ./_baseIteratee */ \"./node_modules/lodash/_baseIteratee.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    isIterateeCall = __webpack_require__(/*! ./_isIterateeCall */ \"./node_modules/lodash/_isIterateeCall.js\");\n\n/**\n * Checks if `predicate` returns truthy for **all** elements of `collection`.\n * Iteration is stopped once `predicate` returns falsey. The predicate is\n * invoked with three arguments: (value, index|key, collection).\n *\n * **Note:** This method returns `true` for\n * [empty collections](https://en.wikipedia.org/wiki/Empty_set) because\n * [everything is true](https://en.wikipedia.org/wiki/Vacuous_truth) of\n * elements of empty collections.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Collection\n * @param {Array|Object} collection The collection to iterate over.\n * @param {Function} [predicate=_.identity] The function invoked per iteration.\n * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.\n * @returns {boolean} Returns `true` if all elements pass the predicate check,\n *  else `false`.\n * @example\n *\n * _.every([true, 1, null, 'yes'], Boolean);\n * // => false\n *\n * var users = [\n *   { 'user': 'barney', 'age': 36, 'active': false },\n *   { 'user': 'fred',   'age': 40, 'active': false }\n * ];\n *\n * // The `_.matches` iteratee shorthand.\n * _.every(users, { 'user': 'barney', 'active': false });\n * // => false\n *\n * // The `_.matchesProperty` iteratee shorthand.\n * _.every(users, ['active', false]);\n * // => true\n *\n * // The `_.property` iteratee shorthand.\n * _.every(users, 'active');\n * // => false\n */\nfunction every(collection, predicate, guard) {\n  var func = isArray(collection) ? arrayEvery : baseEvery;\n  if (guard && isIterateeCall(collection, predicate, guard)) {\n    predicate = undefined;\n  }\n  return func(collection, baseIteratee(predicate, 3));\n}\n\nmodule.exports = every;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/every.js?");
+var arrayEvery = __webpack_require__(6193),
+    baseEvery = __webpack_require__(3239),
+    baseIteratee = __webpack_require__(7206),
+    isArray = __webpack_require__(1469),
+    isIterateeCall = __webpack_require__(6612);
+
+/**
+ * Checks if `predicate` returns truthy for **all** elements of `collection`.
+ * Iteration is stopped once `predicate` returns falsey. The predicate is
+ * invoked with three arguments: (value, index|key, collection).
+ *
+ * **Note:** This method returns `true` for
+ * [empty collections](https://en.wikipedia.org/wiki/Empty_set) because
+ * [everything is true](https://en.wikipedia.org/wiki/Vacuous_truth) of
+ * elements of empty collections.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @returns {boolean} Returns `true` if all elements pass the predicate check,
+ *  else `false`.
+ * @example
+ *
+ * _.every([true, 1, null, 'yes'], Boolean);
+ * // => false
+ *
+ * var users = [
+ *   { 'user': 'barney', 'age': 36, 'active': false },
+ *   { 'user': 'fred',   'age': 40, 'active': false }
+ * ];
+ *
+ * // The `_.matches` iteratee shorthand.
+ * _.every(users, { 'user': 'barney', 'active': false });
+ * // => false
+ *
+ * // The `_.matchesProperty` iteratee shorthand.
+ * _.every(users, ['active', false]);
+ * // => true
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.every(users, 'active');
+ * // => false
+ */
+function every(collection, predicate, guard) {
+  var func = isArray(collection) ? arrayEvery : baseEvery;
+  if (guard && isIterateeCall(collection, predicate, guard)) {
+    predicate = undefined;
+  }
+  return func(collection, baseIteratee(predicate, 3));
+}
+
+module.exports = every;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/extend.js":
-/*!***************************************!*\
-  !*** ./node_modules/lodash/extend.js ***!
-  \***************************************/
+/***/ 2205:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("module.exports = __webpack_require__(/*! ./assignIn */ \"./node_modules/lodash/assignIn.js\");\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/extend.js?");
+module.exports = __webpack_require__(3045);
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/forEach.js":
-/*!****************************************!*\
-  !*** ./node_modules/lodash/forEach.js ***!
-  \****************************************/
+/***/ 4486:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var arrayEach = __webpack_require__(/*! ./_arrayEach */ \"./node_modules/lodash/_arrayEach.js\"),\n    baseEach = __webpack_require__(/*! ./_baseEach */ \"./node_modules/lodash/_baseEach.js\"),\n    castFunction = __webpack_require__(/*! ./_castFunction */ \"./node_modules/lodash/_castFunction.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\");\n\n/**\n * Iterates over elements of `collection` and invokes `iteratee` for each element.\n * The iteratee is invoked with three arguments: (value, index|key, collection).\n * Iteratee functions may exit iteration early by explicitly returning `false`.\n *\n * **Note:** As with other \"Collections\" methods, objects with a \"length\"\n * property are iterated like arrays. To avoid this behavior use `_.forIn`\n * or `_.forOwn` for object iteration.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @alias each\n * @category Collection\n * @param {Array|Object} collection The collection to iterate over.\n * @param {Function} [iteratee=_.identity] The function invoked per iteration.\n * @returns {Array|Object} Returns `collection`.\n * @see _.forEachRight\n * @example\n *\n * _.forEach([1, 2], function(value) {\n *   console.log(value);\n * });\n * // => Logs `1` then `2`.\n *\n * _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {\n *   console.log(key);\n * });\n * // => Logs 'a' then 'b' (iteration order is not guaranteed).\n */\nfunction forEach(collection, iteratee) {\n  var func = isArray(collection) ? arrayEach : baseEach;\n  return func(collection, castFunction(iteratee));\n}\n\nmodule.exports = forEach;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/forEach.js?");
+var arrayEach = __webpack_require__(7412),
+    baseEach = __webpack_require__(9881),
+    castFunction = __webpack_require__(4290),
+    isArray = __webpack_require__(1469);
+
+/**
+ * Iterates over elements of `collection` and invokes `iteratee` for each element.
+ * The iteratee is invoked with three arguments: (value, index|key, collection).
+ * Iteratee functions may exit iteration early by explicitly returning `false`.
+ *
+ * **Note:** As with other "Collections" methods, objects with a "length"
+ * property are iterated like arrays. To avoid this behavior use `_.forIn`
+ * or `_.forOwn` for object iteration.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @alias each
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array|Object} Returns `collection`.
+ * @see _.forEachRight
+ * @example
+ *
+ * _.forEach([1, 2], function(value) {
+ *   console.log(value);
+ * });
+ * // => Logs `1` then `2`.
+ *
+ * _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
+ *   console.log(key);
+ * });
+ * // => Logs 'a' then 'b' (iteration order is not guaranteed).
+ */
+function forEach(collection, iteratee) {
+  var func = isArray(collection) ? arrayEach : baseEach;
+  return func(collection, castFunction(iteratee));
+}
+
+module.exports = forEach;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/fromPairs.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/fromPairs.js ***!
-  \******************************************/
+/***/ 7204:
 /***/ ((module) => {
 
-eval("/**\n * The inverse of `_.toPairs`; this method returns an object composed\n * from key-value `pairs`.\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Array\n * @param {Array} pairs The key-value pairs.\n * @returns {Object} Returns the new object.\n * @example\n *\n * _.fromPairs([['a', 1], ['b', 2]]);\n * // => { 'a': 1, 'b': 2 }\n */\nfunction fromPairs(pairs) {\n  var index = -1,\n      length = pairs == null ? 0 : pairs.length,\n      result = {};\n\n  while (++index < length) {\n    var pair = pairs[index];\n    result[pair[0]] = pair[1];\n  }\n  return result;\n}\n\nmodule.exports = fromPairs;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/fromPairs.js?");
+/**
+ * The inverse of `_.toPairs`; this method returns an object composed
+ * from key-value `pairs`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} pairs The key-value pairs.
+ * @returns {Object} Returns the new object.
+ * @example
+ *
+ * _.fromPairs([['a', 1], ['b', 2]]);
+ * // => { 'a': 1, 'b': 2 }
+ */
+function fromPairs(pairs) {
+  var index = -1,
+      length = pairs == null ? 0 : pairs.length,
+      result = {};
+
+  while (++index < length) {
+    var pair = pairs[index];
+    result[pair[0]] = pair[1];
+  }
+  return result;
+}
+
+module.exports = fromPairs;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/get.js":
-/*!************************************!*\
-  !*** ./node_modules/lodash/get.js ***!
-  \************************************/
+/***/ 7361:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGet = __webpack_require__(/*! ./_baseGet */ \"./node_modules/lodash/_baseGet.js\");\n\n/**\n * Gets the value at `path` of `object`. If the resolved value is\n * `undefined`, the `defaultValue` is returned in its place.\n *\n * @static\n * @memberOf _\n * @since 3.7.0\n * @category Object\n * @param {Object} object The object to query.\n * @param {Array|string} path The path of the property to get.\n * @param {*} [defaultValue] The value returned for `undefined` resolved values.\n * @returns {*} Returns the resolved value.\n * @example\n *\n * var object = { 'a': [{ 'b': { 'c': 3 } }] };\n *\n * _.get(object, 'a[0].b.c');\n * // => 3\n *\n * _.get(object, ['a', '0', 'b', 'c']);\n * // => 3\n *\n * _.get(object, 'a.b.c', 'default');\n * // => 'default'\n */\nfunction get(object, path, defaultValue) {\n  var result = object == null ? undefined : baseGet(object, path);\n  return result === undefined ? defaultValue : result;\n}\n\nmodule.exports = get;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/get.js?");
+var baseGet = __webpack_require__(7786);
+
+/**
+ * Gets the value at `path` of `object`. If the resolved value is
+ * `undefined`, the `defaultValue` is returned in its place.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.7.0
+ * @category Object
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @param {*} [defaultValue] The value returned for `undefined` resolved values.
+ * @returns {*} Returns the resolved value.
+ * @example
+ *
+ * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ *
+ * _.get(object, 'a[0].b.c');
+ * // => 3
+ *
+ * _.get(object, ['a', '0', 'b', 'c']);
+ * // => 3
+ *
+ * _.get(object, 'a.b.c', 'default');
+ * // => 'default'
+ */
+function get(object, path, defaultValue) {
+  var result = object == null ? undefined : baseGet(object, path);
+  return result === undefined ? defaultValue : result;
+}
+
+module.exports = get;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/hasIn.js":
-/*!**************************************!*\
-  !*** ./node_modules/lodash/hasIn.js ***!
-  \**************************************/
+/***/ 9095:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseHasIn = __webpack_require__(/*! ./_baseHasIn */ \"./node_modules/lodash/_baseHasIn.js\"),\n    hasPath = __webpack_require__(/*! ./_hasPath */ \"./node_modules/lodash/_hasPath.js\");\n\n/**\n * Checks if `path` is a direct or inherited property of `object`.\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Object\n * @param {Object} object The object to query.\n * @param {Array|string} path The path to check.\n * @returns {boolean} Returns `true` if `path` exists, else `false`.\n * @example\n *\n * var object = _.create({ 'a': _.create({ 'b': 2 }) });\n *\n * _.hasIn(object, 'a');\n * // => true\n *\n * _.hasIn(object, 'a.b');\n * // => true\n *\n * _.hasIn(object, ['a', 'b']);\n * // => true\n *\n * _.hasIn(object, 'b');\n * // => false\n */\nfunction hasIn(object, path) {\n  return object != null && hasPath(object, path, baseHasIn);\n}\n\nmodule.exports = hasIn;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/hasIn.js?");
+var baseHasIn = __webpack_require__(13),
+    hasPath = __webpack_require__(222);
+
+/**
+ * Checks if `path` is a direct or inherited property of `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Object
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path to check.
+ * @returns {boolean} Returns `true` if `path` exists, else `false`.
+ * @example
+ *
+ * var object = _.create({ 'a': _.create({ 'b': 2 }) });
+ *
+ * _.hasIn(object, 'a');
+ * // => true
+ *
+ * _.hasIn(object, 'a.b');
+ * // => true
+ *
+ * _.hasIn(object, ['a', 'b']);
+ * // => true
+ *
+ * _.hasIn(object, 'b');
+ * // => false
+ */
+function hasIn(object, path) {
+  return object != null && hasPath(object, path, baseHasIn);
+}
+
+module.exports = hasIn;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/identity.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/identity.js ***!
-  \*****************************************/
+/***/ 6557:
 /***/ ((module) => {
 
-eval("/**\n * This method returns the first argument it receives.\n *\n * @static\n * @since 0.1.0\n * @memberOf _\n * @category Util\n * @param {*} value Any value.\n * @returns {*} Returns `value`.\n * @example\n *\n * var object = { 'a': 1 };\n *\n * console.log(_.identity(object) === object);\n * // => true\n */\nfunction identity(value) {\n  return value;\n}\n\nmodule.exports = identity;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/identity.js?");
+/**
+ * This method returns the first argument it receives.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ *
+ * console.log(_.identity(object) === object);
+ * // => true
+ */
+function identity(value) {
+  return value;
+}
+
+module.exports = identity;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isArguments.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/isArguments.js ***!
-  \********************************************/
+/***/ 5694:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseIsArguments = __webpack_require__(/*! ./_baseIsArguments */ \"./node_modules/lodash/_baseIsArguments.js\"),\n    isObjectLike = __webpack_require__(/*! ./isObjectLike */ \"./node_modules/lodash/isObjectLike.js\");\n\n/** Used for built-in method references. */\nvar objectProto = Object.prototype;\n\n/** Used to check objects for own properties. */\nvar hasOwnProperty = objectProto.hasOwnProperty;\n\n/** Built-in value references. */\nvar propertyIsEnumerable = objectProto.propertyIsEnumerable;\n\n/**\n * Checks if `value` is likely an `arguments` object.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is an `arguments` object,\n *  else `false`.\n * @example\n *\n * _.isArguments(function() { return arguments; }());\n * // => true\n *\n * _.isArguments([1, 2, 3]);\n * // => false\n */\nvar isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {\n  return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&\n    !propertyIsEnumerable.call(value, 'callee');\n};\n\nmodule.exports = isArguments;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isArguments.js?");
+var baseIsArguments = __webpack_require__(9454),
+    isObjectLike = __webpack_require__(7005);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+/**
+ * Checks if `value` is likely an `arguments` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArguments(function() { return arguments; }());
+ * // => true
+ *
+ * _.isArguments([1, 2, 3]);
+ * // => false
+ */
+var isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
+  return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&
+    !propertyIsEnumerable.call(value, 'callee');
+};
+
+module.exports = isArguments;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isArray.js":
-/*!****************************************!*\
-  !*** ./node_modules/lodash/isArray.js ***!
-  \****************************************/
+/***/ 1469:
 /***/ ((module) => {
 
-eval("/**\n * Checks if `value` is classified as an `Array` object.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is an array, else `false`.\n * @example\n *\n * _.isArray([1, 2, 3]);\n * // => true\n *\n * _.isArray(document.body.children);\n * // => false\n *\n * _.isArray('abc');\n * // => false\n *\n * _.isArray(_.noop);\n * // => false\n */\nvar isArray = Array.isArray;\n\nmodule.exports = isArray;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isArray.js?");
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+module.exports = isArray;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isArrayLike.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/isArrayLike.js ***!
-  \********************************************/
+/***/ 8612:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var isFunction = __webpack_require__(/*! ./isFunction */ \"./node_modules/lodash/isFunction.js\"),\n    isLength = __webpack_require__(/*! ./isLength */ \"./node_modules/lodash/isLength.js\");\n\n/**\n * Checks if `value` is array-like. A value is considered array-like if it's\n * not a function and has a `value.length` that's an integer greater than or\n * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is array-like, else `false`.\n * @example\n *\n * _.isArrayLike([1, 2, 3]);\n * // => true\n *\n * _.isArrayLike(document.body.children);\n * // => true\n *\n * _.isArrayLike('abc');\n * // => true\n *\n * _.isArrayLike(_.noop);\n * // => false\n */\nfunction isArrayLike(value) {\n  return value != null && isLength(value.length) && !isFunction(value);\n}\n\nmodule.exports = isArrayLike;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isArrayLike.js?");
+var isFunction = __webpack_require__(3560),
+    isLength = __webpack_require__(1780);
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && isLength(value.length) && !isFunction(value);
+}
+
+module.exports = isArrayLike;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isBoolean.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/isBoolean.js ***!
-  \******************************************/
+/***/ 1584:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ \"./node_modules/lodash/_baseGetTag.js\"),\n    isObjectLike = __webpack_require__(/*! ./isObjectLike */ \"./node_modules/lodash/isObjectLike.js\");\n\n/** `Object#toString` result references. */\nvar boolTag = '[object Boolean]';\n\n/**\n * Checks if `value` is classified as a boolean primitive or object.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a boolean, else `false`.\n * @example\n *\n * _.isBoolean(false);\n * // => true\n *\n * _.isBoolean(null);\n * // => false\n */\nfunction isBoolean(value) {\n  return value === true || value === false ||\n    (isObjectLike(value) && baseGetTag(value) == boolTag);\n}\n\nmodule.exports = isBoolean;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isBoolean.js?");
+var baseGetTag = __webpack_require__(4239),
+    isObjectLike = __webpack_require__(7005);
+
+/** `Object#toString` result references. */
+var boolTag = '[object Boolean]';
+
+/**
+ * Checks if `value` is classified as a boolean primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a boolean, else `false`.
+ * @example
+ *
+ * _.isBoolean(false);
+ * // => true
+ *
+ * _.isBoolean(null);
+ * // => false
+ */
+function isBoolean(value) {
+  return value === true || value === false ||
+    (isObjectLike(value) && baseGetTag(value) == boolTag);
+}
+
+module.exports = isBoolean;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isBuffer.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/isBuffer.js ***!
-  \*****************************************/
+/***/ 4144:
 /***/ ((module, exports, __webpack_require__) => {
 
-eval("/* module decorator */ module = __webpack_require__.nmd(module);\nvar root = __webpack_require__(/*! ./_root */ \"./node_modules/lodash/_root.js\"),\n    stubFalse = __webpack_require__(/*! ./stubFalse */ \"./node_modules/lodash/stubFalse.js\");\n\n/** Detect free variable `exports`. */\nvar freeExports =  true && exports && !exports.nodeType && exports;\n\n/** Detect free variable `module`. */\nvar freeModule = freeExports && \"object\" == 'object' && module && !module.nodeType && module;\n\n/** Detect the popular CommonJS extension `module.exports`. */\nvar moduleExports = freeModule && freeModule.exports === freeExports;\n\n/** Built-in value references. */\nvar Buffer = moduleExports ? root.Buffer : undefined;\n\n/* Built-in method references for those with the same name as other `lodash` methods. */\nvar nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;\n\n/**\n * Checks if `value` is a buffer.\n *\n * @static\n * @memberOf _\n * @since 4.3.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.\n * @example\n *\n * _.isBuffer(new Buffer(2));\n * // => true\n *\n * _.isBuffer(new Uint8Array(2));\n * // => false\n */\nvar isBuffer = nativeIsBuffer || stubFalse;\n\nmodule.exports = isBuffer;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isBuffer.js?");
+/* module decorator */ module = __webpack_require__.nmd(module);
+var root = __webpack_require__(5639),
+    stubFalse = __webpack_require__(5062);
+
+/** Detect free variable `exports`. */
+var freeExports =  true && exports && !exports.nodeType && exports;
+
+/** Detect free variable `module`. */
+var freeModule = freeExports && "object" == 'object' && module && !module.nodeType && module;
+
+/** Detect the popular CommonJS extension `module.exports`. */
+var moduleExports = freeModule && freeModule.exports === freeExports;
+
+/** Built-in value references. */
+var Buffer = moduleExports ? root.Buffer : undefined;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
+
+/**
+ * Checks if `value` is a buffer.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.3.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
+ * @example
+ *
+ * _.isBuffer(new Buffer(2));
+ * // => true
+ *
+ * _.isBuffer(new Uint8Array(2));
+ * // => false
+ */
+var isBuffer = nativeIsBuffer || stubFalse;
+
+module.exports = isBuffer;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isFunction.js":
-/*!*******************************************!*\
-  !*** ./node_modules/lodash/isFunction.js ***!
-  \*******************************************/
+/***/ 3560:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ \"./node_modules/lodash/_baseGetTag.js\"),\n    isObject = __webpack_require__(/*! ./isObject */ \"./node_modules/lodash/isObject.js\");\n\n/** `Object#toString` result references. */\nvar asyncTag = '[object AsyncFunction]',\n    funcTag = '[object Function]',\n    genTag = '[object GeneratorFunction]',\n    proxyTag = '[object Proxy]';\n\n/**\n * Checks if `value` is classified as a `Function` object.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a function, else `false`.\n * @example\n *\n * _.isFunction(_);\n * // => true\n *\n * _.isFunction(/abc/);\n * // => false\n */\nfunction isFunction(value) {\n  if (!isObject(value)) {\n    return false;\n  }\n  // The use of `Object#toString` avoids issues with the `typeof` operator\n  // in Safari 9 which returns 'object' for typed arrays and other constructors.\n  var tag = baseGetTag(value);\n  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;\n}\n\nmodule.exports = isFunction;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isFunction.js?");
+var baseGetTag = __webpack_require__(4239),
+    isObject = __webpack_require__(3218);
+
+/** `Object#toString` result references. */
+var asyncTag = '[object AsyncFunction]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    proxyTag = '[object Proxy]';
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  if (!isObject(value)) {
+    return false;
+  }
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 9 which returns 'object' for typed arrays and other constructors.
+  var tag = baseGetTag(value);
+  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
+}
+
+module.exports = isFunction;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isLength.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/isLength.js ***!
-  \*****************************************/
+/***/ 1780:
 /***/ ((module) => {
 
-eval("/** Used as references for various `Number` constants. */\nvar MAX_SAFE_INTEGER = 9007199254740991;\n\n/**\n * Checks if `value` is a valid array-like length.\n *\n * **Note:** This method is loosely based on\n * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.\n * @example\n *\n * _.isLength(3);\n * // => true\n *\n * _.isLength(Number.MIN_VALUE);\n * // => false\n *\n * _.isLength(Infinity);\n * // => false\n *\n * _.isLength('3');\n * // => false\n */\nfunction isLength(value) {\n  return typeof value == 'number' &&\n    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;\n}\n\nmodule.exports = isLength;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isLength.js?");
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+module.exports = isLength;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isNull.js":
-/*!***************************************!*\
-  !*** ./node_modules/lodash/isNull.js ***!
-  \***************************************/
+/***/ 5220:
 /***/ ((module) => {
 
-eval("/**\n * Checks if `value` is `null`.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is `null`, else `false`.\n * @example\n *\n * _.isNull(null);\n * // => true\n *\n * _.isNull(void 0);\n * // => false\n */\nfunction isNull(value) {\n  return value === null;\n}\n\nmodule.exports = isNull;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isNull.js?");
+/**
+ * Checks if `value` is `null`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is `null`, else `false`.
+ * @example
+ *
+ * _.isNull(null);
+ * // => true
+ *
+ * _.isNull(void 0);
+ * // => false
+ */
+function isNull(value) {
+  return value === null;
+}
+
+module.exports = isNull;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isNumber.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/isNumber.js ***!
-  \*****************************************/
+/***/ 1763:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ \"./node_modules/lodash/_baseGetTag.js\"),\n    isObjectLike = __webpack_require__(/*! ./isObjectLike */ \"./node_modules/lodash/isObjectLike.js\");\n\n/** `Object#toString` result references. */\nvar numberTag = '[object Number]';\n\n/**\n * Checks if `value` is classified as a `Number` primitive or object.\n *\n * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are\n * classified as numbers, use the `_.isFinite` method.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a number, else `false`.\n * @example\n *\n * _.isNumber(3);\n * // => true\n *\n * _.isNumber(Number.MIN_VALUE);\n * // => true\n *\n * _.isNumber(Infinity);\n * // => true\n *\n * _.isNumber('3');\n * // => false\n */\nfunction isNumber(value) {\n  return typeof value == 'number' ||\n    (isObjectLike(value) && baseGetTag(value) == numberTag);\n}\n\nmodule.exports = isNumber;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isNumber.js?");
+var baseGetTag = __webpack_require__(4239),
+    isObjectLike = __webpack_require__(7005);
+
+/** `Object#toString` result references. */
+var numberTag = '[object Number]';
+
+/**
+ * Checks if `value` is classified as a `Number` primitive or object.
+ *
+ * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are
+ * classified as numbers, use the `_.isFinite` method.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a number, else `false`.
+ * @example
+ *
+ * _.isNumber(3);
+ * // => true
+ *
+ * _.isNumber(Number.MIN_VALUE);
+ * // => true
+ *
+ * _.isNumber(Infinity);
+ * // => true
+ *
+ * _.isNumber('3');
+ * // => false
+ */
+function isNumber(value) {
+  return typeof value == 'number' ||
+    (isObjectLike(value) && baseGetTag(value) == numberTag);
+}
+
+module.exports = isNumber;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isObject.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/isObject.js ***!
-  \*****************************************/
+/***/ 3218:
 /***/ ((module) => {
 
-eval("/**\n * Checks if `value` is the\n * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)\n * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is an object, else `false`.\n * @example\n *\n * _.isObject({});\n * // => true\n *\n * _.isObject([1, 2, 3]);\n * // => true\n *\n * _.isObject(_.noop);\n * // => true\n *\n * _.isObject(null);\n * // => false\n */\nfunction isObject(value) {\n  var type = typeof value;\n  return value != null && (type == 'object' || type == 'function');\n}\n\nmodule.exports = isObject;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isObject.js?");
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+}
+
+module.exports = isObject;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isObjectLike.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/isObjectLike.js ***!
-  \*********************************************/
+/***/ 7005:
 /***/ ((module) => {
 
-eval("/**\n * Checks if `value` is object-like. A value is object-like if it's not `null`\n * and has a `typeof` result of \"object\".\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is object-like, else `false`.\n * @example\n *\n * _.isObjectLike({});\n * // => true\n *\n * _.isObjectLike([1, 2, 3]);\n * // => true\n *\n * _.isObjectLike(_.noop);\n * // => false\n *\n * _.isObjectLike(null);\n * // => false\n */\nfunction isObjectLike(value) {\n  return value != null && typeof value == 'object';\n}\n\nmodule.exports = isObjectLike;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isObjectLike.js?");
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isString.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/isString.js ***!
-  \*****************************************/
+/***/ 7037:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ \"./node_modules/lodash/_baseGetTag.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\"),\n    isObjectLike = __webpack_require__(/*! ./isObjectLike */ \"./node_modules/lodash/isObjectLike.js\");\n\n/** `Object#toString` result references. */\nvar stringTag = '[object String]';\n\n/**\n * Checks if `value` is classified as a `String` primitive or object.\n *\n * @static\n * @since 0.1.0\n * @memberOf _\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a string, else `false`.\n * @example\n *\n * _.isString('abc');\n * // => true\n *\n * _.isString(1);\n * // => false\n */\nfunction isString(value) {\n  return typeof value == 'string' ||\n    (!isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);\n}\n\nmodule.exports = isString;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isString.js?");
+var baseGetTag = __webpack_require__(4239),
+    isArray = __webpack_require__(1469),
+    isObjectLike = __webpack_require__(7005);
+
+/** `Object#toString` result references. */
+var stringTag = '[object String]';
+
+/**
+ * Checks if `value` is classified as a `String` primitive or object.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a string, else `false`.
+ * @example
+ *
+ * _.isString('abc');
+ * // => true
+ *
+ * _.isString(1);
+ * // => false
+ */
+function isString(value) {
+  return typeof value == 'string' ||
+    (!isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);
+}
+
+module.exports = isString;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isSymbol.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/isSymbol.js ***!
-  \*****************************************/
+/***/ 3448:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ \"./node_modules/lodash/_baseGetTag.js\"),\n    isObjectLike = __webpack_require__(/*! ./isObjectLike */ \"./node_modules/lodash/isObjectLike.js\");\n\n/** `Object#toString` result references. */\nvar symbolTag = '[object Symbol]';\n\n/**\n * Checks if `value` is classified as a `Symbol` primitive or object.\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.\n * @example\n *\n * _.isSymbol(Symbol.iterator);\n * // => true\n *\n * _.isSymbol('abc');\n * // => false\n */\nfunction isSymbol(value) {\n  return typeof value == 'symbol' ||\n    (isObjectLike(value) && baseGetTag(value) == symbolTag);\n}\n\nmodule.exports = isSymbol;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isSymbol.js?");
+var baseGetTag = __webpack_require__(4239),
+    isObjectLike = __webpack_require__(7005);
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && baseGetTag(value) == symbolTag);
+}
+
+module.exports = isSymbol;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isTypedArray.js":
-/*!*********************************************!*\
-  !*** ./node_modules/lodash/isTypedArray.js ***!
-  \*********************************************/
+/***/ 6719:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseIsTypedArray = __webpack_require__(/*! ./_baseIsTypedArray */ \"./node_modules/lodash/_baseIsTypedArray.js\"),\n    baseUnary = __webpack_require__(/*! ./_baseUnary */ \"./node_modules/lodash/_baseUnary.js\"),\n    nodeUtil = __webpack_require__(/*! ./_nodeUtil */ \"./node_modules/lodash/_nodeUtil.js\");\n\n/* Node.js helper references. */\nvar nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;\n\n/**\n * Checks if `value` is classified as a typed array.\n *\n * @static\n * @memberOf _\n * @since 3.0.0\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.\n * @example\n *\n * _.isTypedArray(new Uint8Array);\n * // => true\n *\n * _.isTypedArray([]);\n * // => false\n */\nvar isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;\n\nmodule.exports = isTypedArray;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isTypedArray.js?");
+var baseIsTypedArray = __webpack_require__(8749),
+    baseUnary = __webpack_require__(7518),
+    nodeUtil = __webpack_require__(1167);
+
+/* Node.js helper references. */
+var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
+
+/**
+ * Checks if `value` is classified as a typed array.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+ * @example
+ *
+ * _.isTypedArray(new Uint8Array);
+ * // => true
+ *
+ * _.isTypedArray([]);
+ * // => false
+ */
+var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+
+module.exports = isTypedArray;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/isUndefined.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash/isUndefined.js ***!
-  \********************************************/
+/***/ 2353:
 /***/ ((module) => {
 
-eval("/**\n * Checks if `value` is `undefined`.\n *\n * @static\n * @since 0.1.0\n * @memberOf _\n * @category Lang\n * @param {*} value The value to check.\n * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.\n * @example\n *\n * _.isUndefined(void 0);\n * // => true\n *\n * _.isUndefined(null);\n * // => false\n */\nfunction isUndefined(value) {\n  return value === undefined;\n}\n\nmodule.exports = isUndefined;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/isUndefined.js?");
+/**
+ * Checks if `value` is `undefined`.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
+ * @example
+ *
+ * _.isUndefined(void 0);
+ * // => true
+ *
+ * _.isUndefined(null);
+ * // => false
+ */
+function isUndefined(value) {
+  return value === undefined;
+}
+
+module.exports = isUndefined;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/keys.js":
-/*!*************************************!*\
-  !*** ./node_modules/lodash/keys.js ***!
-  \*************************************/
+/***/ 3674:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var arrayLikeKeys = __webpack_require__(/*! ./_arrayLikeKeys */ \"./node_modules/lodash/_arrayLikeKeys.js\"),\n    baseKeys = __webpack_require__(/*! ./_baseKeys */ \"./node_modules/lodash/_baseKeys.js\"),\n    isArrayLike = __webpack_require__(/*! ./isArrayLike */ \"./node_modules/lodash/isArrayLike.js\");\n\n/**\n * Creates an array of the own enumerable property names of `object`.\n *\n * **Note:** Non-object values are coerced to objects. See the\n * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)\n * for more details.\n *\n * @static\n * @since 0.1.0\n * @memberOf _\n * @category Object\n * @param {Object} object The object to query.\n * @returns {Array} Returns the array of property names.\n * @example\n *\n * function Foo() {\n *   this.a = 1;\n *   this.b = 2;\n * }\n *\n * Foo.prototype.c = 3;\n *\n * _.keys(new Foo);\n * // => ['a', 'b'] (iteration order is not guaranteed)\n *\n * _.keys('hi');\n * // => ['0', '1']\n */\nfunction keys(object) {\n  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);\n}\n\nmodule.exports = keys;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/keys.js?");
+var arrayLikeKeys = __webpack_require__(4636),
+    baseKeys = __webpack_require__(280),
+    isArrayLike = __webpack_require__(8612);
+
+/**
+ * Creates an array of the own enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects. See the
+ * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+ * for more details.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keys(new Foo);
+ * // => ['a', 'b'] (iteration order is not guaranteed)
+ *
+ * _.keys('hi');
+ * // => ['0', '1']
+ */
+function keys(object) {
+  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
+}
+
+module.exports = keys;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/keysIn.js":
-/*!***************************************!*\
-  !*** ./node_modules/lodash/keysIn.js ***!
-  \***************************************/
+/***/ 1704:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var arrayLikeKeys = __webpack_require__(/*! ./_arrayLikeKeys */ \"./node_modules/lodash/_arrayLikeKeys.js\"),\n    baseKeysIn = __webpack_require__(/*! ./_baseKeysIn */ \"./node_modules/lodash/_baseKeysIn.js\"),\n    isArrayLike = __webpack_require__(/*! ./isArrayLike */ \"./node_modules/lodash/isArrayLike.js\");\n\n/**\n * Creates an array of the own and inherited enumerable property names of `object`.\n *\n * **Note:** Non-object values are coerced to objects.\n *\n * @static\n * @memberOf _\n * @since 3.0.0\n * @category Object\n * @param {Object} object The object to query.\n * @returns {Array} Returns the array of property names.\n * @example\n *\n * function Foo() {\n *   this.a = 1;\n *   this.b = 2;\n * }\n *\n * Foo.prototype.c = 3;\n *\n * _.keysIn(new Foo);\n * // => ['a', 'b', 'c'] (iteration order is not guaranteed)\n */\nfunction keysIn(object) {\n  return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);\n}\n\nmodule.exports = keysIn;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/keysIn.js?");
+var arrayLikeKeys = __webpack_require__(4636),
+    baseKeysIn = __webpack_require__(313),
+    isArrayLike = __webpack_require__(8612);
+
+/**
+ * Creates an array of the own and inherited enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keysIn(new Foo);
+ * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+ */
+function keysIn(object) {
+  return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
+}
+
+module.exports = keysIn;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/map.js":
-/*!************************************!*\
-  !*** ./node_modules/lodash/map.js ***!
-  \************************************/
+/***/ 5161:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var arrayMap = __webpack_require__(/*! ./_arrayMap */ \"./node_modules/lodash/_arrayMap.js\"),\n    baseIteratee = __webpack_require__(/*! ./_baseIteratee */ \"./node_modules/lodash/_baseIteratee.js\"),\n    baseMap = __webpack_require__(/*! ./_baseMap */ \"./node_modules/lodash/_baseMap.js\"),\n    isArray = __webpack_require__(/*! ./isArray */ \"./node_modules/lodash/isArray.js\");\n\n/**\n * Creates an array of values by running each element in `collection` thru\n * `iteratee`. The iteratee is invoked with three arguments:\n * (value, index|key, collection).\n *\n * Many lodash methods are guarded to work as iteratees for methods like\n * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.\n *\n * The guarded methods are:\n * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,\n * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,\n * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,\n * `template`, `trim`, `trimEnd`, `trimStart`, and `words`\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Collection\n * @param {Array|Object} collection The collection to iterate over.\n * @param {Function} [iteratee=_.identity] The function invoked per iteration.\n * @returns {Array} Returns the new mapped array.\n * @example\n *\n * function square(n) {\n *   return n * n;\n * }\n *\n * _.map([4, 8], square);\n * // => [16, 64]\n *\n * _.map({ 'a': 4, 'b': 8 }, square);\n * // => [16, 64] (iteration order is not guaranteed)\n *\n * var users = [\n *   { 'user': 'barney' },\n *   { 'user': 'fred' }\n * ];\n *\n * // The `_.property` iteratee shorthand.\n * _.map(users, 'user');\n * // => ['barney', 'fred']\n */\nfunction map(collection, iteratee) {\n  var func = isArray(collection) ? arrayMap : baseMap;\n  return func(collection, baseIteratee(iteratee, 3));\n}\n\nmodule.exports = map;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/map.js?");
+var arrayMap = __webpack_require__(9932),
+    baseIteratee = __webpack_require__(7206),
+    baseMap = __webpack_require__(9199),
+    isArray = __webpack_require__(1469);
+
+/**
+ * Creates an array of values by running each element in `collection` thru
+ * `iteratee`. The iteratee is invoked with three arguments:
+ * (value, index|key, collection).
+ *
+ * Many lodash methods are guarded to work as iteratees for methods like
+ * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
+ *
+ * The guarded methods are:
+ * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
+ * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,
+ * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
+ * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ * @example
+ *
+ * function square(n) {
+ *   return n * n;
+ * }
+ *
+ * _.map([4, 8], square);
+ * // => [16, 64]
+ *
+ * _.map({ 'a': 4, 'b': 8 }, square);
+ * // => [16, 64] (iteration order is not guaranteed)
+ *
+ * var users = [
+ *   { 'user': 'barney' },
+ *   { 'user': 'fred' }
+ * ];
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.map(users, 'user');
+ * // => ['barney', 'fred']
+ */
+function map(collection, iteratee) {
+  var func = isArray(collection) ? arrayMap : baseMap;
+  return func(collection, baseIteratee(iteratee, 3));
+}
+
+module.exports = map;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/memoize.js":
-/*!****************************************!*\
-  !*** ./node_modules/lodash/memoize.js ***!
-  \****************************************/
+/***/ 8306:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var MapCache = __webpack_require__(/*! ./_MapCache */ \"./node_modules/lodash/_MapCache.js\");\n\n/** Error message constants. */\nvar FUNC_ERROR_TEXT = 'Expected a function';\n\n/**\n * Creates a function that memoizes the result of `func`. If `resolver` is\n * provided, it determines the cache key for storing the result based on the\n * arguments provided to the memoized function. By default, the first argument\n * provided to the memoized function is used as the map cache key. The `func`\n * is invoked with the `this` binding of the memoized function.\n *\n * **Note:** The cache is exposed as the `cache` property on the memoized\n * function. Its creation may be customized by replacing the `_.memoize.Cache`\n * constructor with one whose instances implement the\n * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)\n * method interface of `clear`, `delete`, `get`, `has`, and `set`.\n *\n * @static\n * @memberOf _\n * @since 0.1.0\n * @category Function\n * @param {Function} func The function to have its output memoized.\n * @param {Function} [resolver] The function to resolve the cache key.\n * @returns {Function} Returns the new memoized function.\n * @example\n *\n * var object = { 'a': 1, 'b': 2 };\n * var other = { 'c': 3, 'd': 4 };\n *\n * var values = _.memoize(_.values);\n * values(object);\n * // => [1, 2]\n *\n * values(other);\n * // => [3, 4]\n *\n * object.a = 2;\n * values(object);\n * // => [1, 2]\n *\n * // Modify the result cache.\n * values.cache.set(object, ['a', 'b']);\n * values(object);\n * // => ['a', 'b']\n *\n * // Replace `_.memoize.Cache`.\n * _.memoize.Cache = WeakMap;\n */\nfunction memoize(func, resolver) {\n  if (typeof func != 'function' || (resolver != null && typeof resolver != 'function')) {\n    throw new TypeError(FUNC_ERROR_TEXT);\n  }\n  var memoized = function() {\n    var args = arguments,\n        key = resolver ? resolver.apply(this, args) : args[0],\n        cache = memoized.cache;\n\n    if (cache.has(key)) {\n      return cache.get(key);\n    }\n    var result = func.apply(this, args);\n    memoized.cache = cache.set(key, result) || cache;\n    return result;\n  };\n  memoized.cache = new (memoize.Cache || MapCache);\n  return memoized;\n}\n\n// Expose `MapCache`.\nmemoize.Cache = MapCache;\n\nmodule.exports = memoize;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/memoize.js?");
+var MapCache = __webpack_require__(3369);
+
+/** Error message constants. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/**
+ * Creates a function that memoizes the result of `func`. If `resolver` is
+ * provided, it determines the cache key for storing the result based on the
+ * arguments provided to the memoized function. By default, the first argument
+ * provided to the memoized function is used as the map cache key. The `func`
+ * is invoked with the `this` binding of the memoized function.
+ *
+ * **Note:** The cache is exposed as the `cache` property on the memoized
+ * function. Its creation may be customized by replacing the `_.memoize.Cache`
+ * constructor with one whose instances implement the
+ * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)
+ * method interface of `clear`, `delete`, `get`, `has`, and `set`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to have its output memoized.
+ * @param {Function} [resolver] The function to resolve the cache key.
+ * @returns {Function} Returns the new memoized function.
+ * @example
+ *
+ * var object = { 'a': 1, 'b': 2 };
+ * var other = { 'c': 3, 'd': 4 };
+ *
+ * var values = _.memoize(_.values);
+ * values(object);
+ * // => [1, 2]
+ *
+ * values(other);
+ * // => [3, 4]
+ *
+ * object.a = 2;
+ * values(object);
+ * // => [1, 2]
+ *
+ * // Modify the result cache.
+ * values.cache.set(object, ['a', 'b']);
+ * values(object);
+ * // => ['a', 'b']
+ *
+ * // Replace `_.memoize.Cache`.
+ * _.memoize.Cache = WeakMap;
+ */
+function memoize(func, resolver) {
+  if (typeof func != 'function' || (resolver != null && typeof resolver != 'function')) {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  var memoized = function() {
+    var args = arguments,
+        key = resolver ? resolver.apply(this, args) : args[0],
+        cache = memoized.cache;
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    var result = func.apply(this, args);
+    memoized.cache = cache.set(key, result) || cache;
+    return result;
+  };
+  memoized.cache = new (memoize.Cache || MapCache);
+  return memoized;
+}
+
+// Expose `MapCache`.
+memoize.Cache = MapCache;
+
+module.exports = memoize;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/property.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/property.js ***!
-  \*****************************************/
+/***/ 9601:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseProperty = __webpack_require__(/*! ./_baseProperty */ \"./node_modules/lodash/_baseProperty.js\"),\n    basePropertyDeep = __webpack_require__(/*! ./_basePropertyDeep */ \"./node_modules/lodash/_basePropertyDeep.js\"),\n    isKey = __webpack_require__(/*! ./_isKey */ \"./node_modules/lodash/_isKey.js\"),\n    toKey = __webpack_require__(/*! ./_toKey */ \"./node_modules/lodash/_toKey.js\");\n\n/**\n * Creates a function that returns the value at `path` of a given object.\n *\n * @static\n * @memberOf _\n * @since 2.4.0\n * @category Util\n * @param {Array|string} path The path of the property to get.\n * @returns {Function} Returns the new accessor function.\n * @example\n *\n * var objects = [\n *   { 'a': { 'b': 2 } },\n *   { 'a': { 'b': 1 } }\n * ];\n *\n * _.map(objects, _.property('a.b'));\n * // => [2, 1]\n *\n * _.map(_.sortBy(objects, _.property(['a', 'b'])), 'a.b');\n * // => [1, 2]\n */\nfunction property(path) {\n  return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path);\n}\n\nmodule.exports = property;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/property.js?");
+var baseProperty = __webpack_require__(371),
+    basePropertyDeep = __webpack_require__(9152),
+    isKey = __webpack_require__(5403),
+    toKey = __webpack_require__(327);
+
+/**
+ * Creates a function that returns the value at `path` of a given object.
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Util
+ * @param {Array|string} path The path of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ * @example
+ *
+ * var objects = [
+ *   { 'a': { 'b': 2 } },
+ *   { 'a': { 'b': 1 } }
+ * ];
+ *
+ * _.map(objects, _.property('a.b'));
+ * // => [2, 1]
+ *
+ * _.map(_.sortBy(objects, _.property(['a', 'b'])), 'a.b');
+ * // => [1, 2]
+ */
+function property(path) {
+  return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path);
+}
+
+module.exports = property;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/stubArray.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/stubArray.js ***!
-  \******************************************/
+/***/ 479:
 /***/ ((module) => {
 
-eval("/**\n * This method returns a new empty array.\n *\n * @static\n * @memberOf _\n * @since 4.13.0\n * @category Util\n * @returns {Array} Returns the new empty array.\n * @example\n *\n * var arrays = _.times(2, _.stubArray);\n *\n * console.log(arrays);\n * // => [[], []]\n *\n * console.log(arrays[0] === arrays[1]);\n * // => false\n */\nfunction stubArray() {\n  return [];\n}\n\nmodule.exports = stubArray;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/stubArray.js?");
+/**
+ * This method returns a new empty array.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.13.0
+ * @category Util
+ * @returns {Array} Returns the new empty array.
+ * @example
+ *
+ * var arrays = _.times(2, _.stubArray);
+ *
+ * console.log(arrays);
+ * // => [[], []]
+ *
+ * console.log(arrays[0] === arrays[1]);
+ * // => false
+ */
+function stubArray() {
+  return [];
+}
+
+module.exports = stubArray;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/stubFalse.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/stubFalse.js ***!
-  \******************************************/
+/***/ 5062:
 /***/ ((module) => {
 
-eval("/**\n * This method returns `false`.\n *\n * @static\n * @memberOf _\n * @since 4.13.0\n * @category Util\n * @returns {boolean} Returns `false`.\n * @example\n *\n * _.times(2, _.stubFalse);\n * // => [false, false]\n */\nfunction stubFalse() {\n  return false;\n}\n\nmodule.exports = stubFalse;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/stubFalse.js?");
+/**
+ * This method returns `false`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.13.0
+ * @category Util
+ * @returns {boolean} Returns `false`.
+ * @example
+ *
+ * _.times(2, _.stubFalse);
+ * // => [false, false]
+ */
+function stubFalse() {
+  return false;
+}
+
+module.exports = stubFalse;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/times.js":
-/*!**************************************!*\
-  !*** ./node_modules/lodash/times.js ***!
-  \**************************************/
+/***/ 8913:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseTimes = __webpack_require__(/*! ./_baseTimes */ \"./node_modules/lodash/_baseTimes.js\"),\n    castFunction = __webpack_require__(/*! ./_castFunction */ \"./node_modules/lodash/_castFunction.js\"),\n    toInteger = __webpack_require__(/*! ./toInteger */ \"./node_modules/lodash/toInteger.js\");\n\n/** Used as references for various `Number` constants. */\nvar MAX_SAFE_INTEGER = 9007199254740991;\n\n/** Used as references for the maximum length and index of an array. */\nvar MAX_ARRAY_LENGTH = 4294967295;\n\n/* Built-in method references for those with the same name as other `lodash` methods. */\nvar nativeMin = Math.min;\n\n/**\n * Invokes the iteratee `n` times, returning an array of the results of\n * each invocation. The iteratee is invoked with one argument; (index).\n *\n * @static\n * @since 0.1.0\n * @memberOf _\n * @category Util\n * @param {number} n The number of times to invoke `iteratee`.\n * @param {Function} [iteratee=_.identity] The function invoked per iteration.\n * @returns {Array} Returns the array of results.\n * @example\n *\n * _.times(3, String);\n * // => ['0', '1', '2']\n *\n *  _.times(4, _.constant(0));\n * // => [0, 0, 0, 0]\n */\nfunction times(n, iteratee) {\n  n = toInteger(n);\n  if (n < 1 || n > MAX_SAFE_INTEGER) {\n    return [];\n  }\n  var index = MAX_ARRAY_LENGTH,\n      length = nativeMin(n, MAX_ARRAY_LENGTH);\n\n  iteratee = castFunction(iteratee);\n  n -= MAX_ARRAY_LENGTH;\n\n  var result = baseTimes(length, iteratee);\n  while (++index < n) {\n    iteratee(index);\n  }\n  return result;\n}\n\nmodule.exports = times;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/times.js?");
+var baseTimes = __webpack_require__(2545),
+    castFunction = __webpack_require__(4290),
+    toInteger = __webpack_require__(554);
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** Used as references for the maximum length and index of an array. */
+var MAX_ARRAY_LENGTH = 4294967295;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMin = Math.min;
+
+/**
+ * Invokes the iteratee `n` times, returning an array of the results of
+ * each invocation. The iteratee is invoked with one argument; (index).
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Util
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
+ * @example
+ *
+ * _.times(3, String);
+ * // => ['0', '1', '2']
+ *
+ *  _.times(4, _.constant(0));
+ * // => [0, 0, 0, 0]
+ */
+function times(n, iteratee) {
+  n = toInteger(n);
+  if (n < 1 || n > MAX_SAFE_INTEGER) {
+    return [];
+  }
+  var index = MAX_ARRAY_LENGTH,
+      length = nativeMin(n, MAX_ARRAY_LENGTH);
+
+  iteratee = castFunction(iteratee);
+  n -= MAX_ARRAY_LENGTH;
+
+  var result = baseTimes(length, iteratee);
+  while (++index < n) {
+    iteratee(index);
+  }
+  return result;
+}
+
+module.exports = times;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/toFinite.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/toFinite.js ***!
-  \*****************************************/
+/***/ 8601:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var toNumber = __webpack_require__(/*! ./toNumber */ \"./node_modules/lodash/toNumber.js\");\n\n/** Used as references for various `Number` constants. */\nvar INFINITY = 1 / 0,\n    MAX_INTEGER = 1.7976931348623157e+308;\n\n/**\n * Converts `value` to a finite number.\n *\n * @static\n * @memberOf _\n * @since 4.12.0\n * @category Lang\n * @param {*} value The value to convert.\n * @returns {number} Returns the converted number.\n * @example\n *\n * _.toFinite(3.2);\n * // => 3.2\n *\n * _.toFinite(Number.MIN_VALUE);\n * // => 5e-324\n *\n * _.toFinite(Infinity);\n * // => 1.7976931348623157e+308\n *\n * _.toFinite('3.2');\n * // => 3.2\n */\nfunction toFinite(value) {\n  if (!value) {\n    return value === 0 ? value : 0;\n  }\n  value = toNumber(value);\n  if (value === INFINITY || value === -INFINITY) {\n    var sign = (value < 0 ? -1 : 1);\n    return sign * MAX_INTEGER;\n  }\n  return value === value ? value : 0;\n}\n\nmodule.exports = toFinite;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/toFinite.js?");
+var toNumber = __webpack_require__(4841);
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0,
+    MAX_INTEGER = 1.7976931348623157e+308;
+
+/**
+ * Converts `value` to a finite number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.12.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted number.
+ * @example
+ *
+ * _.toFinite(3.2);
+ * // => 3.2
+ *
+ * _.toFinite(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toFinite(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toFinite('3.2');
+ * // => 3.2
+ */
+function toFinite(value) {
+  if (!value) {
+    return value === 0 ? value : 0;
+  }
+  value = toNumber(value);
+  if (value === INFINITY || value === -INFINITY) {
+    var sign = (value < 0 ? -1 : 1);
+    return sign * MAX_INTEGER;
+  }
+  return value === value ? value : 0;
+}
+
+module.exports = toFinite;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/toInteger.js":
-/*!******************************************!*\
-  !*** ./node_modules/lodash/toInteger.js ***!
-  \******************************************/
+/***/ 554:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var toFinite = __webpack_require__(/*! ./toFinite */ \"./node_modules/lodash/toFinite.js\");\n\n/**\n * Converts `value` to an integer.\n *\n * **Note:** This method is loosely based on\n * [`ToInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-tointeger).\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Lang\n * @param {*} value The value to convert.\n * @returns {number} Returns the converted integer.\n * @example\n *\n * _.toInteger(3.2);\n * // => 3\n *\n * _.toInteger(Number.MIN_VALUE);\n * // => 0\n *\n * _.toInteger(Infinity);\n * // => 1.7976931348623157e+308\n *\n * _.toInteger('3.2');\n * // => 3\n */\nfunction toInteger(value) {\n  var result = toFinite(value),\n      remainder = result % 1;\n\n  return result === result ? (remainder ? result - remainder : result) : 0;\n}\n\nmodule.exports = toInteger;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/toInteger.js?");
+var toFinite = __webpack_require__(8601);
+
+/**
+ * Converts `value` to an integer.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-tointeger).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted integer.
+ * @example
+ *
+ * _.toInteger(3.2);
+ * // => 3
+ *
+ * _.toInteger(Number.MIN_VALUE);
+ * // => 0
+ *
+ * _.toInteger(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toInteger('3.2');
+ * // => 3
+ */
+function toInteger(value) {
+  var result = toFinite(value),
+      remainder = result % 1;
+
+  return result === result ? (remainder ? result - remainder : result) : 0;
+}
+
+module.exports = toInteger;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/toNumber.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/toNumber.js ***!
-  \*****************************************/
+/***/ 4841:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseTrim = __webpack_require__(/*! ./_baseTrim */ \"./node_modules/lodash/_baseTrim.js\"),\n    isObject = __webpack_require__(/*! ./isObject */ \"./node_modules/lodash/isObject.js\"),\n    isSymbol = __webpack_require__(/*! ./isSymbol */ \"./node_modules/lodash/isSymbol.js\");\n\n/** Used as references for various `Number` constants. */\nvar NAN = 0 / 0;\n\n/** Used to detect bad signed hexadecimal string values. */\nvar reIsBadHex = /^[-+]0x[0-9a-f]+$/i;\n\n/** Used to detect binary string values. */\nvar reIsBinary = /^0b[01]+$/i;\n\n/** Used to detect octal string values. */\nvar reIsOctal = /^0o[0-7]+$/i;\n\n/** Built-in method references without a dependency on `root`. */\nvar freeParseInt = parseInt;\n\n/**\n * Converts `value` to a number.\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Lang\n * @param {*} value The value to process.\n * @returns {number} Returns the number.\n * @example\n *\n * _.toNumber(3.2);\n * // => 3.2\n *\n * _.toNumber(Number.MIN_VALUE);\n * // => 5e-324\n *\n * _.toNumber(Infinity);\n * // => Infinity\n *\n * _.toNumber('3.2');\n * // => 3.2\n */\nfunction toNumber(value) {\n  if (typeof value == 'number') {\n    return value;\n  }\n  if (isSymbol(value)) {\n    return NAN;\n  }\n  if (isObject(value)) {\n    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;\n    value = isObject(other) ? (other + '') : other;\n  }\n  if (typeof value != 'string') {\n    return value === 0 ? value : +value;\n  }\n  value = baseTrim(value);\n  var isBinary = reIsBinary.test(value);\n  return (isBinary || reIsOctal.test(value))\n    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)\n    : (reIsBadHex.test(value) ? NAN : +value);\n}\n\nmodule.exports = toNumber;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/toNumber.js?");
+var baseTrim = __webpack_require__(7561),
+    isObject = __webpack_require__(3218),
+    isSymbol = __webpack_require__(3448);
+
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3.2);
+ * // => 3.2
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3.2');
+ * // => 3.2
+ */
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return NAN;
+  }
+  if (isObject(value)) {
+    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+    value = isObject(other) ? (other + '') : other;
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+  value = baseTrim(value);
+  var isBinary = reIsBinary.test(value);
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+module.exports = toNumber;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/toString.js":
-/*!*****************************************!*\
-  !*** ./node_modules/lodash/toString.js ***!
-  \*****************************************/
+/***/ 9833:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseToString = __webpack_require__(/*! ./_baseToString */ \"./node_modules/lodash/_baseToString.js\");\n\n/**\n * Converts `value` to a string. An empty string is returned for `null`\n * and `undefined` values. The sign of `-0` is preserved.\n *\n * @static\n * @memberOf _\n * @since 4.0.0\n * @category Lang\n * @param {*} value The value to convert.\n * @returns {string} Returns the converted string.\n * @example\n *\n * _.toString(null);\n * // => ''\n *\n * _.toString(-0);\n * // => '-0'\n *\n * _.toString([1, 2, 3]);\n * // => '1,2,3'\n */\nfunction toString(value) {\n  return value == null ? '' : baseToString(value);\n}\n\nmodule.exports = toString;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/toString.js?");
+var baseToString = __webpack_require__(531);
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ * @example
+ *
+ * _.toString(null);
+ * // => ''
+ *
+ * _.toString(-0);
+ * // => '-0'
+ *
+ * _.toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+function toString(value) {
+  return value == null ? '' : baseToString(value);
+}
+
+module.exports = toString;
+
 
 /***/ }),
 
-/***/ "./node_modules/lodash/values.js":
-/*!***************************************!*\
-  !*** ./node_modules/lodash/values.js ***!
-  \***************************************/
+/***/ 2628:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var baseValues = __webpack_require__(/*! ./_baseValues */ \"./node_modules/lodash/_baseValues.js\"),\n    keys = __webpack_require__(/*! ./keys */ \"./node_modules/lodash/keys.js\");\n\n/**\n * Creates an array of the own enumerable string keyed property values of `object`.\n *\n * **Note:** Non-object values are coerced to objects.\n *\n * @static\n * @since 0.1.0\n * @memberOf _\n * @category Object\n * @param {Object} object The object to query.\n * @returns {Array} Returns the array of property values.\n * @example\n *\n * function Foo() {\n *   this.a = 1;\n *   this.b = 2;\n * }\n *\n * Foo.prototype.c = 3;\n *\n * _.values(new Foo);\n * // => [1, 2] (iteration order is not guaranteed)\n *\n * _.values('hi');\n * // => ['h', 'i']\n */\nfunction values(object) {\n  return object == null ? [] : baseValues(object, keys(object));\n}\n\nmodule.exports = values;\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/lodash/values.js?");
+var baseValues = __webpack_require__(7415),
+    keys = __webpack_require__(3674);
+
+/**
+ * Creates an array of the own enumerable string keyed property values of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property values.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.values(new Foo);
+ * // => [1, 2] (iteration order is not guaranteed)
+ *
+ * _.values('hi');
+ * // => ['h', 'i']
+ */
+function values(object) {
+  return object == null ? [] : baseValues(object, keys(object));
+}
+
+module.exports = values;
+
 
 /***/ }),
 
-/***/ "./node_modules/long/dist/Long.js":
-/*!****************************************!*\
-  !*** ./node_modules/long/dist/Long.js ***!
-  \****************************************/
+/***/ 1102:
 /***/ (function(module, exports) {
 
-eval("var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*\r\n Copyright 2013 Daniel Wirtz <dcode@dcode.io>\r\n Copyright 2009 The Closure Library Authors. All Rights Reserved.\r\n\r\n Licensed under the Apache License, Version 2.0 (the \"License\");\r\n you may not use this file except in compliance with the License.\r\n You may obtain a copy of the License at\r\n\r\n http://www.apache.org/licenses/LICENSE-2.0\r\n\r\n Unless required by applicable law or agreed to in writing, software\r\n distributed under the License is distributed on an \"AS-IS\" BASIS,\r\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n See the License for the specific language governing permissions and\r\n limitations under the License.\r\n */\r\n\r\n/**\r\n * @license Long.js (c) 2013 Daniel Wirtz <dcode@dcode.io>\r\n * Released under the Apache License, Version 2.0\r\n * see: https://github.com/dcodeIO/Long.js for details\r\n */\r\n(function(global, factory) {\r\n\r\n    /* AMD */ if (true)\r\n        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),\n\t\t__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?\n\t\t(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),\n\t\t__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));\r\n    /* CommonJS */ else {}\r\n\r\n})(this, function() {\r\n    \"use strict\";\r\n\r\n    /**\r\n     * Constructs a 64 bit two's-complement integer, given its low and high 32 bit values as *signed* integers.\r\n     *  See the from* functions below for more convenient ways of constructing Longs.\r\n     * @exports Long\r\n     * @class A Long class for representing a 64 bit two's-complement integer value.\r\n     * @param {number} low The low (signed) 32 bits of the long\r\n     * @param {number} high The high (signed) 32 bits of the long\r\n     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed\r\n     * @constructor\r\n     */\r\n    function Long(low, high, unsigned) {\r\n\r\n        /**\r\n         * The low 32 bits as a signed value.\r\n         * @type {number}\r\n         * @expose\r\n         */\r\n        this.low = low|0;\r\n\r\n        /**\r\n         * The high 32 bits as a signed value.\r\n         * @type {number}\r\n         * @expose\r\n         */\r\n        this.high = high|0;\r\n\r\n        /**\r\n         * Whether unsigned or not.\r\n         * @type {boolean}\r\n         * @expose\r\n         */\r\n        this.unsigned = !!unsigned;\r\n    }\r\n\r\n    // The internal representation of a long is the two given signed, 32-bit values.\r\n    // We use 32-bit pieces because these are the size of integers on which\r\n    // Javascript performs bit-operations.  For operations like addition and\r\n    // multiplication, we split each number into 16 bit pieces, which can easily be\r\n    // multiplied within Javascript's floating-point representation without overflow\r\n    // or change in sign.\r\n    //\r\n    // In the algorithms below, we frequently reduce the negative case to the\r\n    // positive case by negating the input(s) and then post-processing the result.\r\n    // Note that we must ALWAYS check specially whether those values are MIN_VALUE\r\n    // (-2^63) because -MIN_VALUE == MIN_VALUE (since 2^63 cannot be represented as\r\n    // a positive number, it overflows back into a negative).  Not handling this\r\n    // case would often result in infinite recursion.\r\n    //\r\n    // Common constant values ZERO, ONE, NEG_ONE, etc. are defined below the from*\r\n    // methods on which they depend.\r\n\r\n    /**\r\n     * An indicator used to reliably determine if an object is a Long or not.\r\n     * @type {boolean}\r\n     * @const\r\n     * @expose\r\n     * @private\r\n     */\r\n    Long.__isLong__;\r\n\r\n    Object.defineProperty(Long.prototype, \"__isLong__\", {\r\n        value: true,\r\n        enumerable: false,\r\n        configurable: false\r\n    });\r\n\r\n    /**\r\n     * Tests if the specified object is a Long.\r\n     * @param {*} obj Object\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.isLong = function isLong(obj) {\r\n        return (obj && obj[\"__isLong__\"]) === true;\r\n    };\r\n\r\n    /**\r\n     * A cache of the Long representations of small integer values.\r\n     * @type {!Object}\r\n     * @inner\r\n     */\r\n    var INT_CACHE = {};\r\n\r\n    /**\r\n     * A cache of the Long representations of small unsigned integer values.\r\n     * @type {!Object}\r\n     * @inner\r\n     */\r\n    var UINT_CACHE = {};\r\n\r\n    /**\r\n     * Returns a Long representing the given 32 bit integer value.\r\n     * @param {number} value The 32 bit integer in question\r\n     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed\r\n     * @returns {!Long} The corresponding Long value\r\n     * @expose\r\n     */\r\n    Long.fromInt = function fromInt(value, unsigned) {\r\n        var obj, cachedObj;\r\n        if (!unsigned) {\r\n            value = value | 0;\r\n            if (-128 <= value && value < 128) {\r\n                cachedObj = INT_CACHE[value];\r\n                if (cachedObj)\r\n                    return cachedObj;\r\n            }\r\n            obj = new Long(value, value < 0 ? -1 : 0, false);\r\n            if (-128 <= value && value < 128)\r\n                INT_CACHE[value] = obj;\r\n            return obj;\r\n        } else {\r\n            value = value >>> 0;\r\n            if (0 <= value && value < 256) {\r\n                cachedObj = UINT_CACHE[value];\r\n                if (cachedObj)\r\n                    return cachedObj;\r\n            }\r\n            obj = new Long(value, (value | 0) < 0 ? -1 : 0, true);\r\n            if (0 <= value && value < 256)\r\n                UINT_CACHE[value] = obj;\r\n            return obj;\r\n        }\r\n    };\r\n\r\n    /**\r\n     * Returns a Long representing the given value, provided that it is a finite number. Otherwise, zero is returned.\r\n     * @param {number} value The number in question\r\n     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed\r\n     * @returns {!Long} The corresponding Long value\r\n     * @expose\r\n     */\r\n    Long.fromNumber = function fromNumber(value, unsigned) {\r\n        unsigned = !!unsigned;\r\n        if (isNaN(value) || !isFinite(value))\r\n            return Long.ZERO;\r\n        if (!unsigned && value <= -TWO_PWR_63_DBL)\r\n            return Long.MIN_VALUE;\r\n        if (!unsigned && value + 1 >= TWO_PWR_63_DBL)\r\n            return Long.MAX_VALUE;\r\n        if (unsigned && value >= TWO_PWR_64_DBL)\r\n            return Long.MAX_UNSIGNED_VALUE;\r\n        if (value < 0)\r\n            return Long.fromNumber(-value, unsigned).negate();\r\n        return new Long((value % TWO_PWR_32_DBL) | 0, (value / TWO_PWR_32_DBL) | 0, unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns a Long representing the 64 bit integer that comes by concatenating the given low and high bits. Each is\r\n     *  assumed to use 32 bits.\r\n     * @param {number} lowBits The low 32 bits\r\n     * @param {number} highBits The high 32 bits\r\n     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed\r\n     * @returns {!Long} The corresponding Long value\r\n     * @expose\r\n     */\r\n    Long.fromBits = function fromBits(lowBits, highBits, unsigned) {\r\n        return new Long(lowBits, highBits, unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns a Long representation of the given string, written using the specified radix.\r\n     * @param {string} str The textual representation of the Long\r\n     * @param {(boolean|number)=} unsigned Whether unsigned or not, defaults to `false` for signed\r\n     * @param {number=} radix The radix in which the text is written (2-36), defaults to 10\r\n     * @returns {!Long} The corresponding Long value\r\n     * @expose\r\n     */\r\n    Long.fromString = function fromString(str, unsigned, radix) {\r\n        if (str.length === 0)\r\n            throw Error('number format error: empty string');\r\n        if (str === \"NaN\" || str === \"Infinity\" || str === \"+Infinity\" || str === \"-Infinity\")\r\n            return Long.ZERO;\r\n        if (typeof unsigned === 'number') // For goog.math.long compatibility\r\n            radix = unsigned,\r\n            unsigned = false;\r\n        radix = radix || 10;\r\n        if (radix < 2 || 36 < radix)\r\n            throw Error('radix out of range: ' + radix);\r\n\r\n        var p;\r\n        if ((p = str.indexOf('-')) > 0)\r\n            throw Error('number format error: interior \"-\" character: ' + str);\r\n        else if (p === 0)\r\n            return Long.fromString(str.substring(1), unsigned, radix).negate();\r\n\r\n        // Do several (8) digits each time through the loop, so as to\r\n        // minimize the calls to the very expensive emulated div.\r\n        var radixToPower = Long.fromNumber(Math.pow(radix, 8));\r\n\r\n        var result = Long.ZERO;\r\n        for (var i = 0; i < str.length; i += 8) {\r\n            var size = Math.min(8, str.length - i);\r\n            var value = parseInt(str.substring(i, i + size), radix);\r\n            if (size < 8) {\r\n                var power = Long.fromNumber(Math.pow(radix, size));\r\n                result = result.multiply(power).add(Long.fromNumber(value));\r\n            } else {\r\n                result = result.multiply(radixToPower);\r\n                result = result.add(Long.fromNumber(value));\r\n            }\r\n        }\r\n        result.unsigned = unsigned;\r\n        return result;\r\n    };\r\n\r\n    /**\r\n     * Converts the specified value to a Long.\r\n     * @param {!Long|number|string|!{low: number, high: number, unsigned: boolean}} val Value\r\n     * @returns {!Long}\r\n     * @expose\r\n     */\r\n    Long.fromValue = function fromValue(val) {\r\n        if (val /* is compatible */ instanceof Long)\r\n            return val;\r\n        if (typeof val === 'number')\r\n            return Long.fromNumber(val);\r\n        if (typeof val === 'string')\r\n            return Long.fromString(val);\r\n        // Throws for non-objects, converts non-instanceof Long:\r\n        return new Long(val.low, val.high, val.unsigned);\r\n    };\r\n\r\n    // NOTE: the compiler should inline these constant values below and then remove these variables, so there should be\r\n    // no runtime penalty for these.\r\n\r\n    /**\r\n     * @type {number}\r\n     * @const\r\n     * @inner\r\n     */\r\n    var TWO_PWR_16_DBL = 1 << 16;\r\n\r\n    /**\r\n     * @type {number}\r\n     * @const\r\n     * @inner\r\n     */\r\n    var TWO_PWR_24_DBL = 1 << 24;\r\n\r\n    /**\r\n     * @type {number}\r\n     * @const\r\n     * @inner\r\n     */\r\n    var TWO_PWR_32_DBL = TWO_PWR_16_DBL * TWO_PWR_16_DBL;\r\n\r\n    /**\r\n     * @type {number}\r\n     * @const\r\n     * @inner\r\n     */\r\n    var TWO_PWR_64_DBL = TWO_PWR_32_DBL * TWO_PWR_32_DBL;\r\n\r\n    /**\r\n     * @type {number}\r\n     * @const\r\n     * @inner\r\n     */\r\n    var TWO_PWR_63_DBL = TWO_PWR_64_DBL / 2;\r\n\r\n    /**\r\n     * @type {!Long}\r\n     * @const\r\n     * @inner\r\n     */\r\n    var TWO_PWR_24 = Long.fromInt(TWO_PWR_24_DBL);\r\n\r\n    /**\r\n     * Signed zero.\r\n     * @type {!Long}\r\n     * @expose\r\n     */\r\n    Long.ZERO = Long.fromInt(0);\r\n\r\n    /**\r\n     * Unsigned zero.\r\n     * @type {!Long}\r\n     * @expose\r\n     */\r\n    Long.UZERO = Long.fromInt(0, true);\r\n\r\n    /**\r\n     * Signed one.\r\n     * @type {!Long}\r\n     * @expose\r\n     */\r\n    Long.ONE = Long.fromInt(1);\r\n\r\n    /**\r\n     * Unsigned one.\r\n     * @type {!Long}\r\n     * @expose\r\n     */\r\n    Long.UONE = Long.fromInt(1, true);\r\n\r\n    /**\r\n     * Signed negative one.\r\n     * @type {!Long}\r\n     * @expose\r\n     */\r\n    Long.NEG_ONE = Long.fromInt(-1);\r\n\r\n    /**\r\n     * Maximum signed value.\r\n     * @type {!Long}\r\n     * @expose\r\n     */\r\n    Long.MAX_VALUE = Long.fromBits(0xFFFFFFFF|0, 0x7FFFFFFF|0, false);\r\n\r\n    /**\r\n     * Maximum unsigned value.\r\n     * @type {!Long}\r\n     * @expose\r\n     */\r\n    Long.MAX_UNSIGNED_VALUE = Long.fromBits(0xFFFFFFFF|0, 0xFFFFFFFF|0, true);\r\n\r\n    /**\r\n     * Minimum signed value.\r\n     * @type {!Long}\r\n     * @expose\r\n     */\r\n    Long.MIN_VALUE = Long.fromBits(0, 0x80000000|0, false);\r\n\r\n    /**\r\n     * Converts the Long to a 32 bit integer, assuming it is a 32 bit integer.\r\n     * @returns {number}\r\n     * @expose\r\n     */\r\n    Long.prototype.toInt = function toInt() {\r\n        return this.unsigned ? this.low >>> 0 : this.low;\r\n    };\r\n\r\n    /**\r\n     * Converts the Long to a the nearest floating-point representation of this value (double, 53 bit mantissa).\r\n     * @returns {number}\r\n     * @expose\r\n     */\r\n    Long.prototype.toNumber = function toNumber() {\r\n        if (this.unsigned) {\r\n            return ((this.high >>> 0) * TWO_PWR_32_DBL) + (this.low >>> 0);\r\n        }\r\n        return this.high * TWO_PWR_32_DBL + (this.low >>> 0);\r\n    };\r\n\r\n    /**\r\n     * Converts the Long to a string written in the specified radix.\r\n     * @param {number=} radix Radix (2-36), defaults to 10\r\n     * @returns {string}\r\n     * @override\r\n     * @throws {RangeError} If `radix` is out of range\r\n     * @expose\r\n     */\r\n    Long.prototype.toString = function toString(radix) {\r\n        radix = radix || 10;\r\n        if (radix < 2 || 36 < radix)\r\n            throw RangeError('radix out of range: ' + radix);\r\n        if (this.isZero())\r\n            return '0';\r\n        var rem;\r\n        if (this.isNegative()) { // Unsigned Longs are never negative\r\n            if (this.equals(Long.MIN_VALUE)) {\r\n                // We need to change the Long value before it can be negated, so we remove\r\n                // the bottom-most digit in this base and then recurse to do the rest.\r\n                var radixLong = Long.fromNumber(radix);\r\n                var div = this.divide(radixLong);\r\n                rem = div.multiply(radixLong).subtract(this);\r\n                return div.toString(radix) + rem.toInt().toString(radix);\r\n            } else\r\n                return '-' + this.negate().toString(radix);\r\n        }\r\n\r\n        // Do several (6) digits each time through the loop, so as to\r\n        // minimize the calls to the very expensive emulated div.\r\n        var radixToPower = Long.fromNumber(Math.pow(radix, 6), this.unsigned);\r\n        rem = this;\r\n        var result = '';\r\n        while (true) {\r\n            var remDiv = rem.divide(radixToPower),\r\n                intval = rem.subtract(remDiv.multiply(radixToPower)).toInt() >>> 0,\r\n                digits = intval.toString(radix);\r\n            rem = remDiv;\r\n            if (rem.isZero())\r\n                return digits + result;\r\n            else {\r\n                while (digits.length < 6)\r\n                    digits = '0' + digits;\r\n                result = '' + digits + result;\r\n            }\r\n        }\r\n    };\r\n\r\n    /**\r\n     * Gets the high 32 bits as a signed integer.\r\n     * @returns {number} Signed high bits\r\n     * @expose\r\n     */\r\n    Long.prototype.getHighBits = function getHighBits() {\r\n        return this.high;\r\n    };\r\n\r\n    /**\r\n     * Gets the high 32 bits as an unsigned integer.\r\n     * @returns {number} Unsigned high bits\r\n     * @expose\r\n     */\r\n    Long.prototype.getHighBitsUnsigned = function getHighBitsUnsigned() {\r\n        return this.high >>> 0;\r\n    };\r\n\r\n    /**\r\n     * Gets the low 32 bits as a signed integer.\r\n     * @returns {number} Signed low bits\r\n     * @expose\r\n     */\r\n    Long.prototype.getLowBits = function getLowBits() {\r\n        return this.low;\r\n    };\r\n\r\n    /**\r\n     * Gets the low 32 bits as an unsigned integer.\r\n     * @returns {number} Unsigned low bits\r\n     * @expose\r\n     */\r\n    Long.prototype.getLowBitsUnsigned = function getLowBitsUnsigned() {\r\n        return this.low >>> 0;\r\n    };\r\n\r\n    /**\r\n     * Gets the number of bits needed to represent the absolute value of this Long.\r\n     * @returns {number}\r\n     * @expose\r\n     */\r\n    Long.prototype.getNumBitsAbs = function getNumBitsAbs() {\r\n        if (this.isNegative()) // Unsigned Longs are never negative\r\n            return this.equals(Long.MIN_VALUE) ? 64 : this.negate().getNumBitsAbs();\r\n        var val = this.high != 0 ? this.high : this.low;\r\n        for (var bit = 31; bit > 0; bit--)\r\n            if ((val & (1 << bit)) != 0)\r\n                break;\r\n        return this.high != 0 ? bit + 33 : bit + 1;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value equals zero.\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.isZero = function isZero() {\r\n        return this.high === 0 && this.low === 0;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value is negative.\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.isNegative = function isNegative() {\r\n        return !this.unsigned && this.high < 0;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value is positive.\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.isPositive = function isPositive() {\r\n        return this.unsigned || this.high >= 0;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value is odd.\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.isOdd = function isOdd() {\r\n        return (this.low & 1) === 1;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value is even.\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.isEven = function isEven() {\r\n        return (this.low & 1) === 0;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value equals the specified's.\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.equals = function equals(other) {\r\n        if (!Long.isLong(other))\r\n            other = Long.fromValue(other);\r\n        if (this.unsigned !== other.unsigned && (this.high >>> 31) === 1 && (other.high >>> 31) === 1)\r\n            return false;\r\n        return this.high === other.high && this.low === other.low;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value equals the specified's. This is an alias of {@link Long#equals}.\r\n     * @function\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.eq = Long.prototype.equals;\r\n\r\n    /**\r\n     * Tests if this Long's value differs from the specified's.\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.notEquals = function notEquals(other) {\r\n        return !this.equals(/* validates */ other);\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value differs from the specified's. This is an alias of {@link Long#notEquals}.\r\n     * @function\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.neq = Long.prototype.notEquals;\r\n\r\n    /**\r\n     * Tests if this Long's value is less than the specified's.\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.lessThan = function lessThan(other) {\r\n        return this.compare(/* validates */ other) < 0;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value is less than the specified's. This is an alias of {@link Long#lessThan}.\r\n     * @function\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.lt = Long.prototype.lessThan;\r\n\r\n    /**\r\n     * Tests if this Long's value is less than or equal the specified's.\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.lessThanOrEqual = function lessThanOrEqual(other) {\r\n        return this.compare(/* validates */ other) <= 0;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value is less than or equal the specified's. This is an alias of {@link Long#lessThanOrEqual}.\r\n     * @function\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.lte = Long.prototype.lessThanOrEqual;\r\n\r\n    /**\r\n     * Tests if this Long's value is greater than the specified's.\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.greaterThan = function greaterThan(other) {\r\n        return this.compare(/* validates */ other) > 0;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value is greater than the specified's. This is an alias of {@link Long#greaterThan}.\r\n     * @function\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.gt = Long.prototype.greaterThan;\r\n\r\n    /**\r\n     * Tests if this Long's value is greater than or equal the specified's.\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.greaterThanOrEqual = function greaterThanOrEqual(other) {\r\n        return this.compare(/* validates */ other) >= 0;\r\n    };\r\n\r\n    /**\r\n     * Tests if this Long's value is greater than or equal the specified's. This is an alias of {@link Long#greaterThanOrEqual}.\r\n     * @function\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {boolean}\r\n     * @expose\r\n     */\r\n    Long.prototype.gte = Long.prototype.greaterThanOrEqual;\r\n\r\n    /**\r\n     * Compares this Long's value with the specified's.\r\n     * @param {!Long|number|string} other Other value\r\n     * @returns {number} 0 if they are the same, 1 if the this is greater and -1\r\n     *  if the given one is greater\r\n     * @expose\r\n     */\r\n    Long.prototype.compare = function compare(other) {\r\n        if (!Long.isLong(other))\r\n            other = Long.fromValue(other);\r\n        if (this.equals(other))\r\n            return 0;\r\n        var thisNeg = this.isNegative(),\r\n            otherNeg = other.isNegative();\r\n        if (thisNeg && !otherNeg)\r\n            return -1;\r\n        if (!thisNeg && otherNeg)\r\n            return 1;\r\n        // At this point the sign bits are the same\r\n        if (!this.unsigned)\r\n            return this.subtract(other).isNegative() ? -1 : 1;\r\n        // Both are positive if at least one is unsigned\r\n        return (other.high >>> 0) > (this.high >>> 0) || (other.high === this.high && (other.low >>> 0) > (this.low >>> 0)) ? -1 : 1;\r\n    };\r\n\r\n    /**\r\n     * Negates this Long's value.\r\n     * @returns {!Long} Negated Long\r\n     * @expose\r\n     */\r\n    Long.prototype.negate = function negate() {\r\n        if (!this.unsigned && this.equals(Long.MIN_VALUE))\r\n            return Long.MIN_VALUE;\r\n        return this.not().add(Long.ONE);\r\n    };\r\n\r\n    /**\r\n     * Negates this Long's value. This is an alias of {@link Long#negate}.\r\n     * @function\r\n     * @returns {!Long} Negated Long\r\n     * @expose\r\n     */\r\n    Long.prototype.neg = Long.prototype.negate;\r\n\r\n    /**\r\n     * Returns the sum of this and the specified Long.\r\n     * @param {!Long|number|string} addend Addend\r\n     * @returns {!Long} Sum\r\n     * @expose\r\n     */\r\n    Long.prototype.add = function add(addend) {\r\n        if (!Long.isLong(addend))\r\n            addend = Long.fromValue(addend);\r\n\r\n        // Divide each number into 4 chunks of 16 bits, and then sum the chunks.\r\n\r\n        var a48 = this.high >>> 16;\r\n        var a32 = this.high & 0xFFFF;\r\n        var a16 = this.low >>> 16;\r\n        var a00 = this.low & 0xFFFF;\r\n\r\n        var b48 = addend.high >>> 16;\r\n        var b32 = addend.high & 0xFFFF;\r\n        var b16 = addend.low >>> 16;\r\n        var b00 = addend.low & 0xFFFF;\r\n\r\n        var c48 = 0, c32 = 0, c16 = 0, c00 = 0;\r\n        c00 += a00 + b00;\r\n        c16 += c00 >>> 16;\r\n        c00 &= 0xFFFF;\r\n        c16 += a16 + b16;\r\n        c32 += c16 >>> 16;\r\n        c16 &= 0xFFFF;\r\n        c32 += a32 + b32;\r\n        c48 += c32 >>> 16;\r\n        c32 &= 0xFFFF;\r\n        c48 += a48 + b48;\r\n        c48 &= 0xFFFF;\r\n        return Long.fromBits((c16 << 16) | c00, (c48 << 16) | c32, this.unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns the difference of this and the specified Long.\r\n     * @param {!Long|number|string} subtrahend Subtrahend\r\n     * @returns {!Long} Difference\r\n     * @expose\r\n     */\r\n    Long.prototype.subtract = function subtract(subtrahend) {\r\n        if (!Long.isLong(subtrahend))\r\n            subtrahend = Long.fromValue(subtrahend);\r\n        return this.add(subtrahend.negate());\r\n    };\r\n\r\n    /**\r\n     * Returns the difference of this and the specified Long. This is an alias of {@link Long#subtract}.\r\n     * @function\r\n     * @param {!Long|number|string} subtrahend Subtrahend\r\n     * @returns {!Long} Difference\r\n     * @expose\r\n     */\r\n    Long.prototype.sub = Long.prototype.subtract;\r\n\r\n    /**\r\n     * Returns the product of this and the specified Long.\r\n     * @param {!Long|number|string} multiplier Multiplier\r\n     * @returns {!Long} Product\r\n     * @expose\r\n     */\r\n    Long.prototype.multiply = function multiply(multiplier) {\r\n        if (this.isZero())\r\n            return Long.ZERO;\r\n        if (!Long.isLong(multiplier))\r\n            multiplier = Long.fromValue(multiplier);\r\n        if (multiplier.isZero())\r\n            return Long.ZERO;\r\n        if (this.equals(Long.MIN_VALUE))\r\n            return multiplier.isOdd() ? Long.MIN_VALUE : Long.ZERO;\r\n        if (multiplier.equals(Long.MIN_VALUE))\r\n            return this.isOdd() ? Long.MIN_VALUE : Long.ZERO;\r\n\r\n        if (this.isNegative()) {\r\n            if (multiplier.isNegative())\r\n                return this.negate().multiply(multiplier.negate());\r\n            else\r\n                return this.negate().multiply(multiplier).negate();\r\n        } else if (multiplier.isNegative())\r\n            return this.multiply(multiplier.negate()).negate();\r\n\r\n        // If both longs are small, use float multiplication\r\n        if (this.lessThan(TWO_PWR_24) && multiplier.lessThan(TWO_PWR_24))\r\n            return Long.fromNumber(this.toNumber() * multiplier.toNumber(), this.unsigned);\r\n\r\n        // Divide each long into 4 chunks of 16 bits, and then add up 4x4 products.\r\n        // We can skip products that would overflow.\r\n\r\n        var a48 = this.high >>> 16;\r\n        var a32 = this.high & 0xFFFF;\r\n        var a16 = this.low >>> 16;\r\n        var a00 = this.low & 0xFFFF;\r\n\r\n        var b48 = multiplier.high >>> 16;\r\n        var b32 = multiplier.high & 0xFFFF;\r\n        var b16 = multiplier.low >>> 16;\r\n        var b00 = multiplier.low & 0xFFFF;\r\n\r\n        var c48 = 0, c32 = 0, c16 = 0, c00 = 0;\r\n        c00 += a00 * b00;\r\n        c16 += c00 >>> 16;\r\n        c00 &= 0xFFFF;\r\n        c16 += a16 * b00;\r\n        c32 += c16 >>> 16;\r\n        c16 &= 0xFFFF;\r\n        c16 += a00 * b16;\r\n        c32 += c16 >>> 16;\r\n        c16 &= 0xFFFF;\r\n        c32 += a32 * b00;\r\n        c48 += c32 >>> 16;\r\n        c32 &= 0xFFFF;\r\n        c32 += a16 * b16;\r\n        c48 += c32 >>> 16;\r\n        c32 &= 0xFFFF;\r\n        c32 += a00 * b32;\r\n        c48 += c32 >>> 16;\r\n        c32 &= 0xFFFF;\r\n        c48 += a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48;\r\n        c48 &= 0xFFFF;\r\n        return Long.fromBits((c16 << 16) | c00, (c48 << 16) | c32, this.unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns the product of this and the specified Long. This is an alias of {@link Long#multiply}.\r\n     * @function\r\n     * @param {!Long|number|string} multiplier Multiplier\r\n     * @returns {!Long} Product\r\n     * @expose\r\n     */\r\n    Long.prototype.mul = Long.prototype.multiply;\r\n\r\n    /**\r\n     * Returns this Long divided by the specified.\r\n     * @param {!Long|number|string} divisor Divisor\r\n     * @returns {!Long} Quotient\r\n     * @expose\r\n     */\r\n    Long.prototype.divide = function divide(divisor) {\r\n        if (!Long.isLong(divisor))\r\n            divisor = Long.fromValue(divisor);\r\n        if (divisor.isZero())\r\n            throw(new Error('division by zero'));\r\n        if (this.isZero())\r\n            return this.unsigned ? Long.UZERO : Long.ZERO;\r\n        var approx, rem, res;\r\n        if (this.equals(Long.MIN_VALUE)) {\r\n            if (divisor.equals(Long.ONE) || divisor.equals(Long.NEG_ONE))\r\n                return Long.MIN_VALUE;  // recall that -MIN_VALUE == MIN_VALUE\r\n            else if (divisor.equals(Long.MIN_VALUE))\r\n                return Long.ONE;\r\n            else {\r\n                // At this point, we have |other| >= 2, so |this/other| < |MIN_VALUE|.\r\n                var halfThis = this.shiftRight(1);\r\n                approx = halfThis.divide(divisor).shiftLeft(1);\r\n                if (approx.equals(Long.ZERO)) {\r\n                    return divisor.isNegative() ? Long.ONE : Long.NEG_ONE;\r\n                } else {\r\n                    rem = this.subtract(divisor.multiply(approx));\r\n                    res = approx.add(rem.divide(divisor));\r\n                    return res;\r\n                }\r\n            }\r\n        } else if (divisor.equals(Long.MIN_VALUE))\r\n            return this.unsigned ? Long.UZERO : Long.ZERO;\r\n        if (this.isNegative()) {\r\n            if (divisor.isNegative())\r\n                return this.negate().divide(divisor.negate());\r\n            return this.negate().divide(divisor).negate();\r\n        } else if (divisor.isNegative())\r\n            return this.divide(divisor.negate()).negate();\r\n\r\n        // Repeat the following until the remainder is less than other:  find a\r\n        // floating-point that approximates remainder / other *from below*, add this\r\n        // into the result, and subtract it from the remainder.  It is critical that\r\n        // the approximate value is less than or equal to the real value so that the\r\n        // remainder never becomes negative.\r\n        res = Long.ZERO;\r\n        rem = this;\r\n        while (rem.greaterThanOrEqual(divisor)) {\r\n            // Approximate the result of division. This may be a little greater or\r\n            // smaller than the actual value.\r\n            approx = Math.max(1, Math.floor(rem.toNumber() / divisor.toNumber()));\r\n\r\n            // We will tweak the approximate result by changing it in the 48-th digit or\r\n            // the smallest non-fractional digit, whichever is larger.\r\n            var log2 = Math.ceil(Math.log(approx) / Math.LN2),\r\n                delta = (log2 <= 48) ? 1 : Math.pow(2, log2 - 48),\r\n\r\n            // Decrease the approximation until it is smaller than the remainder.  Note\r\n            // that if it is too large, the product overflows and is negative.\r\n                approxRes = Long.fromNumber(approx),\r\n                approxRem = approxRes.multiply(divisor);\r\n            while (approxRem.isNegative() || approxRem.greaterThan(rem)) {\r\n                approx -= delta;\r\n                approxRes = Long.fromNumber(approx, this.unsigned);\r\n                approxRem = approxRes.multiply(divisor);\r\n            }\r\n\r\n            // We know the answer can't be zero... and actually, zero would cause\r\n            // infinite recursion since we would make no progress.\r\n            if (approxRes.isZero())\r\n                approxRes = Long.ONE;\r\n\r\n            res = res.add(approxRes);\r\n            rem = rem.subtract(approxRem);\r\n        }\r\n        return res;\r\n    };\r\n\r\n    /**\r\n     * Returns this Long divided by the specified. This is an alias of {@link Long#divide}.\r\n     * @function\r\n     * @param {!Long|number|string} divisor Divisor\r\n     * @returns {!Long} Quotient\r\n     * @expose\r\n     */\r\n    Long.prototype.div = Long.prototype.divide;\r\n\r\n    /**\r\n     * Returns this Long modulo the specified.\r\n     * @param {!Long|number|string} divisor Divisor\r\n     * @returns {!Long} Remainder\r\n     * @expose\r\n     */\r\n    Long.prototype.modulo = function modulo(divisor) {\r\n        if (!Long.isLong(divisor))\r\n            divisor = Long.fromValue(divisor);\r\n        return this.subtract(this.divide(divisor).multiply(divisor));\r\n    };\r\n\r\n    /**\r\n     * Returns this Long modulo the specified. This is an alias of {@link Long#modulo}.\r\n     * @function\r\n     * @param {!Long|number|string} divisor Divisor\r\n     * @returns {!Long} Remainder\r\n     * @expose\r\n     */\r\n    Long.prototype.mod = Long.prototype.modulo;\r\n\r\n    /**\r\n     * Returns the bitwise NOT of this Long.\r\n     * @returns {!Long}\r\n     * @expose\r\n     */\r\n    Long.prototype.not = function not() {\r\n        return Long.fromBits(~this.low, ~this.high, this.unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns the bitwise AND of this Long and the specified.\r\n     * @param {!Long|number|string} other Other Long\r\n     * @returns {!Long}\r\n     * @expose\r\n     */\r\n    Long.prototype.and = function and(other) {\r\n        if (!Long.isLong(other))\r\n            other = Long.fromValue(other);\r\n        return Long.fromBits(this.low & other.low, this.high & other.high, this.unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns the bitwise OR of this Long and the specified.\r\n     * @param {!Long|number|string} other Other Long\r\n     * @returns {!Long}\r\n     * @expose\r\n     */\r\n    Long.prototype.or = function or(other) {\r\n        if (!Long.isLong(other))\r\n            other = Long.fromValue(other);\r\n        return Long.fromBits(this.low | other.low, this.high | other.high, this.unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns the bitwise XOR of this Long and the given one.\r\n     * @param {!Long|number|string} other Other Long\r\n     * @returns {!Long}\r\n     * @expose\r\n     */\r\n    Long.prototype.xor = function xor(other) {\r\n        if (!Long.isLong(other))\r\n            other = Long.fromValue(other);\r\n        return Long.fromBits(this.low ^ other.low, this.high ^ other.high, this.unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns this Long with bits shifted to the left by the given amount.\r\n     * @param {number|!Long} numBits Number of bits\r\n     * @returns {!Long} Shifted Long\r\n     * @expose\r\n     */\r\n    Long.prototype.shiftLeft = function shiftLeft(numBits) {\r\n        if (Long.isLong(numBits))\r\n            numBits = numBits.toInt();\r\n        if ((numBits &= 63) === 0)\r\n            return this;\r\n        else if (numBits < 32)\r\n            return Long.fromBits(this.low << numBits, (this.high << numBits) | (this.low >>> (32 - numBits)), this.unsigned);\r\n        else\r\n            return Long.fromBits(0, this.low << (numBits - 32), this.unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns this Long with bits shifted to the left by the given amount. This is an alias of {@link Long#shiftLeft}.\r\n     * @function\r\n     * @param {number|!Long} numBits Number of bits\r\n     * @returns {!Long} Shifted Long\r\n     * @expose\r\n     */\r\n    Long.prototype.shl = Long.prototype.shiftLeft;\r\n\r\n    /**\r\n     * Returns this Long with bits arithmetically shifted to the right by the given amount.\r\n     * @param {number|!Long} numBits Number of bits\r\n     * @returns {!Long} Shifted Long\r\n     * @expose\r\n     */\r\n    Long.prototype.shiftRight = function shiftRight(numBits) {\r\n        if (Long.isLong(numBits))\r\n            numBits = numBits.toInt();\r\n        if ((numBits &= 63) === 0)\r\n            return this;\r\n        else if (numBits < 32)\r\n            return Long.fromBits((this.low >>> numBits) | (this.high << (32 - numBits)), this.high >> numBits, this.unsigned);\r\n        else\r\n            return Long.fromBits(this.high >> (numBits - 32), this.high >= 0 ? 0 : -1, this.unsigned);\r\n    };\r\n\r\n    /**\r\n     * Returns this Long with bits arithmetically shifted to the right by the given amount. This is an alias of {@link Long#shiftRight}.\r\n     * @function\r\n     * @param {number|!Long} numBits Number of bits\r\n     * @returns {!Long} Shifted Long\r\n     * @expose\r\n     */\r\n    Long.prototype.shr = Long.prototype.shiftRight;\r\n\r\n    /**\r\n     * Returns this Long with bits logically shifted to the right by the given amount.\r\n     * @param {number|!Long} numBits Number of bits\r\n     * @returns {!Long} Shifted Long\r\n     * @expose\r\n     */\r\n    Long.prototype.shiftRightUnsigned = function shiftRightUnsigned(numBits) {\r\n        if (Long.isLong(numBits))\r\n            numBits = numBits.toInt();\r\n        numBits &= 63;\r\n        if (numBits === 0)\r\n            return this;\r\n        else {\r\n            var high = this.high;\r\n            if (numBits < 32) {\r\n                var low = this.low;\r\n                return Long.fromBits((low >>> numBits) | (high << (32 - numBits)), high >>> numBits, this.unsigned);\r\n            } else if (numBits === 32)\r\n                return Long.fromBits(high, 0, this.unsigned);\r\n            else\r\n                return Long.fromBits(high >>> (numBits - 32), 0, this.unsigned);\r\n        }\r\n    };\r\n\r\n    /**\r\n     * Returns this Long with bits logically shifted to the right by the given amount. This is an alias of {@link Long#shiftRightUnsigned}.\r\n     * @function\r\n     * @param {number|!Long} numBits Number of bits\r\n     * @returns {!Long} Shifted Long\r\n     * @expose\r\n     */\r\n    Long.prototype.shru = Long.prototype.shiftRightUnsigned;\r\n\r\n    /**\r\n     * Converts this Long to signed.\r\n     * @returns {!Long} Signed long\r\n     * @expose\r\n     */\r\n    Long.prototype.toSigned = function toSigned() {\r\n        if (!this.unsigned)\r\n            return this;\r\n        return new Long(this.low, this.high, false);\r\n    };\r\n\r\n    /**\r\n     * Converts this Long to unsigned.\r\n     * @returns {!Long} Unsigned long\r\n     * @expose\r\n     */\r\n    Long.prototype.toUnsigned = function toUnsigned() {\r\n        if (this.unsigned)\r\n            return this;\r\n        return new Long(this.low, this.high, true);\r\n    };\r\n\r\n    return Long;\r\n});\r\n\n\n//# sourceURL=webpack://vreaderpdf/./node_modules/long/dist/Long.js?");
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+ Copyright 2013 Daniel Wirtz <dcode@dcode.io>
+ Copyright 2009 The Closure Library Authors. All Rights Reserved.
 
-/***/ }),
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-/***/ "./src/process.js":
-/*!************************!*\
-  !*** ./src/process.js ***!
-  \************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+ http://www.apache.org/licenses/LICENSE-2.0
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _v3dconv__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./v3dconv */ \"./src/v3dconv.js\");\n\n\nfunction load_asy_gl() {\n  return new Promise(function (resolve, reject) {\n    let asy_gl = document.createElement(\"script\");\n    asy_gl.type = \"text/javascript\";\n\n    asy_gl.src =\n      \"https://vectorgraphics.github.io/asymptote/base/webgl/asygl-1.02.js\";\n\n    asy_gl.onload = function () {\n      resolve();\n    };\n\n    asy_gl.onerror = function () {\n      reject(new Error(\"Could not load the asy_gl library\"));\n    };\n\n    document.head.appendChild(asy_gl);\n  });\n}\n\nlet v3dobj = _v3dconv__WEBPACK_IMPORTED_MODULE_0__.V3DReader.from_file_arr(v3dArrayBuffer);\nlet promise = load_asy_gl();\n\npromise.then(function () {\n  v3dobj.process();\n  webGLStart();\n});\n\n\n//# sourceURL=webpack://vreaderpdf/./src/process.js?");
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS-IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
-/***/ }),
+/**
+ * @license Long.js (c) 2013 Daniel Wirtz <dcode@dcode.io>
+ * Released under the Apache License, Version 2.0
+ * see: https://github.com/dcodeIO/Long.js for details
+ */
+(function(global, factory) {
 
-/***/ "./src/v3dconv.js":
-/*!************************!*\
-  !*** ./src/v3dconv.js ***!
-  \************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+    /* AMD */ if (true)
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    /* CommonJS */ else {}
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"V3DReader\": () => (/* binding */ V3DReader)\n/* harmony export */ });\n/* harmony import */ var _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./v3dheadertypes.js */ \"./src/v3dheadertypes.js\");\n/* harmony import */ var _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./v3dtypes.js */ \"./src/v3dtypes.js\");\n/* harmony import */ var buffer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! buffer */ \"./node_modules/buffer/index.js\");\n(\"use scrict\");\n\n\n\nglobalThis.Buffer = buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer;\n\nlet gzip = __webpack_require__(/*! gzip-js */ \"./node_modules/gzip-js/lib/gzip.js\"),\n  options = {\n    level: 9,\n  };\nlet xdr = __webpack_require__(/*! js-xdr */ \"./node_modules/js-xdr/lib/index.js\");\n\n//--- Set up\n\nlet Transform = [\n  0.1762732, -0.08715096, 0.1482109, 14.37726, 0.1719354, 0.08934971,\n  -0.1519502, 4.135837, 2.73381e-17, 0.2122624, 0.1248145, 39.91369,\n  3.85186e-34, 3.044927e-18, 1.758601e-18, 1,\n];\n\nlet webgl2 = false;\nlet ibl = false;\n//---  Set up done\n\nclass V3DReader {\n  constructor(fil) {\n    //To keep track of how many bytes we have read so we can\n    // simulate moving the file reader by making sub arrays\n    this.bytesRead = 0;\n    this.file = fil;\n    this.file_ver = null;\n    this.processed = false;\n    this.object_process_fns = function (type) {\n      switch (type) {\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_bezierPatch:\n          return this.process_bezierpatch;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_bezierPatchColor:\n          return this.process_bezierpatch_color;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_bezierTriangle:\n          return this.process_beziertriangle;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_bezierTriangleColor:\n          return this.process_beziertriangle_color;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_sphere:\n          return this.process_sphere;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_halfSphere:\n          return this.process_half_sphere;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_cylinder:\n          return this.process_cylinder;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_disk:\n          return this.process_disk;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_tube:\n          return this.process_tube;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_curve:\n          return this.process_beziercurve;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_line:\n          return this.process_line;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_pixel:\n          return this.process_pixel;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_triangles:\n          return this.process_triangles;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_triangle:\n          return this.process_straight_beziertriangle;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_triangleColor:\n          return this.process_straight_beziertriangle_color;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_quad:\n          return this.process_quad;\n\n        case _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_quadColor:\n          return this.process_quad_color;\n\n        default:\n          return undefined;\n      }\n    };\n  }\n\n  unpack_bool() {\n    let ret_val = xdr.Bool.fromXDR(\n      this.file.slice(this.bytesRead, this.bytesRead + 4 + 1)\n    );\n    this.bytesRead += 4;\n    return ret_val;\n  }\n\n  unpack_double() {\n    let ret_val = xdr.Double.fromXDR(\n      this.file.slice(this.bytesRead, this.bytesRead + 8 + 1)\n    );\n    this.bytesRead += 8;\n    return ret_val;\n  }\n\n  unpack_float() {\n    let ret_val = xdr.Float.fromXDR(\n      this.file.slice(this.bytesRead, this.bytesRead + 4 + 1)\n    );\n    this.bytesRead += 4;\n    return ret_val;\n  }\n\n  unpack_unsigned_int() {\n    let ret_val = xdr.UnsignedInt.fromXDR(\n      this.file.slice(this.bytesRead, this.bytesRead + 4 + 1)\n    );\n    this.bytesRead += 4;\n    return ret_val;\n  }\n\n  unpack_pair() {\n    let x = this.unpack_double();\n    let y = this.unpack_double();\n    return [x, y];\n  }\n\n  unpack_triple() {\n    let x = this.unpack_double();\n    let y = this.unpack_double();\n    let z = this.unpack_double();\n    return [x, y, z];\n  }\n\n  unpack_triple_n(num) {\n    let final_list = [];\n    for (let i = 0; i < num; i++) {\n      final_list.push(this.unpack_triple());\n    }\n    return final_list;\n  }\n\n  unpack_rgb_float() {\n    let r = this.unpack_float();\n    let g = this.unpack_float();\n    let b = this.unpack_float();\n    return [r, g, b];\n  }\n\n  unpack_rgba_float() {\n    let r = this.unpack_float();\n    let g = this.unpack_float();\n    let b = this.unpack_float();\n    let a = this.unpack_float();\n    return [r, g, b, a];\n  }\n\n  unpack_rgba_float_n(n) {\n    let final_list = [];\n    for (let i = 0; i < n; i++) {\n      final_list.push(this.unpack_rgba_float());\n    }\n    return final_list;\n  }\n  unpack_int_indices() {\n    let x = this.unpack_unsigned_int();\n    let y = this.unpack_unsigned_int();\n    let z = this.unpack_unsigned_int();\n    return [x, y, z];\n  }\n\n  process_header() {\n    let num_headers = this.unpack_unsigned_int();\n    for (let i = 0; i < num_headers; i++) {\n      let header_type = this.unpack_unsigned_int();\n      let block_count = this.unpack_unsigned_int();\n\n      if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_canvasWidth) {\n        document.asy.canvasWidth = this.unpack_unsigned_int();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_canvasHeight) {\n        document.asy.canvasHeight = this.unpack_unsigned_int();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_minBound) {\n        document.asy.minBound = this.unpack_triple();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_maxBound) {\n        document.asy.maxBound = this.unpack_triple();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_orthographic) {\n        document.asy.orthographic = this.unpack_bool();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_angleOfView) {\n        document.asy.angleOfView = this.unpack_double();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_initialZoom) {\n        document.asy.initialZoom = this.unpack_double();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_viewportShift) {\n        document.asy.viewportShift = this.unpack_pair();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_viewportMargin) {\n        document.asy.viewportMargin = this.unpack_pair();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_light) {\n        let position = this.unpack_triple();\n        let color = this.unpack_rgb_float();\n        light(position, color);\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_background) {\n        document.asy.background = this.unpack_rgba_float();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_absolute) {\n        document.asy.absolute = this.unpack_bool();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_zoomFactor) {\n        document.asy.zoomFactor = this.unpack_double();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_zoomPinchFactor) {\n        document.asy.zoomPinchFactor = this.unpack_double();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_zoomStep) {\n        document.asy.zoomStep = this.unpack_double();\n      } else if (\n        header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_shiftHoldDistance\n      ) {\n        document.asy.shiftHoldDistance = this.unpack_double();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_shiftWaitTime) {\n        document.asy.shiftWaitTime = this.unpack_double();\n      } else if (header_type == _v3dheadertypes_js__WEBPACK_IMPORTED_MODULE_0__.v3dheadertypes_vibrateTime) {\n        document.asy.vibrateTime = this.unpack_double();\n      } else {\n        for (let j = 0; j < block_count; j++) {\n          this.unpack_unsigned_int();\n        }\n      }\n    }\n  }\n\n  process_bezierpatch() {\n    let controlpoints = this.unpack_triple_n(16);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n    patch(controlpoints, CenterIndex, MaterialIndex);\n  }\n\n  process_bezierpatch_color() {\n    let controlpoints = this.unpack_triple_n(16);\n\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n\n    let colors = this.unpack_rgba_float_n(4);\n\n    for (let i = 0; i < 10; i++)\n      patch(controlpoints, CenterIndex, MaterialIndex, colors);\n  }\n\n  process_beziertriangle() {\n    let controlpoints = this.unpack_triple_n(10);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n    patch(controlpoints, CenterIndex, MaterialIndex);\n  }\n\n  process_beziertriangle_color() {\n    let controlpoints = this.unpack_triple_n(10);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n    let colors = this.unpack_rgba_float_n(3);\n\n    patch(controlpoints, CenterIndex, MaterialIndex, colors);\n  }\n\n  process_straight_beziertriangle() {\n    let controlpoints = this.unpack_triple_n(3);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n\n    patch(controlpoints, CenterIndex, MaterialIndex);\n  }\n\n  process_straight_beziertriangle_color() {\n    let controlpoints = this.unpack_triple_n(3);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n    let colors = this.unpack_rgba_float_n(3);\n\n    patch(controlpoints, CenterIndex, MaterialIndex, colors);\n  }\n\n  process_sphere() {\n    let center = this.unpack_triple();\n    let radius = this.unpack_double();\n\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n    sphere(center, radius, CenterIndex, MaterialIndex);\n  }\n\n  process_half_sphere() {\n    let center = this.unpack_triple();\n    let radius = this.unpack_double();\n\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n\n    let polar = this.unpack_double();\n    let azimuth = this.unpack_double();\n    let dir = [polar, azimuth];\n    sphere(center, radius, CenterIndex, MaterialIndex, dir);\n  }\n\n  process_cylinder() {\n    let center = this.unpack_triple();\n    let radius = this.unpack_double();\n    let height = this.unpack_double();\n\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n\n    let polar = this.unpack_double();\n    let azimuth = this.unpack_double();\n    let coreBase = this.unpack_bool();\n    let dir = [polar, azimuth];\n    cylinder(center, radius, height, CenterIndex, MaterialIndex, dir, coreBase);\n  }\n\n  process_disk() {\n    let center = this.unpack_triple();\n    let radius = this.unpack_double();\n\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n\n    let polar = this.unpack_double();\n    let azimuth = this.unpack_double();\n    let dir = [polar, azimuth];\n    disk(center, radius, CenterIndex, MaterialIndex, dir);\n  }\n\n  process_tube() {\n    let points = this.unpack_triple_n(4);\n    let width = this.unpack_double();\n\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n\n    let coreBase = this.unpack_bool();\n    tube(points, width, CenterIndex, MaterialIndex, coreBase);\n  }\n\n  process_beziercurve() {\n    let controlpoints = this.unpack_triple_n(4);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n    curve(controlpoints, CenterIndex, MaterialIndex);\n  }\n\n  process_line() {\n    let controlpoints = this.unpack_triple_n(2);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n    line(controlpoints, CenterIndex, MaterialIndex);\n  }\n\n  process_pixel() {\n    let controlpoint = this.unpack_triple();\n    let width = this.unpack_double();\n    let MaterialIndex = this.unpack_unsigned_int();\n    pixel(controlpoint, width, MaterialIndex);\n  }\n\n  process_material() {\n    let diffuse = this.unpack_rgba_float();\n    let emissive = this.unpack_rgba_float();\n    let specular = this.unpack_rgba_float();\n    let result = this.unpack_rgb_float();\n    let shininess = result[0];\n    let metallic = result[1];\n    let fresnel0 = result[2];\n    material(diffuse, emissive, specular, shininess, metallic, fresnel0);\n  }\n\n  process_centers() {\n    let number_centers = this.unpack_unsigned_int();\n    document.asy.Centers = this.unpack_triple_n(number_centers);\n  }\n\n  process_triangles() {\n    let colors;\n    let explicitCi = null;\n    let isColor = false;\n    let numIndex = this.unpack_unsigned_int();\n\n    let numPositions = this.unpack_unsigned_int();\n    let positions = this.unpack_triple_n(numPositions);\n    //Positions = this.unpack_triple_n(numPositions);\n    let numNormals = this.unpack_unsigned_int();\n    let normals = this.unpack_triple_n(numNormals);\n    //Normals = this.unpack_triple_n(numNormals);\n    let explicitNI = this.unpack_bool();\n\n    let numColor = this.unpack_unsigned_int();\n\n    if (numColor > 0) {\n      isColor = true;\n      colors = this.unpack_rgba_float_n(numColor);\n      explicitCi = this.unpack_bool();\n    }\n\n    let posIndices = [];\n    let normalIndices = [];\n    let colorIndices = null;\n\n    if (isColor) {\n      colorIndices = [];\n    }\n\n    for (let i = 0; i < numIndex; i++) {\n      let posIndex = this.unpack_int_indices();\n      let normalIndex = explicitNI ? this.unpack_int_indices() : posIndex;\n      let colorIndex = null;\n\n      if (isColor) {\n        colorIndex = explicitCi ? this.unpack_int_indices() : posIndex;\n        colorIndices.push(colorIndex);\n      }\n\n      posIndices.push(posIndex);\n      normalIndices.push(normalIndex);\n    }\n\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n\n    for (let i = 0; i < positions.length; i++) {\n      Positions.push(positions[i]);\n    }\n\n    for (let i = 0; i < normals.length; i++) {\n      Normals.push(normals[i]);\n    }\n\n    if (isColor) {\n      for (let i = 0; i < colors.length; i++) {\n        Colors.push(colors[i]);\n      }\n    }\n\n    for (let i = 0; i < posIndices.length; i++) {\n      if (isColor) {\n        Indices.push([posIndices[i], normalIndices[i], colorIndices[i]]);\n      } else {\n        Indices.push([posIndices[i], normalIndices[i]]);\n      }\n    }\n    triangles(CenterIndex, MaterialIndex);\n  }\n\n  process_quad() {\n    let vertices = this.unpack_triple_n(4);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n    patch(vertices, CenterIndex, MaterialIndex);\n  }\n\n  process_quad_color() {\n    let vertices = this.unpack_triple_n(4);\n    let CenterIndex = this.unpack_unsigned_int();\n    let MaterialIndex = this.unpack_unsigned_int();\n\n    let colors = this.unpack_rgba_float_n(4);\n\n    patch(vertices, CenterIndex, MaterialIndex, colors);\n  }\n\n  get_obj_type() {\n    if (this.bytesRead + 4 <= this.file.length) {\n      let obj_type = this.unpack_unsigned_int();\n      return obj_type;\n    } else {\n      return null;\n    }\n  }\n\n  get_fn_process_type(typ) {\n    if (this.object_process_fns(typ) != undefined) {\n      return this.object_process_fns(typ).bind(this);\n    } else {\n      return null;\n    }\n  }\n\n  process(force = false) {\n    if (this.processed && !force) {\n      return;\n    }\n\n    if (this.processed && forced) {\n      this.bytesRead = 0;\n    }\n\n    this.processed = true;\n    this.file_ver = this.unpack_unsigned_int();\n    let allow_double_precision = this.unpack_bool();\n\n    if (!allow_double_precision) {\n      this.unpack_double = this.unpack_float.bind(this);\n    }\n\n    let type;\n    while ((type = this.get_obj_type())) {\n      if (type == _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_material) {\n        this.process_material();\n      } else if (type == _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_centers) {\n        this.process_centers();\n      } else if (type == _v3dtypes_js__WEBPACK_IMPORTED_MODULE_1__.v3dtypes_header) {\n        this.process_header();\n      } else {\n        let fn = this.get_fn_process_type(type);\n        if (fn != null) {\n          fn();\n        } else {\n          console.log(`Unkown Object type ${type}`);\n        }\n      }\n    }\n    if (this.bytesRead != this.file.length) {\n      console.log(\"All bytes in V3D file not read\");\n    }\n  }\n\n  static from_file_arr(file_name) {\n    let file = gzip.unzip(file_name);\n    let reader_obj = new V3DReader(file);\n    return reader_obj;\n  }\n}\n\n\n//# sourceURL=webpack://vreaderpdf/./src/v3dconv.js?");
+})(this, function() {
+    "use strict";
 
-/***/ }),
+    /**
+     * Constructs a 64 bit two's-complement integer, given its low and high 32 bit values as *signed* integers.
+     *  See the from* functions below for more convenient ways of constructing Longs.
+     * @exports Long
+     * @class A Long class for representing a 64 bit two's-complement integer value.
+     * @param {number} low The low (signed) 32 bits of the long
+     * @param {number} high The high (signed) 32 bits of the long
+     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed
+     * @constructor
+     */
+    function Long(low, high, unsigned) {
 
-/***/ "./src/v3dheadertypes.js":
-/*!*******************************!*\
-  !*** ./src/v3dheadertypes.js ***!
-  \*******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+        /**
+         * The low 32 bits as a signed value.
+         * @type {number}
+         * @expose
+         */
+        this.low = low|0;
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"v3dheadertypes_absolute\": () => (/* binding */ v3dheadertypes_absolute),\n/* harmony export */   \"v3dheadertypes_angleOfView\": () => (/* binding */ v3dheadertypes_angleOfView),\n/* harmony export */   \"v3dheadertypes_background\": () => (/* binding */ v3dheadertypes_background),\n/* harmony export */   \"v3dheadertypes_canvasHeight\": () => (/* binding */ v3dheadertypes_canvasHeight),\n/* harmony export */   \"v3dheadertypes_canvasWidth\": () => (/* binding */ v3dheadertypes_canvasWidth),\n/* harmony export */   \"v3dheadertypes_initialZoom\": () => (/* binding */ v3dheadertypes_initialZoom),\n/* harmony export */   \"v3dheadertypes_light\": () => (/* binding */ v3dheadertypes_light),\n/* harmony export */   \"v3dheadertypes_maxBound\": () => (/* binding */ v3dheadertypes_maxBound),\n/* harmony export */   \"v3dheadertypes_minBound\": () => (/* binding */ v3dheadertypes_minBound),\n/* harmony export */   \"v3dheadertypes_orthographic\": () => (/* binding */ v3dheadertypes_orthographic),\n/* harmony export */   \"v3dheadertypes_shiftHoldDistance\": () => (/* binding */ v3dheadertypes_shiftHoldDistance),\n/* harmony export */   \"v3dheadertypes_shiftWaitTime\": () => (/* binding */ v3dheadertypes_shiftWaitTime),\n/* harmony export */   \"v3dheadertypes_vibrateTime\": () => (/* binding */ v3dheadertypes_vibrateTime),\n/* harmony export */   \"v3dheadertypes_viewportMargin\": () => (/* binding */ v3dheadertypes_viewportMargin),\n/* harmony export */   \"v3dheadertypes_viewportShift\": () => (/* binding */ v3dheadertypes_viewportShift),\n/* harmony export */   \"v3dheadertypes_zoomFactor\": () => (/* binding */ v3dheadertypes_zoomFactor),\n/* harmony export */   \"v3dheadertypes_zoomPinchCap\": () => (/* binding */ v3dheadertypes_zoomPinchCap),\n/* harmony export */   \"v3dheadertypes_zoomPinchFactor\": () => (/* binding */ v3dheadertypes_zoomPinchFactor),\n/* harmony export */   \"v3dheadertypes_zoomStep\": () => (/* binding */ v3dheadertypes_zoomStep)\n/* harmony export */ });\n//Enum class for v3dheadertypes\n\n\n    let v3dheadertypes_canvasWidth=1;\n    // UINT  Canvas width\n\n    let v3dheadertypes_canvasHeight=2;\n    // UINT  Canvas height\n\n    let v3dheadertypes_absolute=3;\n    // BOOL  true: absolute size; false: scale to canvas\n\n    let v3dheadertypes_minBound=4;\n    // TRIPLE  Scene minimum bounding box corners\n\n    let v3dheadertypes_maxBound=5;\n    // TRIPLE  Scene maximum bounding box corners\n\n    let v3dheadertypes_orthographic=6;\n    // BOOL  true: orthographic; false: perspective\n\n    let v3dheadertypes_angleOfView=7;\n    // REAL  Field of view angle\n\n    let v3dheadertypes_initialZoom=8;\n    // REAL  Initial zoom\n\n    let v3dheadertypes_viewportShift=9;\n    // PAIR  Viewport shift (for perspective projection)\n\n    let v3dheadertypes_viewportMargin=10;\n    // PAIR  Margin around viewport\n\n    let v3dheadertypes_light=11;\n    // RGB  Direction and color of each point light source\n\n    let v3dheadertypes_background=12;\n    // RGBA  Background color\n\n    let v3dheadertypes_zoomFactor=13;\n    // REAL  Zoom base factor\n\n    let v3dheadertypes_zoomPinchFactor=14;\n    // REAL  Zoom pinch factor\n\n    let v3dheadertypes_zoomPinchCap=15;\n    // REAL  Zoom pinch limit\n\n    let v3dheadertypes_zoomStep=16;\n    // REAL  Zoom power step\n\n    let v3dheadertypes_shiftHoldDistance=17;\n    // REAL  Shift-mode maximum hold distance (pixels)\n\n    let v3dheadertypes_shiftWaitTime=18;\n    // REAL  Shift-mode hold time (milliseconds)\n\n    let v3dheadertypes_vibrateTime=19;\n    // REAL  Shift-mode vibrate time (milliseconds)\n\n\n//# sourceURL=webpack://vreaderpdf/./src/v3dheadertypes.js?");
+        /**
+         * The high 32 bits as a signed value.
+         * @type {number}
+         * @expose
+         */
+        this.high = high|0;
 
-/***/ }),
+        /**
+         * Whether unsigned or not.
+         * @type {boolean}
+         * @expose
+         */
+        this.unsigned = !!unsigned;
+    }
 
-/***/ "./src/v3dtypes.js":
-/*!*************************!*\
-  !*** ./src/v3dtypes.js ***!
-  \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+    // The internal representation of a long is the two given signed, 32-bit values.
+    // We use 32-bit pieces because these are the size of integers on which
+    // Javascript performs bit-operations.  For operations like addition and
+    // multiplication, we split each number into 16 bit pieces, which can easily be
+    // multiplied within Javascript's floating-point representation without overflow
+    // or change in sign.
+    //
+    // In the algorithms below, we frequently reduce the negative case to the
+    // positive case by negating the input(s) and then post-processing the result.
+    // Note that we must ALWAYS check specially whether those values are MIN_VALUE
+    // (-2^63) because -MIN_VALUE == MIN_VALUE (since 2^63 cannot be represented as
+    // a positive number, it overflows back into a negative).  Not handling this
+    // case would often result in infinite recursion.
+    //
+    // Common constant values ZERO, ONE, NEG_ONE, etc. are defined below the from*
+    // methods on which they depend.
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"v3dtypes_animation\": () => (/* binding */ v3dtypes_animation),\n/* harmony export */   \"v3dtypes_bezierPatch\": () => (/* binding */ v3dtypes_bezierPatch),\n/* harmony export */   \"v3dtypes_bezierPatchColor\": () => (/* binding */ v3dtypes_bezierPatchColor),\n/* harmony export */   \"v3dtypes_bezierTriangle\": () => (/* binding */ v3dtypes_bezierTriangle),\n/* harmony export */   \"v3dtypes_bezierTriangleColor\": () => (/* binding */ v3dtypes_bezierTriangleColor),\n/* harmony export */   \"v3dtypes_centers\": () => (/* binding */ v3dtypes_centers),\n/* harmony export */   \"v3dtypes_curve\": () => (/* binding */ v3dtypes_curve),\n/* harmony export */   \"v3dtypes_curveColor\": () => (/* binding */ v3dtypes_curveColor),\n/* harmony export */   \"v3dtypes_cylinder\": () => (/* binding */ v3dtypes_cylinder),\n/* harmony export */   \"v3dtypes_disk\": () => (/* binding */ v3dtypes_disk),\n/* harmony export */   \"v3dtypes_element\": () => (/* binding */ v3dtypes_element),\n/* harmony export */   \"v3dtypes_halfSphere\": () => (/* binding */ v3dtypes_halfSphere),\n/* harmony export */   \"v3dtypes_header\": () => (/* binding */ v3dtypes_header),\n/* harmony export */   \"v3dtypes_line\": () => (/* binding */ v3dtypes_line),\n/* harmony export */   \"v3dtypes_lineColor\": () => (/* binding */ v3dtypes_lineColor),\n/* harmony export */   \"v3dtypes_material\": () => (/* binding */ v3dtypes_material),\n/* harmony export */   \"v3dtypes_pixel\": () => (/* binding */ v3dtypes_pixel),\n/* harmony export */   \"v3dtypes_quad\": () => (/* binding */ v3dtypes_quad),\n/* harmony export */   \"v3dtypes_quadColor\": () => (/* binding */ v3dtypes_quadColor),\n/* harmony export */   \"v3dtypes_sphere\": () => (/* binding */ v3dtypes_sphere),\n/* harmony export */   \"v3dtypes_transform\": () => (/* binding */ v3dtypes_transform),\n/* harmony export */   \"v3dtypes_triangle\": () => (/* binding */ v3dtypes_triangle),\n/* harmony export */   \"v3dtypes_triangleColor\": () => (/* binding */ v3dtypes_triangleColor),\n/* harmony export */   \"v3dtypes_triangles\": () => (/* binding */ v3dtypes_triangles),\n/* harmony export */   \"v3dtypes_tube\": () => (/* binding */ v3dtypes_tube)\n/* harmony export */ });\n//V3D types\n\nlet v3dtypes_material = 1;\nlet v3dtypes_centers = 4;\nlet v3dtypes_header = 5;\nlet v3dtypes_line = 64;\nlet v3dtypes_triangle = 65;\nlet v3dtypes_quad = 66;\nlet v3dtypes_curve = 128;\nlet v3dtypes_bezierTriangle = 129;\nlet v3dtypes_bezierPatch = 130;\nlet v3dtypes_triangleColor = 193;\nlet v3dtypes_quadColor = 194;\nlet v3dtypes_bezierTriangleColor = 257;\nlet v3dtypes_bezierPatchColor = 258;\nlet v3dtypes_triangles = 512;\nlet v3dtypes_disk = 1024;\nlet v3dtypes_cylinder = 1025;\nlet v3dtypes_tube = 1026;\nlet v3dtypes_sphere = 1027;\nlet v3dtypes_halfSphere = 1028;\nlet v3dtypes_pixel = 4096;\n\n//Not supported\nlet v3dtypes_transform = 2;\nlet v3dtypes_element = 3;\nlet v3dtypes_lineColor = 192;\nlet v3dtypes_curveColor = 256;\nlet v3dtypes_animation = 2048;\n\n\n//# sourceURL=webpack://vreaderpdf/./src/v3dtypes.js?");
+    /**
+     * An indicator used to reliably determine if an object is a Long or not.
+     * @type {boolean}
+     * @const
+     * @expose
+     * @private
+     */
+    Long.__isLong__;
+
+    Object.defineProperty(Long.prototype, "__isLong__", {
+        value: true,
+        enumerable: false,
+        configurable: false
+    });
+
+    /**
+     * Tests if the specified object is a Long.
+     * @param {*} obj Object
+     * @returns {boolean}
+     * @expose
+     */
+    Long.isLong = function isLong(obj) {
+        return (obj && obj["__isLong__"]) === true;
+    };
+
+    /**
+     * A cache of the Long representations of small integer values.
+     * @type {!Object}
+     * @inner
+     */
+    var INT_CACHE = {};
+
+    /**
+     * A cache of the Long representations of small unsigned integer values.
+     * @type {!Object}
+     * @inner
+     */
+    var UINT_CACHE = {};
+
+    /**
+     * Returns a Long representing the given 32 bit integer value.
+     * @param {number} value The 32 bit integer in question
+     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed
+     * @returns {!Long} The corresponding Long value
+     * @expose
+     */
+    Long.fromInt = function fromInt(value, unsigned) {
+        var obj, cachedObj;
+        if (!unsigned) {
+            value = value | 0;
+            if (-128 <= value && value < 128) {
+                cachedObj = INT_CACHE[value];
+                if (cachedObj)
+                    return cachedObj;
+            }
+            obj = new Long(value, value < 0 ? -1 : 0, false);
+            if (-128 <= value && value < 128)
+                INT_CACHE[value] = obj;
+            return obj;
+        } else {
+            value = value >>> 0;
+            if (0 <= value && value < 256) {
+                cachedObj = UINT_CACHE[value];
+                if (cachedObj)
+                    return cachedObj;
+            }
+            obj = new Long(value, (value | 0) < 0 ? -1 : 0, true);
+            if (0 <= value && value < 256)
+                UINT_CACHE[value] = obj;
+            return obj;
+        }
+    };
+
+    /**
+     * Returns a Long representing the given value, provided that it is a finite number. Otherwise, zero is returned.
+     * @param {number} value The number in question
+     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed
+     * @returns {!Long} The corresponding Long value
+     * @expose
+     */
+    Long.fromNumber = function fromNumber(value, unsigned) {
+        unsigned = !!unsigned;
+        if (isNaN(value) || !isFinite(value))
+            return Long.ZERO;
+        if (!unsigned && value <= -TWO_PWR_63_DBL)
+            return Long.MIN_VALUE;
+        if (!unsigned && value + 1 >= TWO_PWR_63_DBL)
+            return Long.MAX_VALUE;
+        if (unsigned && value >= TWO_PWR_64_DBL)
+            return Long.MAX_UNSIGNED_VALUE;
+        if (value < 0)
+            return Long.fromNumber(-value, unsigned).negate();
+        return new Long((value % TWO_PWR_32_DBL) | 0, (value / TWO_PWR_32_DBL) | 0, unsigned);
+    };
+
+    /**
+     * Returns a Long representing the 64 bit integer that comes by concatenating the given low and high bits. Each is
+     *  assumed to use 32 bits.
+     * @param {number} lowBits The low 32 bits
+     * @param {number} highBits The high 32 bits
+     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed
+     * @returns {!Long} The corresponding Long value
+     * @expose
+     */
+    Long.fromBits = function fromBits(lowBits, highBits, unsigned) {
+        return new Long(lowBits, highBits, unsigned);
+    };
+
+    /**
+     * Returns a Long representation of the given string, written using the specified radix.
+     * @param {string} str The textual representation of the Long
+     * @param {(boolean|number)=} unsigned Whether unsigned or not, defaults to `false` for signed
+     * @param {number=} radix The radix in which the text is written (2-36), defaults to 10
+     * @returns {!Long} The corresponding Long value
+     * @expose
+     */
+    Long.fromString = function fromString(str, unsigned, radix) {
+        if (str.length === 0)
+            throw Error('number format error: empty string');
+        if (str === "NaN" || str === "Infinity" || str === "+Infinity" || str === "-Infinity")
+            return Long.ZERO;
+        if (typeof unsigned === 'number') // For goog.math.long compatibility
+            radix = unsigned,
+            unsigned = false;
+        radix = radix || 10;
+        if (radix < 2 || 36 < radix)
+            throw Error('radix out of range: ' + radix);
+
+        var p;
+        if ((p = str.indexOf('-')) > 0)
+            throw Error('number format error: interior "-" character: ' + str);
+        else if (p === 0)
+            return Long.fromString(str.substring(1), unsigned, radix).negate();
+
+        // Do several (8) digits each time through the loop, so as to
+        // minimize the calls to the very expensive emulated div.
+        var radixToPower = Long.fromNumber(Math.pow(radix, 8));
+
+        var result = Long.ZERO;
+        for (var i = 0; i < str.length; i += 8) {
+            var size = Math.min(8, str.length - i);
+            var value = parseInt(str.substring(i, i + size), radix);
+            if (size < 8) {
+                var power = Long.fromNumber(Math.pow(radix, size));
+                result = result.multiply(power).add(Long.fromNumber(value));
+            } else {
+                result = result.multiply(radixToPower);
+                result = result.add(Long.fromNumber(value));
+            }
+        }
+        result.unsigned = unsigned;
+        return result;
+    };
+
+    /**
+     * Converts the specified value to a Long.
+     * @param {!Long|number|string|!{low: number, high: number, unsigned: boolean}} val Value
+     * @returns {!Long}
+     * @expose
+     */
+    Long.fromValue = function fromValue(val) {
+        if (val /* is compatible */ instanceof Long)
+            return val;
+        if (typeof val === 'number')
+            return Long.fromNumber(val);
+        if (typeof val === 'string')
+            return Long.fromString(val);
+        // Throws for non-objects, converts non-instanceof Long:
+        return new Long(val.low, val.high, val.unsigned);
+    };
+
+    // NOTE: the compiler should inline these constant values below and then remove these variables, so there should be
+    // no runtime penalty for these.
+
+    /**
+     * @type {number}
+     * @const
+     * @inner
+     */
+    var TWO_PWR_16_DBL = 1 << 16;
+
+    /**
+     * @type {number}
+     * @const
+     * @inner
+     */
+    var TWO_PWR_24_DBL = 1 << 24;
+
+    /**
+     * @type {number}
+     * @const
+     * @inner
+     */
+    var TWO_PWR_32_DBL = TWO_PWR_16_DBL * TWO_PWR_16_DBL;
+
+    /**
+     * @type {number}
+     * @const
+     * @inner
+     */
+    var TWO_PWR_64_DBL = TWO_PWR_32_DBL * TWO_PWR_32_DBL;
+
+    /**
+     * @type {number}
+     * @const
+     * @inner
+     */
+    var TWO_PWR_63_DBL = TWO_PWR_64_DBL / 2;
+
+    /**
+     * @type {!Long}
+     * @const
+     * @inner
+     */
+    var TWO_PWR_24 = Long.fromInt(TWO_PWR_24_DBL);
+
+    /**
+     * Signed zero.
+     * @type {!Long}
+     * @expose
+     */
+    Long.ZERO = Long.fromInt(0);
+
+    /**
+     * Unsigned zero.
+     * @type {!Long}
+     * @expose
+     */
+    Long.UZERO = Long.fromInt(0, true);
+
+    /**
+     * Signed one.
+     * @type {!Long}
+     * @expose
+     */
+    Long.ONE = Long.fromInt(1);
+
+    /**
+     * Unsigned one.
+     * @type {!Long}
+     * @expose
+     */
+    Long.UONE = Long.fromInt(1, true);
+
+    /**
+     * Signed negative one.
+     * @type {!Long}
+     * @expose
+     */
+    Long.NEG_ONE = Long.fromInt(-1);
+
+    /**
+     * Maximum signed value.
+     * @type {!Long}
+     * @expose
+     */
+    Long.MAX_VALUE = Long.fromBits(0xFFFFFFFF|0, 0x7FFFFFFF|0, false);
+
+    /**
+     * Maximum unsigned value.
+     * @type {!Long}
+     * @expose
+     */
+    Long.MAX_UNSIGNED_VALUE = Long.fromBits(0xFFFFFFFF|0, 0xFFFFFFFF|0, true);
+
+    /**
+     * Minimum signed value.
+     * @type {!Long}
+     * @expose
+     */
+    Long.MIN_VALUE = Long.fromBits(0, 0x80000000|0, false);
+
+    /**
+     * Converts the Long to a 32 bit integer, assuming it is a 32 bit integer.
+     * @returns {number}
+     * @expose
+     */
+    Long.prototype.toInt = function toInt() {
+        return this.unsigned ? this.low >>> 0 : this.low;
+    };
+
+    /**
+     * Converts the Long to a the nearest floating-point representation of this value (double, 53 bit mantissa).
+     * @returns {number}
+     * @expose
+     */
+    Long.prototype.toNumber = function toNumber() {
+        if (this.unsigned) {
+            return ((this.high >>> 0) * TWO_PWR_32_DBL) + (this.low >>> 0);
+        }
+        return this.high * TWO_PWR_32_DBL + (this.low >>> 0);
+    };
+
+    /**
+     * Converts the Long to a string written in the specified radix.
+     * @param {number=} radix Radix (2-36), defaults to 10
+     * @returns {string}
+     * @override
+     * @throws {RangeError} If `radix` is out of range
+     * @expose
+     */
+    Long.prototype.toString = function toString(radix) {
+        radix = radix || 10;
+        if (radix < 2 || 36 < radix)
+            throw RangeError('radix out of range: ' + radix);
+        if (this.isZero())
+            return '0';
+        var rem;
+        if (this.isNegative()) { // Unsigned Longs are never negative
+            if (this.equals(Long.MIN_VALUE)) {
+                // We need to change the Long value before it can be negated, so we remove
+                // the bottom-most digit in this base and then recurse to do the rest.
+                var radixLong = Long.fromNumber(radix);
+                var div = this.divide(radixLong);
+                rem = div.multiply(radixLong).subtract(this);
+                return div.toString(radix) + rem.toInt().toString(radix);
+            } else
+                return '-' + this.negate().toString(radix);
+        }
+
+        // Do several (6) digits each time through the loop, so as to
+        // minimize the calls to the very expensive emulated div.
+        var radixToPower = Long.fromNumber(Math.pow(radix, 6), this.unsigned);
+        rem = this;
+        var result = '';
+        while (true) {
+            var remDiv = rem.divide(radixToPower),
+                intval = rem.subtract(remDiv.multiply(radixToPower)).toInt() >>> 0,
+                digits = intval.toString(radix);
+            rem = remDiv;
+            if (rem.isZero())
+                return digits + result;
+            else {
+                while (digits.length < 6)
+                    digits = '0' + digits;
+                result = '' + digits + result;
+            }
+        }
+    };
+
+    /**
+     * Gets the high 32 bits as a signed integer.
+     * @returns {number} Signed high bits
+     * @expose
+     */
+    Long.prototype.getHighBits = function getHighBits() {
+        return this.high;
+    };
+
+    /**
+     * Gets the high 32 bits as an unsigned integer.
+     * @returns {number} Unsigned high bits
+     * @expose
+     */
+    Long.prototype.getHighBitsUnsigned = function getHighBitsUnsigned() {
+        return this.high >>> 0;
+    };
+
+    /**
+     * Gets the low 32 bits as a signed integer.
+     * @returns {number} Signed low bits
+     * @expose
+     */
+    Long.prototype.getLowBits = function getLowBits() {
+        return this.low;
+    };
+
+    /**
+     * Gets the low 32 bits as an unsigned integer.
+     * @returns {number} Unsigned low bits
+     * @expose
+     */
+    Long.prototype.getLowBitsUnsigned = function getLowBitsUnsigned() {
+        return this.low >>> 0;
+    };
+
+    /**
+     * Gets the number of bits needed to represent the absolute value of this Long.
+     * @returns {number}
+     * @expose
+     */
+    Long.prototype.getNumBitsAbs = function getNumBitsAbs() {
+        if (this.isNegative()) // Unsigned Longs are never negative
+            return this.equals(Long.MIN_VALUE) ? 64 : this.negate().getNumBitsAbs();
+        var val = this.high != 0 ? this.high : this.low;
+        for (var bit = 31; bit > 0; bit--)
+            if ((val & (1 << bit)) != 0)
+                break;
+        return this.high != 0 ? bit + 33 : bit + 1;
+    };
+
+    /**
+     * Tests if this Long's value equals zero.
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.isZero = function isZero() {
+        return this.high === 0 && this.low === 0;
+    };
+
+    /**
+     * Tests if this Long's value is negative.
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.isNegative = function isNegative() {
+        return !this.unsigned && this.high < 0;
+    };
+
+    /**
+     * Tests if this Long's value is positive.
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.isPositive = function isPositive() {
+        return this.unsigned || this.high >= 0;
+    };
+
+    /**
+     * Tests if this Long's value is odd.
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.isOdd = function isOdd() {
+        return (this.low & 1) === 1;
+    };
+
+    /**
+     * Tests if this Long's value is even.
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.isEven = function isEven() {
+        return (this.low & 1) === 0;
+    };
+
+    /**
+     * Tests if this Long's value equals the specified's.
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.equals = function equals(other) {
+        if (!Long.isLong(other))
+            other = Long.fromValue(other);
+        if (this.unsigned !== other.unsigned && (this.high >>> 31) === 1 && (other.high >>> 31) === 1)
+            return false;
+        return this.high === other.high && this.low === other.low;
+    };
+
+    /**
+     * Tests if this Long's value equals the specified's. This is an alias of {@link Long#equals}.
+     * @function
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.eq = Long.prototype.equals;
+
+    /**
+     * Tests if this Long's value differs from the specified's.
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.notEquals = function notEquals(other) {
+        return !this.equals(/* validates */ other);
+    };
+
+    /**
+     * Tests if this Long's value differs from the specified's. This is an alias of {@link Long#notEquals}.
+     * @function
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.neq = Long.prototype.notEquals;
+
+    /**
+     * Tests if this Long's value is less than the specified's.
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.lessThan = function lessThan(other) {
+        return this.compare(/* validates */ other) < 0;
+    };
+
+    /**
+     * Tests if this Long's value is less than the specified's. This is an alias of {@link Long#lessThan}.
+     * @function
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.lt = Long.prototype.lessThan;
+
+    /**
+     * Tests if this Long's value is less than or equal the specified's.
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.lessThanOrEqual = function lessThanOrEqual(other) {
+        return this.compare(/* validates */ other) <= 0;
+    };
+
+    /**
+     * Tests if this Long's value is less than or equal the specified's. This is an alias of {@link Long#lessThanOrEqual}.
+     * @function
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.lte = Long.prototype.lessThanOrEqual;
+
+    /**
+     * Tests if this Long's value is greater than the specified's.
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.greaterThan = function greaterThan(other) {
+        return this.compare(/* validates */ other) > 0;
+    };
+
+    /**
+     * Tests if this Long's value is greater than the specified's. This is an alias of {@link Long#greaterThan}.
+     * @function
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.gt = Long.prototype.greaterThan;
+
+    /**
+     * Tests if this Long's value is greater than or equal the specified's.
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.greaterThanOrEqual = function greaterThanOrEqual(other) {
+        return this.compare(/* validates */ other) >= 0;
+    };
+
+    /**
+     * Tests if this Long's value is greater than or equal the specified's. This is an alias of {@link Long#greaterThanOrEqual}.
+     * @function
+     * @param {!Long|number|string} other Other value
+     * @returns {boolean}
+     * @expose
+     */
+    Long.prototype.gte = Long.prototype.greaterThanOrEqual;
+
+    /**
+     * Compares this Long's value with the specified's.
+     * @param {!Long|number|string} other Other value
+     * @returns {number} 0 if they are the same, 1 if the this is greater and -1
+     *  if the given one is greater
+     * @expose
+     */
+    Long.prototype.compare = function compare(other) {
+        if (!Long.isLong(other))
+            other = Long.fromValue(other);
+        if (this.equals(other))
+            return 0;
+        var thisNeg = this.isNegative(),
+            otherNeg = other.isNegative();
+        if (thisNeg && !otherNeg)
+            return -1;
+        if (!thisNeg && otherNeg)
+            return 1;
+        // At this point the sign bits are the same
+        if (!this.unsigned)
+            return this.subtract(other).isNegative() ? -1 : 1;
+        // Both are positive if at least one is unsigned
+        return (other.high >>> 0) > (this.high >>> 0) || (other.high === this.high && (other.low >>> 0) > (this.low >>> 0)) ? -1 : 1;
+    };
+
+    /**
+     * Negates this Long's value.
+     * @returns {!Long} Negated Long
+     * @expose
+     */
+    Long.prototype.negate = function negate() {
+        if (!this.unsigned && this.equals(Long.MIN_VALUE))
+            return Long.MIN_VALUE;
+        return this.not().add(Long.ONE);
+    };
+
+    /**
+     * Negates this Long's value. This is an alias of {@link Long#negate}.
+     * @function
+     * @returns {!Long} Negated Long
+     * @expose
+     */
+    Long.prototype.neg = Long.prototype.negate;
+
+    /**
+     * Returns the sum of this and the specified Long.
+     * @param {!Long|number|string} addend Addend
+     * @returns {!Long} Sum
+     * @expose
+     */
+    Long.prototype.add = function add(addend) {
+        if (!Long.isLong(addend))
+            addend = Long.fromValue(addend);
+
+        // Divide each number into 4 chunks of 16 bits, and then sum the chunks.
+
+        var a48 = this.high >>> 16;
+        var a32 = this.high & 0xFFFF;
+        var a16 = this.low >>> 16;
+        var a00 = this.low & 0xFFFF;
+
+        var b48 = addend.high >>> 16;
+        var b32 = addend.high & 0xFFFF;
+        var b16 = addend.low >>> 16;
+        var b00 = addend.low & 0xFFFF;
+
+        var c48 = 0, c32 = 0, c16 = 0, c00 = 0;
+        c00 += a00 + b00;
+        c16 += c00 >>> 16;
+        c00 &= 0xFFFF;
+        c16 += a16 + b16;
+        c32 += c16 >>> 16;
+        c16 &= 0xFFFF;
+        c32 += a32 + b32;
+        c48 += c32 >>> 16;
+        c32 &= 0xFFFF;
+        c48 += a48 + b48;
+        c48 &= 0xFFFF;
+        return Long.fromBits((c16 << 16) | c00, (c48 << 16) | c32, this.unsigned);
+    };
+
+    /**
+     * Returns the difference of this and the specified Long.
+     * @param {!Long|number|string} subtrahend Subtrahend
+     * @returns {!Long} Difference
+     * @expose
+     */
+    Long.prototype.subtract = function subtract(subtrahend) {
+        if (!Long.isLong(subtrahend))
+            subtrahend = Long.fromValue(subtrahend);
+        return this.add(subtrahend.negate());
+    };
+
+    /**
+     * Returns the difference of this and the specified Long. This is an alias of {@link Long#subtract}.
+     * @function
+     * @param {!Long|number|string} subtrahend Subtrahend
+     * @returns {!Long} Difference
+     * @expose
+     */
+    Long.prototype.sub = Long.prototype.subtract;
+
+    /**
+     * Returns the product of this and the specified Long.
+     * @param {!Long|number|string} multiplier Multiplier
+     * @returns {!Long} Product
+     * @expose
+     */
+    Long.prototype.multiply = function multiply(multiplier) {
+        if (this.isZero())
+            return Long.ZERO;
+        if (!Long.isLong(multiplier))
+            multiplier = Long.fromValue(multiplier);
+        if (multiplier.isZero())
+            return Long.ZERO;
+        if (this.equals(Long.MIN_VALUE))
+            return multiplier.isOdd() ? Long.MIN_VALUE : Long.ZERO;
+        if (multiplier.equals(Long.MIN_VALUE))
+            return this.isOdd() ? Long.MIN_VALUE : Long.ZERO;
+
+        if (this.isNegative()) {
+            if (multiplier.isNegative())
+                return this.negate().multiply(multiplier.negate());
+            else
+                return this.negate().multiply(multiplier).negate();
+        } else if (multiplier.isNegative())
+            return this.multiply(multiplier.negate()).negate();
+
+        // If both longs are small, use float multiplication
+        if (this.lessThan(TWO_PWR_24) && multiplier.lessThan(TWO_PWR_24))
+            return Long.fromNumber(this.toNumber() * multiplier.toNumber(), this.unsigned);
+
+        // Divide each long into 4 chunks of 16 bits, and then add up 4x4 products.
+        // We can skip products that would overflow.
+
+        var a48 = this.high >>> 16;
+        var a32 = this.high & 0xFFFF;
+        var a16 = this.low >>> 16;
+        var a00 = this.low & 0xFFFF;
+
+        var b48 = multiplier.high >>> 16;
+        var b32 = multiplier.high & 0xFFFF;
+        var b16 = multiplier.low >>> 16;
+        var b00 = multiplier.low & 0xFFFF;
+
+        var c48 = 0, c32 = 0, c16 = 0, c00 = 0;
+        c00 += a00 * b00;
+        c16 += c00 >>> 16;
+        c00 &= 0xFFFF;
+        c16 += a16 * b00;
+        c32 += c16 >>> 16;
+        c16 &= 0xFFFF;
+        c16 += a00 * b16;
+        c32 += c16 >>> 16;
+        c16 &= 0xFFFF;
+        c32 += a32 * b00;
+        c48 += c32 >>> 16;
+        c32 &= 0xFFFF;
+        c32 += a16 * b16;
+        c48 += c32 >>> 16;
+        c32 &= 0xFFFF;
+        c32 += a00 * b32;
+        c48 += c32 >>> 16;
+        c32 &= 0xFFFF;
+        c48 += a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48;
+        c48 &= 0xFFFF;
+        return Long.fromBits((c16 << 16) | c00, (c48 << 16) | c32, this.unsigned);
+    };
+
+    /**
+     * Returns the product of this and the specified Long. This is an alias of {@link Long#multiply}.
+     * @function
+     * @param {!Long|number|string} multiplier Multiplier
+     * @returns {!Long} Product
+     * @expose
+     */
+    Long.prototype.mul = Long.prototype.multiply;
+
+    /**
+     * Returns this Long divided by the specified.
+     * @param {!Long|number|string} divisor Divisor
+     * @returns {!Long} Quotient
+     * @expose
+     */
+    Long.prototype.divide = function divide(divisor) {
+        if (!Long.isLong(divisor))
+            divisor = Long.fromValue(divisor);
+        if (divisor.isZero())
+            throw(new Error('division by zero'));
+        if (this.isZero())
+            return this.unsigned ? Long.UZERO : Long.ZERO;
+        var approx, rem, res;
+        if (this.equals(Long.MIN_VALUE)) {
+            if (divisor.equals(Long.ONE) || divisor.equals(Long.NEG_ONE))
+                return Long.MIN_VALUE;  // recall that -MIN_VALUE == MIN_VALUE
+            else if (divisor.equals(Long.MIN_VALUE))
+                return Long.ONE;
+            else {
+                // At this point, we have |other| >= 2, so |this/other| < |MIN_VALUE|.
+                var halfThis = this.shiftRight(1);
+                approx = halfThis.divide(divisor).shiftLeft(1);
+                if (approx.equals(Long.ZERO)) {
+                    return divisor.isNegative() ? Long.ONE : Long.NEG_ONE;
+                } else {
+                    rem = this.subtract(divisor.multiply(approx));
+                    res = approx.add(rem.divide(divisor));
+                    return res;
+                }
+            }
+        } else if (divisor.equals(Long.MIN_VALUE))
+            return this.unsigned ? Long.UZERO : Long.ZERO;
+        if (this.isNegative()) {
+            if (divisor.isNegative())
+                return this.negate().divide(divisor.negate());
+            return this.negate().divide(divisor).negate();
+        } else if (divisor.isNegative())
+            return this.divide(divisor.negate()).negate();
+
+        // Repeat the following until the remainder is less than other:  find a
+        // floating-point that approximates remainder / other *from below*, add this
+        // into the result, and subtract it from the remainder.  It is critical that
+        // the approximate value is less than or equal to the real value so that the
+        // remainder never becomes negative.
+        res = Long.ZERO;
+        rem = this;
+        while (rem.greaterThanOrEqual(divisor)) {
+            // Approximate the result of division. This may be a little greater or
+            // smaller than the actual value.
+            approx = Math.max(1, Math.floor(rem.toNumber() / divisor.toNumber()));
+
+            // We will tweak the approximate result by changing it in the 48-th digit or
+            // the smallest non-fractional digit, whichever is larger.
+            var log2 = Math.ceil(Math.log(approx) / Math.LN2),
+                delta = (log2 <= 48) ? 1 : Math.pow(2, log2 - 48),
+
+            // Decrease the approximation until it is smaller than the remainder.  Note
+            // that if it is too large, the product overflows and is negative.
+                approxRes = Long.fromNumber(approx),
+                approxRem = approxRes.multiply(divisor);
+            while (approxRem.isNegative() || approxRem.greaterThan(rem)) {
+                approx -= delta;
+                approxRes = Long.fromNumber(approx, this.unsigned);
+                approxRem = approxRes.multiply(divisor);
+            }
+
+            // We know the answer can't be zero... and actually, zero would cause
+            // infinite recursion since we would make no progress.
+            if (approxRes.isZero())
+                approxRes = Long.ONE;
+
+            res = res.add(approxRes);
+            rem = rem.subtract(approxRem);
+        }
+        return res;
+    };
+
+    /**
+     * Returns this Long divided by the specified. This is an alias of {@link Long#divide}.
+     * @function
+     * @param {!Long|number|string} divisor Divisor
+     * @returns {!Long} Quotient
+     * @expose
+     */
+    Long.prototype.div = Long.prototype.divide;
+
+    /**
+     * Returns this Long modulo the specified.
+     * @param {!Long|number|string} divisor Divisor
+     * @returns {!Long} Remainder
+     * @expose
+     */
+    Long.prototype.modulo = function modulo(divisor) {
+        if (!Long.isLong(divisor))
+            divisor = Long.fromValue(divisor);
+        return this.subtract(this.divide(divisor).multiply(divisor));
+    };
+
+    /**
+     * Returns this Long modulo the specified. This is an alias of {@link Long#modulo}.
+     * @function
+     * @param {!Long|number|string} divisor Divisor
+     * @returns {!Long} Remainder
+     * @expose
+     */
+    Long.prototype.mod = Long.prototype.modulo;
+
+    /**
+     * Returns the bitwise NOT of this Long.
+     * @returns {!Long}
+     * @expose
+     */
+    Long.prototype.not = function not() {
+        return Long.fromBits(~this.low, ~this.high, this.unsigned);
+    };
+
+    /**
+     * Returns the bitwise AND of this Long and the specified.
+     * @param {!Long|number|string} other Other Long
+     * @returns {!Long}
+     * @expose
+     */
+    Long.prototype.and = function and(other) {
+        if (!Long.isLong(other))
+            other = Long.fromValue(other);
+        return Long.fromBits(this.low & other.low, this.high & other.high, this.unsigned);
+    };
+
+    /**
+     * Returns the bitwise OR of this Long and the specified.
+     * @param {!Long|number|string} other Other Long
+     * @returns {!Long}
+     * @expose
+     */
+    Long.prototype.or = function or(other) {
+        if (!Long.isLong(other))
+            other = Long.fromValue(other);
+        return Long.fromBits(this.low | other.low, this.high | other.high, this.unsigned);
+    };
+
+    /**
+     * Returns the bitwise XOR of this Long and the given one.
+     * @param {!Long|number|string} other Other Long
+     * @returns {!Long}
+     * @expose
+     */
+    Long.prototype.xor = function xor(other) {
+        if (!Long.isLong(other))
+            other = Long.fromValue(other);
+        return Long.fromBits(this.low ^ other.low, this.high ^ other.high, this.unsigned);
+    };
+
+    /**
+     * Returns this Long with bits shifted to the left by the given amount.
+     * @param {number|!Long} numBits Number of bits
+     * @returns {!Long} Shifted Long
+     * @expose
+     */
+    Long.prototype.shiftLeft = function shiftLeft(numBits) {
+        if (Long.isLong(numBits))
+            numBits = numBits.toInt();
+        if ((numBits &= 63) === 0)
+            return this;
+        else if (numBits < 32)
+            return Long.fromBits(this.low << numBits, (this.high << numBits) | (this.low >>> (32 - numBits)), this.unsigned);
+        else
+            return Long.fromBits(0, this.low << (numBits - 32), this.unsigned);
+    };
+
+    /**
+     * Returns this Long with bits shifted to the left by the given amount. This is an alias of {@link Long#shiftLeft}.
+     * @function
+     * @param {number|!Long} numBits Number of bits
+     * @returns {!Long} Shifted Long
+     * @expose
+     */
+    Long.prototype.shl = Long.prototype.shiftLeft;
+
+    /**
+     * Returns this Long with bits arithmetically shifted to the right by the given amount.
+     * @param {number|!Long} numBits Number of bits
+     * @returns {!Long} Shifted Long
+     * @expose
+     */
+    Long.prototype.shiftRight = function shiftRight(numBits) {
+        if (Long.isLong(numBits))
+            numBits = numBits.toInt();
+        if ((numBits &= 63) === 0)
+            return this;
+        else if (numBits < 32)
+            return Long.fromBits((this.low >>> numBits) | (this.high << (32 - numBits)), this.high >> numBits, this.unsigned);
+        else
+            return Long.fromBits(this.high >> (numBits - 32), this.high >= 0 ? 0 : -1, this.unsigned);
+    };
+
+    /**
+     * Returns this Long with bits arithmetically shifted to the right by the given amount. This is an alias of {@link Long#shiftRight}.
+     * @function
+     * @param {number|!Long} numBits Number of bits
+     * @returns {!Long} Shifted Long
+     * @expose
+     */
+    Long.prototype.shr = Long.prototype.shiftRight;
+
+    /**
+     * Returns this Long with bits logically shifted to the right by the given amount.
+     * @param {number|!Long} numBits Number of bits
+     * @returns {!Long} Shifted Long
+     * @expose
+     */
+    Long.prototype.shiftRightUnsigned = function shiftRightUnsigned(numBits) {
+        if (Long.isLong(numBits))
+            numBits = numBits.toInt();
+        numBits &= 63;
+        if (numBits === 0)
+            return this;
+        else {
+            var high = this.high;
+            if (numBits < 32) {
+                var low = this.low;
+                return Long.fromBits((low >>> numBits) | (high << (32 - numBits)), high >>> numBits, this.unsigned);
+            } else if (numBits === 32)
+                return Long.fromBits(high, 0, this.unsigned);
+            else
+                return Long.fromBits(high >>> (numBits - 32), 0, this.unsigned);
+        }
+    };
+
+    /**
+     * Returns this Long with bits logically shifted to the right by the given amount. This is an alias of {@link Long#shiftRightUnsigned}.
+     * @function
+     * @param {number|!Long} numBits Number of bits
+     * @returns {!Long} Shifted Long
+     * @expose
+     */
+    Long.prototype.shru = Long.prototype.shiftRightUnsigned;
+
+    /**
+     * Converts this Long to signed.
+     * @returns {!Long} Signed long
+     * @expose
+     */
+    Long.prototype.toSigned = function toSigned() {
+        if (!this.unsigned)
+            return this;
+        return new Long(this.low, this.high, false);
+    };
+
+    /**
+     * Converts this Long to unsigned.
+     * @returns {!Long} Unsigned long
+     * @expose
+     */
+    Long.prototype.toUnsigned = function toUnsigned() {
+        if (this.unsigned)
+            return this;
+        return new Long(this.low, this.high, true);
+    };
+
+    return Long;
+});
+
 
 /***/ })
 
@@ -2050,18 +14373,6 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
 /******/ 		__webpack_require__.g = (function() {
@@ -2074,22 +14385,6 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 		})();
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/node module decorator */
 /******/ 	(() => {
 /******/ 		__webpack_require__.nmd = (module) => {
@@ -2100,11 +14395,666 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/process.js");
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+
+;// CONCATENATED MODULE: ./src/v3dheadertypes.js
+//Enum class for v3dheadertypes
+
+
+    let v3dheadertypes_canvasWidth=1;
+    // UINT  Canvas width
+
+    let v3dheadertypes_canvasHeight=2;
+    // UINT  Canvas height
+
+    let v3dheadertypes_absolute=3;
+    // BOOL  true: absolute size; false: scale to canvas
+
+    let v3dheadertypes_minBound=4;
+    // TRIPLE  Scene minimum bounding box corners
+
+    let v3dheadertypes_maxBound=5;
+    // TRIPLE  Scene maximum bounding box corners
+
+    let v3dheadertypes_orthographic=6;
+    // BOOL  true: orthographic; false: perspective
+
+    let v3dheadertypes_angleOfView=7;
+    // REAL  Field of view angle
+
+    let v3dheadertypes_initialZoom=8;
+    // REAL  Initial zoom
+
+    let v3dheadertypes_viewportShift=9;
+    // PAIR  Viewport shift (for perspective projection)
+
+    let v3dheadertypes_viewportMargin=10;
+    // PAIR  Margin around viewport
+
+    let v3dheadertypes_light=11;
+    // RGB  Direction and color of each point light source
+
+    let v3dheadertypes_background=12;
+    // RGBA  Background color
+
+    let v3dheadertypes_zoomFactor=13;
+    // REAL  Zoom base factor
+
+    let v3dheadertypes_zoomPinchFactor=14;
+    // REAL  Zoom pinch factor
+
+    let v3dheadertypes_zoomPinchCap=15;
+    // REAL  Zoom pinch limit
+
+    let v3dheadertypes_zoomStep=16;
+    // REAL  Zoom power step
+
+    let v3dheadertypes_shiftHoldDistance=17;
+    // REAL  Shift-mode maximum hold distance (pixels)
+
+    let v3dheadertypes_shiftWaitTime=18;
+    // REAL  Shift-mode hold time (milliseconds)
+
+    let v3dheadertypes_vibrateTime=19;
+    // REAL  Shift-mode vibrate time (milliseconds)
+
+;// CONCATENATED MODULE: ./src/v3dtypes.js
+//V3D types
+
+let v3dtypes_material = 1;
+let v3dtypes_centers = 4;
+let v3dtypes_header = 5;
+let v3dtypes_line = 64;
+let v3dtypes_triangle = 65;
+let v3dtypes_quad = 66;
+let v3dtypes_curve = 128;
+let v3dtypes_bezierTriangle = 129;
+let v3dtypes_bezierPatch = 130;
+let v3dtypes_triangleColor = 193;
+let v3dtypes_quadColor = 194;
+let v3dtypes_bezierTriangleColor = 257;
+let v3dtypes_bezierPatchColor = 258;
+let v3dtypes_triangles = 512;
+let v3dtypes_disk = 1024;
+let v3dtypes_cylinder = 1025;
+let v3dtypes_tube = 1026;
+let v3dtypes_sphere = 1027;
+let v3dtypes_halfSphere = 1028;
+let v3dtypes_pixel = 4096;
+
+//Not supported
+let v3dtypes_transform = 2;
+let v3dtypes_element = 3;
+let v3dtypes_lineColor = 192;
+let v3dtypes_curveColor = 256;
+let v3dtypes_animation = 2048;
+
+// EXTERNAL MODULE: ./node_modules/buffer/index.js
+var buffer = __webpack_require__(8764);
+;// CONCATENATED MODULE: ./src/v3dconv.js
+("use scrict");
+
+
+
+globalThis.Buffer = buffer/* Buffer */.lW;
+
+let gzip = __webpack_require__(3606),
+  options = {
+    level: 9,
+  };
+let xdr = __webpack_require__(2259);
+
+//--- Set up
+
+let Transform = (/* unused pure expression or super */ null && ([
+  0.1762732, -0.08715096, 0.1482109, 14.37726, 0.1719354, 0.08934971,
+  -0.1519502, 4.135837, 2.73381e-17, 0.2122624, 0.1248145, 39.91369,
+  3.85186e-34, 3.044927e-18, 1.758601e-18, 1,
+]));
+
+let webgl2 = false;
+let ibl = false;
+//---  Set up done
+
+class V3DReader {
+  constructor(fil) {
+    //To keep track of how many bytes we have read so we can
+    // simulate moving the file reader by making sub arrays
+    this.bytesRead = 0;
+    this.file = fil;
+    this.file_ver = null;
+    this.processed = false;
+    this.object_process_fns = function (type) {
+      switch (type) {
+        case v3dtypes_bezierPatch:
+          return this.process_bezierpatch;
+
+        case v3dtypes_bezierPatchColor:
+          return this.process_bezierpatch_color;
+
+        case v3dtypes_bezierTriangle:
+          return this.process_beziertriangle;
+
+        case v3dtypes_bezierTriangleColor:
+          return this.process_beziertriangle_color;
+
+        case v3dtypes_sphere:
+          return this.process_sphere;
+
+        case v3dtypes_halfSphere:
+          return this.process_half_sphere;
+
+        case v3dtypes_cylinder:
+          return this.process_cylinder;
+
+        case v3dtypes_disk:
+          return this.process_disk;
+
+        case v3dtypes_tube:
+          return this.process_tube;
+
+        case v3dtypes_curve:
+          return this.process_beziercurve;
+
+        case v3dtypes_line:
+          return this.process_line;
+
+        case v3dtypes_pixel:
+          return this.process_pixel;
+
+        case v3dtypes_triangles:
+          return this.process_triangles;
+
+        case v3dtypes_triangle:
+          return this.process_straight_beziertriangle;
+
+        case v3dtypes_triangleColor:
+          return this.process_straight_beziertriangle_color;
+
+        case v3dtypes_quad:
+          return this.process_quad;
+
+        case v3dtypes_quadColor:
+          return this.process_quad_color;
+
+        default:
+          return undefined;
+      }
+    };
+  }
+
+  unpack_bool() {
+    let ret_val = xdr.Bool.fromXDR(
+      this.file.slice(this.bytesRead, this.bytesRead + 4 + 1)
+    );
+    this.bytesRead += 4;
+    return ret_val;
+  }
+
+  unpack_double() {
+    let ret_val = xdr.Double.fromXDR(
+      this.file.slice(this.bytesRead, this.bytesRead + 8 + 1)
+    );
+    this.bytesRead += 8;
+    return ret_val;
+  }
+
+  unpack_float() {
+    let ret_val = xdr.Float.fromXDR(
+      this.file.slice(this.bytesRead, this.bytesRead + 4 + 1)
+    );
+    this.bytesRead += 4;
+    return ret_val;
+  }
+
+  unpack_unsigned_int() {
+    let ret_val = xdr.UnsignedInt.fromXDR(
+      this.file.slice(this.bytesRead, this.bytesRead + 4 + 1)
+    );
+    this.bytesRead += 4;
+    return ret_val;
+  }
+
+  unpack_pair() {
+    let x = this.unpack_double();
+    let y = this.unpack_double();
+    return [x, y];
+  }
+
+  unpack_triple() {
+    let x = this.unpack_double();
+    let y = this.unpack_double();
+    let z = this.unpack_double();
+    return [x, y, z];
+  }
+
+  unpack_triple_n(num) {
+    let final_list = [];
+    for (let i = 0; i < num; i++) {
+      final_list.push(this.unpack_triple());
+    }
+    return final_list;
+  }
+
+  unpack_rgb_float() {
+    let r = this.unpack_float();
+    let g = this.unpack_float();
+    let b = this.unpack_float();
+    return [r, g, b];
+  }
+
+  unpack_rgba_float() {
+    let r = this.unpack_float();
+    let g = this.unpack_float();
+    let b = this.unpack_float();
+    let a = this.unpack_float();
+    return [r, g, b, a];
+  }
+
+  unpack_rgba_float_n(n) {
+    let final_list = [];
+    for (let i = 0; i < n; i++) {
+      final_list.push(this.unpack_rgba_float());
+    }
+    return final_list;
+  }
+  unpack_int_indices() {
+    let x = this.unpack_unsigned_int();
+    let y = this.unpack_unsigned_int();
+    let z = this.unpack_unsigned_int();
+    return [x, y, z];
+  }
+
+  process_header() {
+    let num_headers = this.unpack_unsigned_int();
+    for (let i = 0; i < num_headers; i++) {
+      let header_type = this.unpack_unsigned_int();
+      let block_count = this.unpack_unsigned_int();
+
+      if (header_type == v3dheadertypes_canvasWidth) {
+        document.asy.canvasWidth = this.unpack_unsigned_int();
+      } else if (header_type == v3dheadertypes_canvasHeight) {
+        document.asy.canvasHeight = this.unpack_unsigned_int();
+      } else if (header_type == v3dheadertypes_minBound) {
+        document.asy.minBound = this.unpack_triple();
+      } else if (header_type == v3dheadertypes_maxBound) {
+        document.asy.maxBound = this.unpack_triple();
+      } else if (header_type == v3dheadertypes_orthographic) {
+        document.asy.orthographic = this.unpack_bool();
+      } else if (header_type == v3dheadertypes_angleOfView) {
+        document.asy.angleOfView = this.unpack_double();
+      } else if (header_type == v3dheadertypes_initialZoom) {
+        document.asy.initialZoom = this.unpack_double();
+      } else if (header_type == v3dheadertypes_viewportShift) {
+        document.asy.viewportShift = this.unpack_pair();
+      } else if (header_type == v3dheadertypes_viewportMargin) {
+        document.asy.viewportMargin = this.unpack_pair();
+      } else if (header_type == v3dheadertypes_light) {
+        let position = this.unpack_triple();
+        let color = this.unpack_rgb_float();
+        light(position, color);
+      } else if (header_type == v3dheadertypes_background) {
+        document.asy.background = this.unpack_rgba_float();
+      } else if (header_type == v3dheadertypes_absolute) {
+        document.asy.absolute = this.unpack_bool();
+      } else if (header_type == v3dheadertypes_zoomFactor) {
+        document.asy.zoomFactor = this.unpack_double();
+      } else if (header_type == v3dheadertypes_zoomPinchFactor) {
+        document.asy.zoomPinchFactor = this.unpack_double();
+      } else if (header_type == v3dheadertypes_zoomStep) {
+        document.asy.zoomStep = this.unpack_double();
+      } else if (
+        header_type == v3dheadertypes_shiftHoldDistance
+      ) {
+        document.asy.shiftHoldDistance = this.unpack_double();
+      } else if (header_type == v3dheadertypes_shiftWaitTime) {
+        document.asy.shiftWaitTime = this.unpack_double();
+      } else if (header_type == v3dheadertypes_vibrateTime) {
+        document.asy.vibrateTime = this.unpack_double();
+      } else {
+        for (let j = 0; j < block_count; j++) {
+          this.unpack_unsigned_int();
+        }
+      }
+    }
+  }
+
+  process_bezierpatch() {
+    let controlpoints = this.unpack_triple_n(16);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+    patch(controlpoints, CenterIndex, MaterialIndex);
+  }
+
+  process_bezierpatch_color() {
+    let controlpoints = this.unpack_triple_n(16);
+
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+
+    let colors = this.unpack_rgba_float_n(4);
+
+    for (let i = 0; i < 10; i++)
+      patch(controlpoints, CenterIndex, MaterialIndex, colors);
+  }
+
+  process_beziertriangle() {
+    let controlpoints = this.unpack_triple_n(10);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+    patch(controlpoints, CenterIndex, MaterialIndex);
+  }
+
+  process_beziertriangle_color() {
+    let controlpoints = this.unpack_triple_n(10);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+    let colors = this.unpack_rgba_float_n(3);
+
+    patch(controlpoints, CenterIndex, MaterialIndex, colors);
+  }
+
+  process_straight_beziertriangle() {
+    let controlpoints = this.unpack_triple_n(3);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+
+    patch(controlpoints, CenterIndex, MaterialIndex);
+  }
+
+  process_straight_beziertriangle_color() {
+    let controlpoints = this.unpack_triple_n(3);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+    let colors = this.unpack_rgba_float_n(3);
+
+    patch(controlpoints, CenterIndex, MaterialIndex, colors);
+  }
+
+  process_sphere() {
+    let center = this.unpack_triple();
+    let radius = this.unpack_double();
+
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+    sphere(center, radius, CenterIndex, MaterialIndex);
+  }
+
+  process_half_sphere() {
+    let center = this.unpack_triple();
+    let radius = this.unpack_double();
+
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+
+    let polar = this.unpack_double();
+    let azimuth = this.unpack_double();
+    let dir = [polar, azimuth];
+    sphere(center, radius, CenterIndex, MaterialIndex, dir);
+  }
+
+  process_cylinder() {
+    let center = this.unpack_triple();
+    let radius = this.unpack_double();
+    let height = this.unpack_double();
+
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+
+    let polar = this.unpack_double();
+    let azimuth = this.unpack_double();
+    let coreBase = this.unpack_bool();
+    let dir = [polar, azimuth];
+    cylinder(center, radius, height, CenterIndex, MaterialIndex, dir, coreBase);
+  }
+
+  process_disk() {
+    let center = this.unpack_triple();
+    let radius = this.unpack_double();
+
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+
+    let polar = this.unpack_double();
+    let azimuth = this.unpack_double();
+    let dir = [polar, azimuth];
+    disk(center, radius, CenterIndex, MaterialIndex, dir);
+  }
+
+  process_tube() {
+    let points = this.unpack_triple_n(4);
+    let width = this.unpack_double();
+
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+
+    let coreBase = this.unpack_bool();
+    tube(points, width, CenterIndex, MaterialIndex, coreBase);
+  }
+
+  process_beziercurve() {
+    let controlpoints = this.unpack_triple_n(4);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+    curve(controlpoints, CenterIndex, MaterialIndex);
+  }
+
+  process_line() {
+    let controlpoints = this.unpack_triple_n(2);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+    line(controlpoints, CenterIndex, MaterialIndex);
+  }
+
+  process_pixel() {
+    let controlpoint = this.unpack_triple();
+    let width = this.unpack_double();
+    let MaterialIndex = this.unpack_unsigned_int();
+    pixel(controlpoint, width, MaterialIndex);
+  }
+
+  process_material() {
+    let diffuse = this.unpack_rgba_float();
+    let emissive = this.unpack_rgba_float();
+    let specular = this.unpack_rgba_float();
+    let result = this.unpack_rgb_float();
+    let shininess = result[0];
+    let metallic = result[1];
+    let fresnel0 = result[2];
+    material(diffuse, emissive, specular, shininess, metallic, fresnel0);
+  }
+
+  process_centers() {
+    let number_centers = this.unpack_unsigned_int();
+    document.asy.Centers = this.unpack_triple_n(number_centers);
+  }
+
+  process_triangles() {
+    let colors;
+    let explicitCi = null;
+    let isColor = false;
+    let numIndex = this.unpack_unsigned_int();
+
+    let numPositions = this.unpack_unsigned_int();
+    let positions = this.unpack_triple_n(numPositions);
+    //Positions = this.unpack_triple_n(numPositions);
+    let numNormals = this.unpack_unsigned_int();
+    let normals = this.unpack_triple_n(numNormals);
+    //Normals = this.unpack_triple_n(numNormals);
+    let explicitNI = this.unpack_bool();
+
+    let numColor = this.unpack_unsigned_int();
+
+    if (numColor > 0) {
+      isColor = true;
+      colors = this.unpack_rgba_float_n(numColor);
+      explicitCi = this.unpack_bool();
+    }
+
+    let posIndices = [];
+    let normalIndices = [];
+    let colorIndices = null;
+
+    if (isColor) {
+      colorIndices = [];
+    }
+
+    for (let i = 0; i < numIndex; i++) {
+      let posIndex = this.unpack_int_indices();
+      let normalIndex = explicitNI ? this.unpack_int_indices() : posIndex;
+      let colorIndex = null;
+
+      if (isColor) {
+        colorIndex = explicitCi ? this.unpack_int_indices() : posIndex;
+        colorIndices.push(colorIndex);
+      }
+
+      posIndices.push(posIndex);
+      normalIndices.push(normalIndex);
+    }
+
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+
+    for (let i = 0; i < positions.length; i++) {
+      Positions.push(positions[i]);
+    }
+
+    for (let i = 0; i < normals.length; i++) {
+      Normals.push(normals[i]);
+    }
+
+    if (isColor) {
+      for (let i = 0; i < colors.length; i++) {
+        Colors.push(colors[i]);
+      }
+    }
+
+    for (let i = 0; i < posIndices.length; i++) {
+      if (isColor) {
+        Indices.push([posIndices[i], normalIndices[i], colorIndices[i]]);
+      } else {
+        Indices.push([posIndices[i], normalIndices[i]]);
+      }
+    }
+    triangles(CenterIndex, MaterialIndex);
+  }
+
+  process_quad() {
+    let vertices = this.unpack_triple_n(4);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+    patch(vertices, CenterIndex, MaterialIndex);
+  }
+
+  process_quad_color() {
+    let vertices = this.unpack_triple_n(4);
+    let CenterIndex = this.unpack_unsigned_int();
+    let MaterialIndex = this.unpack_unsigned_int();
+
+    let colors = this.unpack_rgba_float_n(4);
+
+    patch(vertices, CenterIndex, MaterialIndex, colors);
+  }
+
+  get_obj_type() {
+    if (this.bytesRead + 4 <= this.file.length) {
+      let obj_type = this.unpack_unsigned_int();
+      return obj_type;
+    } else {
+      return null;
+    }
+  }
+
+  get_fn_process_type(typ) {
+    if (this.object_process_fns(typ) != undefined) {
+      return this.object_process_fns(typ).bind(this);
+    } else {
+      return null;
+    }
+  }
+
+  process(force = false) {
+    if (this.processed && !force) {
+      return;
+    }
+
+    if (this.processed && forced) {
+      this.bytesRead = 0;
+    }
+
+    this.processed = true;
+    this.file_ver = this.unpack_unsigned_int();
+    let allow_double_precision = this.unpack_bool();
+
+    if (!allow_double_precision) {
+      this.unpack_double = this.unpack_float.bind(this);
+    }
+
+    let type;
+    while ((type = this.get_obj_type())) {
+      if (type == v3dtypes_material) {
+        this.process_material();
+      } else if (type == v3dtypes_centers) {
+        this.process_centers();
+      } else if (type == v3dtypes_header) {
+        this.process_header();
+      } else {
+        let fn = this.get_fn_process_type(type);
+        if (fn != null) {
+          fn();
+        } else {
+          console.log(`Unkown Object type ${type}`);
+        }
+      }
+    }
+    if (this.bytesRead != this.file.length) {
+      console.log("All bytes in V3D file not read");
+    }
+  }
+
+  static from_file_arr(file_name) {
+    let file = gzip.unzip(file_name);
+    let reader_obj = new V3DReader(file);
+    return reader_obj;
+  }
+}
+
+;// CONCATENATED MODULE: ./src/process.js
+
+
+function load_asy_gl() {
+  return new Promise(function (resolve, reject) {
+    let asy_gl = document.createElement("script");
+    asy_gl.type = "text/javascript";
+
+    asy_gl.src =
+      "https://vectorgraphics.github.io/asymptote/base/webgl/asygl-1.02.js";
+
+    asy_gl.onload = function () {
+      resolve();
+    };
+
+    asy_gl.onerror = function () {
+      reject(new Error("Could not load the asy_gl library"));
+    };
+
+    document.head.appendChild(asy_gl);
+  });
+}
+
+let v3dobj = V3DReader.from_file_arr(v3dArrayBuffer);
+let promise = load_asy_gl();
+
+promise.then(function () {
+  v3dobj.process();
+  webGLStart();
+});
+
+})();
+
 /******/ })()
 ;

@@ -2,11 +2,17 @@ import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
 import { TextLayerBuilder } from "pdfjs-dist/lib/web/text_layer_builder";
+import { Ref } from "pdfjs-dist/lib/core/primitives";
+import * as pdfjsViewer from "pdfjs-dist/web/pdf_viewer";
+import { AnnotationLayerBuilder } from "pdfjs-dist/web/pdf_viewer";
+
 
 //Changes pdfjs by removing sdtats in xref.js and changed xrefstats in parser.js
 
 let v3dFile;
 let scale = 1.5;
+let pdf;
+let coreDocument;
 
 export function setScale(newScale) {
   scale = newScale;
@@ -15,9 +21,10 @@ export function setScale(newScale) {
 export function getScale() {
   return scale;
 }
-function renderV3DFiles(pageNum, PDFDocument, div) {
-  let xrefPagesDict = PDFDocument.xref.fetch(PDFDocument.xref.root._map.Pages);
-  let page = PDFDocument.xref.fetch(xrefPagesDict._map.Kids[pageNum - 1]);
+
+function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
+  let ref = new Ref(pageRef.num, pageRef.gen);
+  let page = PDFDocument.xref.fetch(ref);
   let annotationRef = page._map.Annots;
   if (!annotationRef) {
     return;
@@ -58,8 +65,10 @@ function renderV3DFiles(pageNum, PDFDocument, div) {
       fileStream.bufferLength
     )}];`;
 
-    //script.setAttribute("src", "process.js");
-    script.src = document.getElementById("v3d-process-script").href;
+    script.setAttribute(
+      "src",
+      "https://sean-madu.github.io/PDF_ReaderLib/dist/process.js"
+    );
 
     let canvas = document.getElementById(`Page ${pageNum} Canvas`);
 
@@ -84,52 +93,78 @@ function renderV3DFiles(pageNum, PDFDocument, div) {
   }
 }
 
-function renderPages(pdf, pages, coreDocument) {
-  let pdfDiv = document.createElement("div");
-  pdfDiv.id = "pdfDiv";
-  document.body.appendChild(pdfDiv);
-  for (let i = 1; i <= pages; i++) {
-    let loadPage = pdf.getPage(i);
-    loadPage.then(function (page) {
-      console.log(page);
-      let containerDiv = document.createElement("div");
-      containerDiv.className = "container";
-      containerDiv.id = `Page ${i} Container`;
+export function visiblePages() {
+  let pages = document.getElementsByClassName("container");
+  for (let i = 0; i < pages.length; i++) {
+    let container = pages.item(i);
+    if (container.offsetTop + container.offsetHeight < window.scrollY ||
+      container.offsetTop > window.scrollY + window.outerHeight) {
+      if (container.classList.contains("visible")) {
+        removePage(i);
+      }
+    }
+    else {
+      if (!container.classList.contains("visible")) {
+        renderPage(i + 1, container, container.firstChild);
+      }
+    }
+  }
+}
 
-      let textLayerDiv = document.createElement("div");
-      containerDiv.appendChild(textLayerDiv);
+function removePage(i) {
+  let container = document.getElementById(`Page ${i + 1} Container`);
+  container.innerHTML = ``;
+  container.classList.remove("visible");
+}
 
+
+function renderPage(i, containerDiv, textLayerDiv) {
+  let loadPage = pdf.getPage(i);
+  loadPage.then(
+    function (page) {
       let mainCanvas = document.createElement("canvas");
       mainCanvas.id = `Page ${i} Canvas`;
       mainCanvas.className = "page";
       containerDiv.appendChild(mainCanvas);
-      pdfDiv.appendChild(containerDiv);
 
       let viewport = page.getViewport({ scale: scale });
       mainCanvas.height = viewport.height;
       mainCanvas.width = viewport.width;
 
-      textLayerDiv.className = "text-layer";
+      let textLayerDiv = document.createElement("div");
+
 
       textLayerDiv.style.height = viewport.height + "px";
       textLayerDiv.style.width = viewport.width + "px";
       textLayerDiv.style.top = mainCanvas.offsetTop;
       textLayerDiv.style.left = mainCanvas.offsetLeft;
 
+      textLayerDiv.className = "text-layer";
+
+      containerDiv.appendChild(textLayerDiv);
+
       containerDiv.style.height = mainCanvas.height.toString() + "px";
       containerDiv.style.width = mainCanvas.width.toString() + "px";
 
-      let context = mainCanvas.getContext("2d");
 
+      let annotationLayer = document.createElement("div");
+      annotationLayer.classList.add("annotationLayer");
+      annotationLayer.style.height = viewport.height + "px";
+      annotationLayer.style.width = viewport.width + "px";
+      annotationLayer.style.top = mainCanvas.offsetTop;
+      annotationLayer.style.left = mainCanvas.offsetLeft;
+
+      containerDiv.appendChild(annotationLayer);
+
+      let context = mainCanvas.getContext("2d");
       let renderContext = {
         canvasContext: context,
         viewport: viewport,
       };
-
       let renderTask = page.render(renderContext);
       renderTask.promise.then(function () {
         console.log("Page rendered");
-        renderV3DFiles(i, coreDocument, containerDiv);
+        renderV3DFiles(page.ref, coreDocument, containerDiv, i);
       });
       page.getTextContent().then(function (textContent) {
         let textLayer = new TextLayerBuilder({
@@ -138,14 +173,116 @@ function renderPages(pdf, pages, coreDocument) {
           viewport: viewport,
           eventBus: {
             dispatch: function dispatch(a, b) {
-              console.log(a, b);
             },
           },
         });
 
         textLayer.setTextContent(textContent);
         textLayer.render();
+
       });
+
+      //setupAnnotations(page, viewport, mainCanvas, annotationLayer);
+
+      /*let pdfLinkService = new pdfjsViewer.PDFLinkService();
+      page.getAnnotations().then(
+        function (annotationsData) {
+          viewport = viewport.clone({
+            dontFlip: true
+          });
+          let annotLayer = new AnnotationLayerBuilder(
+            {
+              pageDiv: containerDiv,
+              pdfPage: page,
+              linkService: pdfLinkService,
+              renderForms: true,
+              annotationStorage: annotationsData,
+              div: annotationLayer,
+            }
+          )
+          annotLayer.render(viewport).then(() => { console.log("Annotations Rendered.") });
+          /*console.log(annotationsData);
+          pdfjs.AnnotationLayer.render({
+            viewport: viewport,
+            div: annotationLayer,
+            annotations: annotationsData,
+            page: page,
+            linkService: pdfLinkService,
+            enableScripting: true,
+            renderInteractiveForms: true
+          });*//*
+}
+) */
+
+    }
+  )
+  containerDiv.classList.add("visible");
+}
+
+function setupAnnotations(page, viewport, canvas, annotationLayerDiv) {
+  let promise = page.getAnnotations().then(function (annotationsData) {
+    viewport = viewport.clone({
+      dontFlip: true
+    });
+
+    for (let i = 0; i < annotationsData.length; i++) {
+      let data = annotationsData[i];
+      console.log(data);
+      let annotation = pdfjs.Annotation.fromData(data);
+      if (!annotation || !annotation.hasHtml()) {
+        continue;
+      }
+
+      let element = annotation.getHtmlElement(page.commonObjs);
+      data = annotation.getData();
+      let rect = data.rect;
+      let view = page.view;
+      rect = pdfjs.Util.normalizeRect([
+        rect[0],
+        view[3] - rect[1] + view[1],
+        rect[2],
+        view[3] - rect[3] + view[1]]);
+      element.style.left = (canvas.offsetLeft + rect[0]) + 'px';
+      element.style.top = (canvas.offsetTop + rect[1]) + 'px';
+      element.style.position = 'abslute';
+
+      let transform = viewport.transform;
+      let transformStr = 'matrix(' + transform.join(',') + ')';
+      CustomStyle.setProp('transform', element, transformStr);
+      let transformOriginStr = -rect[0] + 'px ' + -rect[1] + 'px';
+      CustomStyle.setProp('transformOrigin', element, transformOriginStr);
+
+      if (data.subtype === 'Link' && !data.url) {
+        // In this example,  I do not handle the `Link` annotations without url.
+        // If you want to handle those annotations, see `web/page_view.js`.
+        continue;
+      }
+      annotationLayerDiv.appendChild(element);
+    }
+  });
+  return promise;
+}
+
+
+function setUpPages(pdf, pages) {
+  let pdfDiv = document.createElement("div");
+  pdfDiv.id = "pdfDiv";
+  document.body.appendChild(pdfDiv);
+  for (let i = 1; i <= pages; i++) {
+    let loadPage = pdf.getPage(i);
+    loadPage.then(function (page) {
+      let containerDiv = document.createElement("div");
+      containerDiv.className = "container";
+      containerDiv.id = `Page ${i} Container`;
+
+      pdfDiv.appendChild(containerDiv);
+
+      let viewport = page.getViewport({ scale: scale });
+
+      containerDiv.style.height = viewport.height + "px";
+      containerDiv.style.width = viewport.width + "px";
+
+      visiblePages();
     });
   }
 }
@@ -153,14 +290,15 @@ function renderPages(pdf, pages, coreDocument) {
 export function processPDF(arrayBuffer) {
   let pdftask = pdfjs.getDocument(arrayBuffer);
 
-  pdftask.promise.then(function (pdf) {
+  pdftask.promise.then(function (_pdf) {
+    pdf = _pdf
     let numPages = pdf.numPages;
     let pdfStream = new Stream(arrayBuffer, 0, arrayBuffer.length, null);
-    let coreDocument = new pdfJsDocument.PDFDocument(null, pdfStream);
+    coreDocument = new pdfJsDocument.PDFDocument(null, pdfStream);
 
     coreDocument.parseStartXRef();
     coreDocument.parse();
 
-    renderPages(pdf, numPages, coreDocument);
+    setUpPages(pdf, numPages);
   });
 }
