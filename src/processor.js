@@ -147,14 +147,6 @@ function renderPage(i, containerDiv, textLayerDiv) {
       containerDiv.style.width = mainCanvas.width.toString() + "px";
 
 
-      let annotationLayer = document.createElement("div");
-      annotationLayer.classList.add("annotationLayer");
-      annotationLayer.style.height = viewport.height + "px";
-      annotationLayer.style.width = viewport.width + "px";
-      annotationLayer.style.top = mainCanvas.offsetTop;
-      annotationLayer.style.left = mainCanvas.offsetLeft;
-
-      containerDiv.appendChild(annotationLayer);
 
       let context = mainCanvas.getContext("2d");
       let renderContext = {
@@ -181,87 +173,11 @@ function renderPage(i, containerDiv, textLayerDiv) {
         textLayer.render();
 
       });
-
-      //setupAnnotations(page, viewport, mainCanvas, annotationLayer);
-
-      /*let pdfLinkService = new pdfjsViewer.PDFLinkService();
-      page.getAnnotations().then(
-        function (annotationsData) {
-          viewport = viewport.clone({
-            dontFlip: true
-          });
-          let annotLayer = new AnnotationLayerBuilder(
-            {
-              pageDiv: containerDiv,
-              pdfPage: page,
-              linkService: pdfLinkService,
-              renderForms: true,
-              annotationStorage: annotationsData,
-              div: annotationLayer,
-            }
-          )
-          annotLayer.render(viewport).then(() => { console.log("Annotations Rendered.") });
-          /*console.log(annotationsData);
-          pdfjs.AnnotationLayer.render({
-            viewport: viewport,
-            div: annotationLayer,
-            annotations: annotationsData,
-            page: page,
-            linkService: pdfLinkService,
-            enableScripting: true,
-            renderInteractiveForms: true
-          });*//*
-}
-) */
-
     }
   )
   containerDiv.classList.add("visible");
 }
 
-function setupAnnotations(page, viewport, canvas, annotationLayerDiv) {
-  let promise = page.getAnnotations().then(function (annotationsData) {
-    viewport = viewport.clone({
-      dontFlip: true
-    });
-
-    for (let i = 0; i < annotationsData.length; i++) {
-      let data = annotationsData[i];
-      console.log(data);
-      let annotation = pdfjs.Annotation.fromData(data);
-      if (!annotation || !annotation.hasHtml()) {
-        continue;
-      }
-
-      let element = annotation.getHtmlElement(page.commonObjs);
-      data = annotation.getData();
-      let rect = data.rect;
-      let view = page.view;
-      rect = pdfjs.Util.normalizeRect([
-        rect[0],
-        view[3] - rect[1] + view[1],
-        rect[2],
-        view[3] - rect[3] + view[1]]);
-      element.style.left = (canvas.offsetLeft + rect[0]) + 'px';
-      element.style.top = (canvas.offsetTop + rect[1]) + 'px';
-      element.style.position = 'abslute';
-
-      let transform = viewport.transform;
-      let transformStr = 'matrix(' + transform.join(',') + ')';
-      CustomStyle.setProp('transform', element, transformStr);
-      let transformOriginStr = -rect[0] + 'px ' + -rect[1] + 'px';
-      CustomStyle.setProp('transformOrigin', element, transformOriginStr);
-
-      if (data.subtype === 'Link' && !data.url) {
-        // In this example,  I do not handle the `Link` annotations without url.
-        // If you want to handle those annotations, see `web/page_view.js`.
-        continue;
-      }
-      annotationLayerDiv.appendChild(element);
-    }
-  });
-  return promise;
-}
 
 
 function setUpPages(pdf, pages) {
@@ -298,7 +214,6 @@ export function processPDF(arrayBuffer) {
 
     coreDocument.parseStartXRef();
     coreDocument.parse();
-
     setUpPages(pdf, numPages);
   });
 }
