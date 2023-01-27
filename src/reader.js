@@ -30,12 +30,12 @@ let zoominbutton = document.getElementById("zoom-in");
 zoominbutton.onclick = function () {
   process.setScale(process.getScale() + 0.25);
   pageScale.textContent = process.getScale() * 100;
-
-  process.processPDF(pdfContent);
   document.body.removeChild(document.getElementById("pdfDiv"));
+  process.processPDF(pdfContent);
+  process.visiblePages();
 };
 
-var zoomoutbutton = document.getElementById("zoom-out");
+let zoomoutbutton = document.getElementById("zoom-out");
 zoomoutbutton.onclick = function () {
   if (process.getScale() <= 0.25) {
     return;
@@ -44,4 +44,9 @@ zoomoutbutton.onclick = function () {
   pageScale.textContent = process.getScale() * 100;
   document.body.removeChild(document.getElementById("pdfDiv"));
   process.processPDF(pdfContent);
+  process.visiblePages();
 };
+
+window.onscroll = function () {
+  process.visiblePages();
+}

@@ -3,11 +3,19 @@ import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
 import { TextLayerBuilder } from "pdfjs-dist/lib/web/text_layer_builder";
 import { Ref } from "pdfjs-dist/lib/core/primitives";
+<<<<<<< HEAD
+=======
+import * as pdfjsViewer from "pdfjs-dist/web/pdf_viewer";
+import { AnnotationLayerBuilder } from "pdfjs-dist/web/pdf_viewer";
+
+>>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
 
 //Changes pdfjs by removing sdtats in xref.js and changed xrefstats in parser.js
 
 let v3dFile;
 let scale = 1.5;
+let pdf;
+let coreDocument;
 
 export function setScale(newScale) {
   scale = newScale;
@@ -16,6 +24,10 @@ export function setScale(newScale) {
 export function getScale() {
   return scale;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
 function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   let ref = new Ref(pageRef.num, pageRef.gen);
   let page = PDFDocument.xref.fetch(ref);
@@ -87,6 +99,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
+<<<<<<< HEAD
 function renderPages(pdf, pages, coreDocument) {
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";
@@ -97,38 +110,76 @@ function renderPages(pdf, pages, coreDocument) {
       let containerDiv = document.createElement("div");
       containerDiv.className = "container";
       containerDiv.id = `Page ${i} Container`;
+=======
+export function visiblePages() {
+  let pages = document.getElementsByClassName("container");
+  for (let i = 0; i < pages.length; i++) {
+    let container = pages.item(i);
+    if (container.offsetTop + container.offsetHeight < window.scrollY ||
+      container.offsetTop > window.scrollY + window.outerHeight) {
+      if (container.classList.contains("visible")) {
+        removePage(i);
+      }
+    }
+    else {
+      if (!container.classList.contains("visible")) {
+        renderPage(i + 1, container, container.firstChild);
+      }
+    }
+  }
+}
+>>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
 
-      let textLayerDiv = document.createElement("div");
-      containerDiv.appendChild(textLayerDiv);
+function removePage(i) {
+  let container = document.getElementById(`Page ${i + 1} Container`);
+  container.innerHTML = ``;
+  container.classList.remove("visible");
+}
 
+<<<<<<< HEAD
       let resolution = 2;
 
+=======
+
+function renderPage(i, containerDiv, textLayerDiv) {
+  let loadPage = pdf.getPage(i);
+  loadPage.then(
+    function (page) {
+>>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
       let mainCanvas = document.createElement("canvas");
       mainCanvas.id = `Page ${i} Canvas`;
       mainCanvas.className = "page";
       containerDiv.appendChild(mainCanvas);
-      pdfDiv.appendChild(containerDiv);
 
       let viewport = page.getViewport({ scale: scale });
       mainCanvas.height = viewport.height;
       mainCanvas.width = viewport.width;
 
-      textLayerDiv.className = "text-layer";
+      let textLayerDiv = document.createElement("div");
+
 
       textLayerDiv.style.height = viewport.height + "px";
       textLayerDiv.style.width = viewport.width + "px";
       textLayerDiv.style.top = mainCanvas.offsetTop;
       textLayerDiv.style.left = mainCanvas.offsetLeft;
 
+      textLayerDiv.className = "text-layer";
+
+      containerDiv.appendChild(textLayerDiv);
+
       containerDiv.style.height = mainCanvas.height.toString() + "px";
       containerDiv.style.width = mainCanvas.width.toString() + "px";
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
       let context = mainCanvas.getContext("2d");
       let renderContext = {
         canvasContext: context,
         viewport: viewport,
       };
-
       let renderTask = page.render(renderContext);
       renderTask.promise.then(function () {
         console.log("Page rendered");
@@ -147,7 +198,34 @@ function renderPages(pdf, pages, coreDocument) {
 
         textLayer.setTextContent(textContent);
         textLayer.render();
+
       });
+    }
+  )
+  containerDiv.classList.add("visible");
+}
+
+
+
+function setUpPages(pdf, pages) {
+  let pdfDiv = document.createElement("div");
+  pdfDiv.id = "pdfDiv";
+  document.body.appendChild(pdfDiv);
+  for (let i = 1; i <= pages; i++) {
+    let loadPage = pdf.getPage(i);
+    loadPage.then(function (page) {
+      let containerDiv = document.createElement("div");
+      containerDiv.className = "container";
+      containerDiv.id = `Page ${i} Container`;
+
+      pdfDiv.appendChild(containerDiv);
+
+      let viewport = page.getViewport({ scale: scale });
+
+      containerDiv.style.height = viewport.height + "px";
+      containerDiv.style.width = viewport.width + "px";
+
+      visiblePages();
     });
   }
 }
@@ -155,14 +233,14 @@ function renderPages(pdf, pages, coreDocument) {
 export function processPDF(arrayBuffer) {
   let pdftask = pdfjs.getDocument(arrayBuffer);
 
-  pdftask.promise.then(function (pdf) {
+  pdftask.promise.then(function (_pdf) {
+    pdf = _pdf
     let numPages = pdf.numPages;
     let pdfStream = new Stream(arrayBuffer, 0, arrayBuffer.length, null);
-    let coreDocument = new pdfJsDocument.PDFDocument(null, pdfStream);
+    coreDocument = new pdfJsDocument.PDFDocument(null, pdfStream);
 
     coreDocument.parseStartXRef();
     coreDocument.parse();
-
-    renderPages(pdf, numPages, coreDocument);
+    setUpPages(pdf, numPages);
   });
 }
