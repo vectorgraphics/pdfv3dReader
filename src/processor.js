@@ -3,12 +3,9 @@ import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
 import { TextLayerBuilder } from "pdfjs-dist/lib/web/text_layer_builder";
 import { Ref } from "pdfjs-dist/lib/core/primitives";
-<<<<<<< HEAD
-=======
 import * as pdfjsViewer from "pdfjs-dist/web/pdf_viewer";
 import { AnnotationLayerBuilder } from "pdfjs-dist/web/pdf_viewer";
 
->>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
 
 //Changes pdfjs by removing sdtats in xref.js and changed xrefstats in parser.js
 
@@ -24,10 +21,7 @@ export function setScale(newScale) {
 export function getScale() {
   return scale;
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
 function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   let ref = new Ref(pageRef.num, pageRef.gen);
   let page = PDFDocument.xref.fetch(ref);
@@ -99,18 +93,6 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
-<<<<<<< HEAD
-function renderPages(pdf, pages, coreDocument) {
-  let pdfDiv = document.createElement("div");
-  pdfDiv.id = "pdfDiv";
-  document.body.appendChild(pdfDiv);
-  for (let i = 1; i <= pages; i++) {
-    let loadPage = pdf.getPage(i);
-    loadPage.then(function (page) {
-      let containerDiv = document.createElement("div");
-      containerDiv.className = "container";
-      containerDiv.id = `Page ${i} Container`;
-=======
 export function visiblePages() {
   let pages = document.getElementsByClassName("container");
   for (let i = 0; i < pages.length; i++) {
@@ -128,7 +110,6 @@ export function visiblePages() {
     }
   }
 }
->>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
 
 function removePage(i) {
   let container = document.getElementById(`Page ${i + 1} Container`);
@@ -136,16 +117,11 @@ function removePage(i) {
   container.classList.remove("visible");
 }
 
-<<<<<<< HEAD
-      let resolution = 2;
-
-=======
 
 function renderPage(i, containerDiv, textLayerDiv) {
   let loadPage = pdf.getPage(i);
   loadPage.then(
     function (page) {
->>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
       let mainCanvas = document.createElement("canvas");
       mainCanvas.id = `Page ${i} Canvas`;
       mainCanvas.className = "page";
@@ -170,11 +146,8 @@ function renderPage(i, containerDiv, textLayerDiv) {
       containerDiv.style.height = mainCanvas.height.toString() + "px";
       containerDiv.style.width = mainCanvas.width.toString() + "px";
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 3432c32fddb3ed00244f582382a1de5689f3587f
       let context = mainCanvas.getContext("2d");
       let renderContext = {
         canvasContext: context,
