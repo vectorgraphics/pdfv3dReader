@@ -2,6 +2,7 @@ import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
 import { TextLayerBuilder } from "pdfjs-dist/lib/web/text_layer_builder";
+import { Ref } from "pdfjs-dist/lib/core/primitives";
 
 //Changes pdfjs by removing sdtats in xref.js and changed xrefstats in parser.js
 
@@ -15,9 +16,9 @@ export function setScale(newScale) {
 export function getScale() {
   return scale;
 }
-function renderV3DFiles(pageNum, PDFDocument, div) {
-  let xrefPagesDict = PDFDocument.xref.fetch(PDFDocument.xref.root._map.Pages);
-  let page = PDFDocument.xref.fetch(xrefPagesDict._map.Kids[pageNum - 1]);
+function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
+  let ref = new Ref(pageRef.num, pageRef.gen);
+  let page = PDFDocument.xref.fetch(ref);
   let annotationRef = page._map.Annots;
   if (!annotationRef) {
     return;
@@ -58,8 +59,10 @@ function renderV3DFiles(pageNum, PDFDocument, div) {
       fileStream.bufferLength
     )}];`;
 
-    //script.setAttribute("src", "process.js");
-    script.src = document.getElementById("v3d-process-script").href;
+    script.setAttribute(
+      "src",
+      "https://sean-madu.github.io/PDF_ReaderLib/dist/process.js"
+    );
 
     let canvas = document.getElementById(`Page ${pageNum} Canvas`);
 
@@ -91,13 +94,14 @@ function renderPages(pdf, pages, coreDocument) {
   for (let i = 1; i <= pages; i++) {
     let loadPage = pdf.getPage(i);
     loadPage.then(function (page) {
-      console.log(page);
       let containerDiv = document.createElement("div");
       containerDiv.className = "container";
       containerDiv.id = `Page ${i} Container`;
 
       let textLayerDiv = document.createElement("div");
       containerDiv.appendChild(textLayerDiv);
+
+      let resolution = 2;
 
       let mainCanvas = document.createElement("canvas");
       mainCanvas.id = `Page ${i} Canvas`;
@@ -120,7 +124,6 @@ function renderPages(pdf, pages, coreDocument) {
       containerDiv.style.width = mainCanvas.width.toString() + "px";
 
       let context = mainCanvas.getContext("2d");
-
       let renderContext = {
         canvasContext: context,
         viewport: viewport,
@@ -129,7 +132,7 @@ function renderPages(pdf, pages, coreDocument) {
       let renderTask = page.render(renderContext);
       renderTask.promise.then(function () {
         console.log("Page rendered");
-        renderV3DFiles(i, coreDocument, containerDiv);
+        renderV3DFiles(page.ref, coreDocument, containerDiv, i);
       });
       page.getTextContent().then(function (textContent) {
         let textLayer = new TextLayerBuilder({
@@ -138,7 +141,6 @@ function renderPages(pdf, pages, coreDocument) {
           viewport: viewport,
           eventBus: {
             dispatch: function dispatch(a, b) {
-              console.log(a, b);
             },
           },
         });
