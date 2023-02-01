@@ -9,4 +9,4 @@ To use it in a website, include the transform.js file as following in your site
 
 and link your pdf file as follows without the sqaure brackets
 
-<a href="[webpage url here]?filename=[link to pdf here]">PDF TEST</a>
+<a href="[webpage url here]?filename=[link to pdf here]">[Link Name]</a>
