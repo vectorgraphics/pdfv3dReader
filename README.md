@@ -18,7 +18,7 @@ and link your pdf file as a href as follows
 ***
 **NOTE FOR FUTURE DEVELOPMENT**
 ***
-webpacks worker script is a bit finicky, so we have to use a tedious workaround, in dist/reader.html paste the generated pdf.worker in the workerScript tag then change the reader.js line
+webpacks worker script is a bit finicky, so we have to use a tedious workaround, in dist/reader.html paste the generated pdf.worker in the workerScript tag (Do this ONLY if new worker is made) then change the reader.js line
 
 
 
@@ -38,3 +38,4 @@ module.exports = function Worker_fn() {
           return new Worker(workerBlobUrl);
 }
 ```
+Finally whenever you edit a file such as the overlay.css or the reader.js, make sure to change it to the apporiate local file name then switch back to linking to this repos when you push. Have fun!
