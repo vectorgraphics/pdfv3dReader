@@ -38,4 +38,7 @@ module.exports = function Worker_fn() {
           return new Worker(workerBlobUrl);
 }
 ```
-Finally whenever you edit a file such as the overlay.css or the reader.js, make sure to change it to the apporiate local file name in the transform.js file and other html files in the dist folder then switch back to linking to this repos when you push. Have fun!
+Finally whenever you edit a file such as the overlay.css or the reader.js, make sure to change it to the apporiate local file name in the transform.js file and other html files in the dist folder then switch back to linking to this repos when you push.
+
+P.S Dont fogett the index.html file too! For testing purposes
+Have fun!
