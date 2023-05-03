@@ -1,3 +1,5 @@
+//This is what runs inside of the iframe that processes the v3d object
+
 import * as v3dconv from "./v3dconv";
 
 function load_asy_gl() {

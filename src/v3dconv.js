@@ -1,3 +1,4 @@
+//gets the v3d binary data to pass to asy_gl
 ("use scrict");
 import * as v3dheadertypes from "./v3dheadertypes.js";
 import * as v3dtypes from "./v3dtypes.js";

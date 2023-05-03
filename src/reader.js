@@ -1,3 +1,4 @@
+//This is the script for the pdf viewer
 import * as process from "./processor.js";
 
 let pdfContent;

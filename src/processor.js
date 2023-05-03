@@ -1,3 +1,5 @@
+// This is the pdf processor
+
 import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
