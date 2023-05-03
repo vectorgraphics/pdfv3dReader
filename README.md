@@ -1,15 +1,40 @@
-PDF READER LIBRARY
+**PDF READER LIBRARY**
+***
 
-This repo is a JavaScript based PDF Viewer that allows for display of embedded V3D Content. 
+This repo is a JavaScript based PDF Viewer that allows for display of pdf's with embedded V3D Content use Node.js and webpack
 
-More about V3D here - https://github.com/vectorgraphics/v3d
+More about V3D here 
+- https://github.com/vectorgraphics/v3d
 
 To generate PDF's with V3D files embedded, you can learn about the asymptote vector graphics language here
 - https://asymptote.sourceforge.io/
 
 
 To use it in a website, include the transform.js file as following in your site    
-<script defer src="https://sean-madu.github.io/PDF_ReaderLib/dist/transform.js"></script>
+<script defer src= "https://sean-madu.github.io/PDF_ReaderLib/dist/transform.js" > </script>
 
 and link your pdf file as a href as follows
 "[webpage url here]?filename=[link to pdf here]">
+***
+**NOTE FOR FUTURE DEVELOPMENT**
+***
+webpacks worker script is a bit finicky, so we have to use a tedious workaround, in dist/reader.html paste the generated pdf.worker in the workerScript tag then change the reader.js line
+
+
+
+```
+module.exports = function Worker_fn() {
+    .... //Whatever is in here 
+}
+```
+
+to 
+```
+module.exports = function Worker_fn() {
+          let script = document.getElementById("workerScript");
+
+          let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
+          let workerBlobUrl = URL.createObjectURL(workerBlob);
+          return new Worker(workerBlobUrl);
+}
+```
