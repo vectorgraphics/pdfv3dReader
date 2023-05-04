@@ -4,9 +4,10 @@ import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
 import { TextLayerBuilder } from "pdfjs-dist/lib/web/text_layer_builder";
+import { AnnotationLayerBuilder } from "pdfjs-dist/lib/web/annotation_layer_builder";
 import { Ref } from "pdfjs-dist/lib/core/primitives";
 import * as pdfjsViewer from "pdfjs-dist/web/pdf_viewer";
-import { AnnotationLayerBuilder } from "pdfjs-dist/web/pdf_viewer";
+import { PDFLinkService } from "pdfjs-dist/lib/web/pdf_link_service";
 
 
 //Changes pdfjs by removing sdtats in xref.js and changed xrefstats in parser.js
@@ -148,6 +149,17 @@ function renderPage(i, containerDiv, textLayerDiv) {
       containerDiv.style.height = mainCanvas.height.toString() + "px";
       containerDiv.style.width = mainCanvas.width.toString() + "px";
 
+      let annotationLayerDiv = document.createElement("div");
+
+      annotationLayerDiv.style.height = viewport.height + "px";
+      annotationLayerDiv.style.width = viewport.width + "px";
+      annotationLayerDiv.style.top = mainCanvas.offsetTop;
+      annotationLayerDiv.style.left = mainCanvas.offsetLeft;
+
+      annotationLayerDiv.className = "annotation-layer";
+
+      containerDiv.appendChild(annotationLayerDiv);
+
 
 
       let context = mainCanvas.getContext("2d");
@@ -175,6 +187,29 @@ function renderPage(i, containerDiv, textLayerDiv) {
         textLayer.render();
 
       });
+
+      //TODO look into faking an event bus for internal scrolling
+      let eventBus = null;
+      let linkService = new PDFLinkService({ eventBus: eventBus });
+      linkService.setDocument(pdf);
+      //TODO look into faking a pdf viewer as well
+      let annotationLayer = new AnnotationLayerBuilder({
+        pageDiv: containerDiv,
+        pdfPage: page,
+        enableScripting: true,
+        linkService: linkService
+      });
+
+
+      annotationLayer.render(viewport).then(
+        function (data) {
+          annotationLayer.div.style.height = viewport.height + "px";
+          annotationLayer.div.style.width = viewport.width + "px";
+          annotationLayer.div.style.top = mainCanvas.offsetTop;
+          annotationLayer.div.style.left = mainCanvas.offsetLeft;
+        }
+      );
+
     }
   )
   containerDiv.classList.add("visible");
