@@ -180,6 +180,10 @@ body {
   text-align: initial;
 }
 
+.annotationLayer .lineAnnotation {
+  border-style: none;
+}
+
 .annotationLayer .linkAnnotation > a,
 .annotationLayer .buttonWidgetAnnotation.pushButton > a {
   position: absolute;

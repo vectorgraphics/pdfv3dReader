@@ -142,24 +142,12 @@ function renderPage(i, containerDiv, textLayerDiv) {
       textLayerDiv.style.top = mainCanvas.offsetTop;
       textLayerDiv.style.left = mainCanvas.offsetLeft;
 
-      textLayerDiv.className = "text-layer";
+      textLayerDiv.className = "textLayer";
 
       containerDiv.appendChild(textLayerDiv);
 
       containerDiv.style.height = mainCanvas.height.toString() + "px";
       containerDiv.style.width = mainCanvas.width.toString() + "px";
-
-      let annotationLayerDiv = document.createElement("div");
-
-      annotationLayerDiv.style.height = viewport.height + "px";
-      annotationLayerDiv.style.width = viewport.width + "px";
-      annotationLayerDiv.style.top = mainCanvas.offsetTop;
-      annotationLayerDiv.style.left = mainCanvas.offsetLeft;
-
-      annotationLayerDiv.className = "annotation-layer";
-
-      containerDiv.appendChild(annotationLayerDiv);
-
 
 
       let context = mainCanvas.getContext("2d");
@@ -192,7 +180,7 @@ function renderPage(i, containerDiv, textLayerDiv) {
       let eventBus = null;
       let linkService = new PDFLinkService({ eventBus: eventBus });
       linkService.setDocument(pdf);
-      //TODO look into faking a pdf viewer as well
+      //TODO look into faking a pdf viewer as well (check the code for link services to see)
       let annotationLayer = new AnnotationLayerBuilder({
         pageDiv: containerDiv,
         pdfPage: page,
