@@ -4,9 +4,13 @@ import * as process from "./processor.js";
 let pdfContent;
 
 let currentURL = window.location.href;
+
 let currentstr = currentURL.toString();
 let defaultLink = document.getElementById("default-view-link");
-let filename = decodeURIComponent(currentstr.slice(currentstr.search("=") + 1));
+let url = new URL(currentURL);
+let params = url.searchParams;
+
+let filename = params.get("pdf");
 let file = filename.substring(filename.lastIndexOf("/") + 1);
 let title = document.createElement("title");
 let navbarName = document.getElementById("pdf-name");
