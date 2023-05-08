@@ -13,8 +13,13 @@ To generate PDF's with V3D files embedded, you can learn about the asymptote vec
 To use it in a website, include the transform.js file as following in your site    
 <script defer src= "https://sean-madu.github.io/PDF_ReaderLib/dist/transform.js" > </script>
 
-and link your pdf file as a href as follows
-"[webpage url here]?filename=[link to pdf here]">
+and link your pdf as a [query string](https://en.wikipedia.org/wiki/Query_string)  as seen below
+- "[webpage url here]?pdf=[link to pdf here]">
+
+
+or if you have multiple query strings, it might look more like this
+
+- "[webpage url here]?query1="catAndDog"&pdf=[link to pdf here]">
 ***
 **NOTE FOR FUTURE DEVELOPMENT**
 ***
@@ -40,5 +45,5 @@ module.exports = function Worker_fn() {
 ```
 Finally whenever you edit a file such as the overlay.css or the reader.js, make sure to change it to the apporiate local file name in the transform.js file and other html files in the dist folder then switch back to linking to this repos when you push.
 
-P.S Dont fogett the index.html file too! For testing purposes
+P.S Dont forget the index.html, its useful for testing and it has examples of how it can be used.
 Have fun!
