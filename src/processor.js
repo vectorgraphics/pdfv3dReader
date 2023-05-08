@@ -1,5 +1,6 @@
 // This is the pdf processor
 
+//TODO fix annotation lyer and texxt layer being on the same index? Maybe have the link subclass be higher
 import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
@@ -142,7 +143,7 @@ function renderPage(i, containerDiv, textLayerDiv) {
       textLayerDiv.style.top = mainCanvas.offsetTop;
       textLayerDiv.style.left = mainCanvas.offsetLeft;
 
-      textLayerDiv.className = "textLayer";
+      textLayerDiv.className = "text-layer";
 
       containerDiv.appendChild(textLayerDiv);
 

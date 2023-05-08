@@ -28,14 +28,14 @@ body {
 
 .file-frame {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   border: solid black 1px;
   margin: none;
   padding: none;
 }
 
 .text-layer {
-  z-index: 1;
+  z-index: 2;
   position: absolute;
   overflow: hidden;
   opacity: 0.2;
@@ -154,7 +154,7 @@ body {
 }
 
 .sticky {
-  z-index: 3;
+  z-index: 4;
   position: fixed;
   top: 0;
   width: 100%;
@@ -171,21 +171,26 @@ body {
 }
 
 .annotationLayer{
-  z-index: 1;
+  pointer-events: none;
+  z-index: 2;
   position: absolute;
 }
+
 
 .annotationLayer section {
   position: absolute;
   text-align: initial;
+
 }
 
 .annotationLayer .lineAnnotation {
   border-style: none;
 }
 
+
 .annotationLayer .linkAnnotation > a,
 .annotationLayer .buttonWidgetAnnotation.pushButton > a {
+  pointer-events: auto;
   position: absolute;
   font-size: 1em;
   top: 0;
