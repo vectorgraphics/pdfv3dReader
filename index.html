@@ -2,40 +2,51 @@
 <html title="PDF File Reader">
   <head>
     <meta charset=" UTF-8" />
-    <script
-      defer
-      src="https://sean-madu.github.io/PDF_ReaderLib/dist/transform.js"
-    ></script>
+    <script defer src="./dist/transform.js"></script>
   </head>
   <body>
     <p>Below is examples of the PDF Reader</p>
     <ul>
       <li>
         <a
-          href="http://127.0.0.1:5500?filename=http://127.0.0.1:5500/TestFiles/test.pdf"
+          href="http://127.0.0.1:5500?pdf=http://127.0.0.1:5500/TestFiles/test.pdf&q=qwrt"
         >
           Teapot PDF
         </a>
       </li>
       <li>
         <a
-          href="http://127.0.0.1:5500?filename=http://127.0.0.1:5500/TestFiles/pages.pdf"
+          href="http://127.0.0.1:5500?pdf=http://127.0.0.1:5500/TestFiles/pages.pdf"
         >
           2 Pages Test
         </a>
       </li>
       <li>
         <a
-          href="http://127.0.0.1:5500?filename=http://127.0.0.1:5500/TestFiles/test2.pdf"
+          href="http://127.0.0.1:5500?pdf=http://127.0.0.1:5500/TestFiles/test2.pdf"
         >
           Lots of teapots test
         </a>
       </li>
       <li>
         <a
-          href="http://127.0.0.1:5500?filename=http://127.0.0.1:5500/TestFiles/link.pdf"
+          href="http://127.0.0.1:5500?pdf=http://127.0.0.1:5500/TestFiles/link.pdf"
         >
           Do Links works (No not yet)</a
+        >
+      </li>
+      <li>
+        <a
+          href="http://127.0.0.1:5500?filen=http://127.0.0.1:5500/TestFiles/link.pdf&hu=ww.google.com"
+        >
+          Test for faulty URL</a
+        >
+      </li>
+      <li>
+        <a
+          href="http://127.0.0.1:5500?filename=http://127.0.0.1:5500/TestFiles/link.pdf"
+        >
+          Another faulty URL</a
         >
       </li>
     </ul>

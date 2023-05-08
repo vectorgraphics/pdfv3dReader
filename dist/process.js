@@ -14495,6 +14495,7 @@ let v3dtypes_animation = 2048;
 // EXTERNAL MODULE: ./node_modules/buffer/index.js
 var buffer = __webpack_require__(8764);
 ;// CONCATENATED MODULE: ./src/v3dconv.js
+//gets the v3d binary data to pass to asy_gl
 ("use scrict");
 
 
@@ -15024,6 +15025,8 @@ class V3DReader {
 }
 
 ;// CONCATENATED MODULE: ./src/process.js
+//This is what runs inside of the iframe that processes the v3d object
+
 
 
 function load_asy_gl() {
