@@ -34,7 +34,7 @@ if (filename != null) {
         </div>
         <div id="center-navbar">
           <div id="pageMenu">
-            <input type="text" id="pageNumber" />
+            <input type="text" id="pageNumber" value="1"/>
             <a id="divider">/</a>
             <a id="totalPageNumber">0</a>
           </div>

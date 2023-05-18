@@ -105505,6 +105505,10 @@
     // This is the pdf processor
 
     //TODO need to mimic the pdf viewer scroll into view thing. Maybe the ref tells us how far 2 scroll in original dimensions? (IT does, need to work on page transitions then doing allat)
+    //TODO reduce popping by rendering pages infront and behind all visible pages, else it hurts  my eyes to scroll lol.
+    // TODO reduce popping when zooming
+    //TODO FIX PHONE?? Why is it like that on a phone???
+    //TODO add input to page menu
 
 
 
@@ -105604,8 +105608,10 @@
 
     function visiblePages() {
       let pages = document.getElementsByClassName("container");
+      let minVisPage = pages.length;
       for (let i = 0; i < pages.length; i++) {
         let container = pages.item(i);
+        //If container out of frame dont render it and mark it as not visible
         if (container.offsetTop + container.offsetHeight < window.scrollY ||
           container.offsetTop > window.scrollY + window.outerHeight) {
           if (container.classList.contains("visible")) {
@@ -105613,11 +105619,20 @@
           }
         }
         else {
+          if (i + 1 < minVisPage) {
+            minVisPage = 1 + i;
+          }
+
           if (!container.classList.contains("visible")) {
             renderPage(i + 1, container, container.firstChild);
+
           }
         }
       }
+      let topPage = document.getElementById("pageNumber");
+      topPage.value = minVisPage.toString();
+
+
     }
 
     function removePage(i) {
@@ -105710,7 +105725,25 @@
       containerDiv.classList.add("visible");
     }
 
+    function gotoPage(i) {
 
+      let pageContainer = document.getElementById(`Page ${i} Container`);
+      pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
+      /*
+      renderPage(i, pageContainer, null);
+    
+      //remove all pages that are visible 
+      let pages = document.getElementsByClassName("visible");
+      for (let j = 0; j < pages.length; j++) {
+        if ((j + 1) != i) {
+          removePage(j);
+          console.log(`removing page ${j + 1}`)
+        }
+      }
+    */
+
+
+    }
 
     function setUpPages(pdf, pages) {
       let totalPageNumber = document.getElementById("totalPageNumber");
@@ -105810,6 +105843,16 @@
     window.onscroll = function () {
       visiblePages();
     }
+
+    let pageNumber = document.getElementById("pageNumber");
+
+    pageNumber.addEventListener("keyup", ({ key }) => {
+      if (key == "Enter") {
+        //Pop into page
+        gotoPage(+pageNumber.value);
+      }
+
+    });
   })();
 
   /******/
