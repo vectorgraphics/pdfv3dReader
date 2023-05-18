@@ -1,6 +1,6 @@
 // This is the pdf processor
 
-//TODO fix annotation lyer and texxt layer being on the same index? Maybe have the link subclass be higher
+//TODO need to mimic the pdf viewer scroll into view thing. Maybe the ref tells us how far 2 scroll in original dimensions? (IT does, need to work on page transitions then doing allat)
 import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
@@ -9,6 +9,7 @@ import { AnnotationLayerBuilder } from "pdfjs-dist/lib/web/annotation_layer_buil
 import { Ref } from "pdfjs-dist/lib/core/primitives";
 import * as pdfjsViewer from "pdfjs-dist/web/pdf_viewer";
 import { PDFLinkService } from "pdfjs-dist/lib/web/pdf_link_service";
+import { EventBus } from "pdfjs-dist/lib/web/event_utils";
 
 
 //Changes pdfjs by removing sdtats in xref.js and changed xrefstats in parser.js
@@ -178,9 +179,10 @@ function renderPage(i, containerDiv, textLayerDiv) {
       });
 
       //TODO look into faking an event bus for internal scrolling
-      let eventBus = null;
+      let eventBus = new EventBus;
       let linkService = new PDFLinkService({ eventBus: eventBus });
       linkService.setDocument(pdf);
+      console.log(pdf.constructor.name);
       //TODO look into faking a pdf viewer as well (check the code for link services to see)
       let annotationLayer = new AnnotationLayerBuilder({
         pageDiv: containerDiv,
@@ -207,6 +209,8 @@ function renderPage(i, containerDiv, textLayerDiv) {
 
 
 function setUpPages(pdf, pages) {
+  let totalPageNumber = document.getElementById("totalPageNumber");
+  totalPageNumber.textContent = pages
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";
   document.body.appendChild(pdfDiv);

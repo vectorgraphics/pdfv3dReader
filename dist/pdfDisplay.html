@@ -1,0 +1,33 @@
+<!--- This is just the pdf reader in a testable format-->
+<!DOCTYPE html>
+<html title="PDF File Reader">
+  <head>
+    <meta charset=" UTF-8" />
+    <link rel="stylesheet" href="./overlay.css" />
+  </head>
+  <body>
+    <div id="navbar" class="sticky">
+      <div id="left-navbar">
+        <a id="pdf-name">LOADING</a>
+      </div>
+      <div id="center-navbar">
+        <div id="pageMenu">
+          <input type="text" id="pageNumber" />
+          <a id="divider">/</a>
+          <a id="totalPageNumber">0</a>
+        </div>
+        <div id="zoom">
+          <button id="zoom-out">-</button>
+          <a id="pageScale"> 150% </a>
+          <button id="zoom-in">+</button>
+        </div>
+      </div>
+      <div id="right-navbar">
+        <div id="save">
+          <a id="default-view-link" href="">DEFAULT VIEWER</a>
+          <button>DEFAULT VIEWER</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

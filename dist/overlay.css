@@ -115,8 +115,7 @@ body {
   top: 0;
   overflow: hidden;
   background-color: black;
-  height: 30px;
-  padding-top: 5px;
+  height: 4%;
   padding-bottom: 5px;
 
 }
@@ -133,9 +132,20 @@ body {
   justify-content: left;
   align-items: center;
   font-family: sans-serif;
-  padding-left: 10px;
 }
-#navbar #zoom {
+#navbar #left-navbar a {
+  height: 100%;
+  width: 33%;
+  float: left;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-family: sans-serif;
+  padding-left: 2%;
+}
+
+/*Used to be #zoom instead of #center-div*/
+#navbar #center-navbar {
   height: 100%;
   width: 33%;
   float: left;
@@ -145,6 +155,33 @@ body {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
+#navbar #center-navbar #pageMenu {
+  width: 50%;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+}
+
+#navbar #center-navbar #pageNumber {
+  width: 5%;
+  background-color:dimgray;
+  color: white;
+  border: none;
+  margin: 1%;
+}
+
+#navbar #center-navbar #pageMenu * {
+  padding: 1%;
+}
+#navbar #center-navbar #zoom {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
 #navbar #right-navbar {
   height: 100%;
   width: 33%;
@@ -152,6 +189,7 @@ body {
   justify-content: right;
   align-items: center;
 }
+
 
 .sticky {
   z-index: 4;

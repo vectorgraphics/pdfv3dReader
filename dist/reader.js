@@ -94978,6 +94978,176 @@
         /***/
 }),
 
+/***/ 9982:
+/***/ ((__unused_webpack_module, exports) => {
+
+        "use strict";
+        var __webpack_unused_export__;
+        /**
+         * @licstart The following is the entire license notice for the
+         * JavaScript code in this page
+         *
+         * Copyright 2022 Mozilla Foundation
+         *
+         * Licensed under the Apache License, Version 2.0 (the "License");
+         * you may not use this file except in compliance with the License.
+         * You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         *
+         * @licend The above is the entire license notice for the
+         * JavaScript code in this page
+         */
+
+
+        __webpack_unused_export__ = ({
+          value: true
+        });
+        __webpack_unused_export__ = exports.Nd = __webpack_unused_export__ = void 0;
+        __webpack_unused_export__ = waitOnEventOrTimeout;
+        const WaitOnType = {
+          EVENT: "event",
+          TIMEOUT: "timeout"
+        };
+        __webpack_unused_export__ = WaitOnType;
+
+        function waitOnEventOrTimeout({
+          target,
+          name,
+          delay = 0
+        }) {
+          return new Promise(function (resolve, reject) {
+            if (typeof target !== "object" || !(name && typeof name === "string") || !(Number.isInteger(delay) && delay >= 0)) {
+              throw new Error("waitOnEventOrTimeout - invalid parameters.");
+            }
+
+            function handler(type) {
+              if (target instanceof EventBus) {
+                target._off(name, eventHandler);
+              } else {
+                target.removeEventListener(name, eventHandler);
+              }
+
+              if (timeout) {
+                clearTimeout(timeout);
+              }
+
+              resolve(type);
+            }
+
+            const eventHandler = handler.bind(null, WaitOnType.EVENT);
+
+            if (target instanceof EventBus) {
+              target._on(name, eventHandler);
+            } else {
+              target.addEventListener(name, eventHandler);
+            }
+
+            const timeoutHandler = handler.bind(null, WaitOnType.TIMEOUT);
+            const timeout = setTimeout(timeoutHandler, delay);
+          });
+        }
+
+        class EventBus {
+          constructor() {
+            this._listeners = Object.create(null);
+          }
+
+          on(eventName, listener, options = null) {
+            this._on(eventName, listener, {
+              external: true,
+              once: options?.once
+            });
+          }
+
+          off(eventName, listener, options = null) {
+            this._off(eventName, listener, {
+              external: true,
+              once: options?.once
+            });
+          }
+
+          dispatch(eventName, data) {
+            const eventListeners = this._listeners[eventName];
+
+            if (!eventListeners || eventListeners.length === 0) {
+              return;
+            }
+
+            let externalListeners;
+
+            for (const {
+              listener,
+              external,
+              once
+            } of eventListeners.slice(0)) {
+              if (once) {
+                this._off(eventName, listener);
+              }
+
+              if (external) {
+                (externalListeners ||= []).push(listener);
+                continue;
+              }
+
+              listener(data);
+            }
+
+            if (externalListeners) {
+              for (const listener of externalListeners) {
+                listener(data);
+              }
+
+              externalListeners = null;
+            }
+          }
+
+          _on(eventName, listener, options = null) {
+            const eventListeners = this._listeners[eventName] ||= [];
+            eventListeners.push({
+              listener,
+              external: options?.external === true,
+              once: options?.once === true
+            });
+          }
+
+          _off(eventName, listener, options = null) {
+            const eventListeners = this._listeners[eventName];
+
+            if (!eventListeners) {
+              return;
+            }
+
+            for (let i = 0, ii = eventListeners.length; i < ii; i++) {
+              if (eventListeners[i].listener === listener) {
+                eventListeners.splice(i, 1);
+                return;
+              }
+            }
+          }
+
+        }
+
+        exports.Nd = EventBus;
+
+        class AutomationEventBus extends EventBus {
+          dispatch(eventName, data) {
+            throw new Error("Not implemented: AutomationEventBus.dispatch");
+          }
+
+        }
+
+        __webpack_unused_export__ = AutomationEventBus;
+
+        /***/
+}),
+
 /***/ 7707:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -95285,12 +95455,15 @@
 
             if (typeof destRef === "object" && destRef !== null) {
               pageNumber = this._cachedPageNumber(destRef);
-
+              console.log(pageNumber);
               if (!pageNumber) {
                 this.pdfDocument.getPageIndex(destRef).then(pageIndex => {
                   this.cachePageRef(pageIndex + 1, destRef);
                   this.#goToDestinationHelper(rawDest, namedDest, explicitDest);
                 }).catch(() => {
+                  console.log(typeof destRef);
+                  console.log(destRef === null);
+                  console.log(explicitDest);
                   console.error(`PDFLinkService.#goToDestinationHelper: "${destRef}" is not ` + `a valid page reference, for dest="${rawDest}".`);
                 });
                 return;
@@ -105326,8 +105499,12 @@
     var pdf_viewer = __webpack_require__(7963);
     // EXTERNAL MODULE: ./node_modules/pdfjs-dist/lib/web/pdf_link_service.js
     var pdf_link_service = __webpack_require__(6379);
+    // EXTERNAL MODULE: ./node_modules/pdfjs-dist/lib/web/event_utils.js
+    var event_utils = __webpack_require__(9982);
     ;// CONCATENATED MODULE: ./src/processor.js
     // This is the pdf processor
+
+    //TODO need to mimic the pdf viewer scroll into view thing. Maybe the ref tells us how far 2 scroll in original dimensions? (IT does, need to work on page transitions then doing allat)
 
 
 
@@ -105506,9 +105683,10 @@
           });
 
           //TODO look into faking an event bus for internal scrolling
-          let eventBus = null;
+          let eventBus = new event_utils/* EventBus */.Nd;
           let linkService = new pdf_link_service/* PDFLinkService */.dM({ eventBus: eventBus });
           linkService.setDocument(pdf);
+          console.log(pdf.constructor.name);
           //TODO look into faking a pdf viewer as well (check the code for link services to see)
           let annotationLayer = new annotation_layer_builder/* AnnotationLayerBuilder */.f({
             pageDiv: containerDiv,
@@ -105535,6 +105713,8 @@
 
 
     function setUpPages(pdf, pages) {
+      let totalPageNumber = document.getElementById("totalPageNumber");
+      totalPageNumber.textContent = pages
       let pdfDiv = document.createElement("div");
       pdfDiv.id = "pdfDiv";
       document.body.appendChild(pdfDiv);
@@ -105579,9 +105759,13 @@
     let pdfContent;
 
     let currentURL = window.location.href;
+
     let currentstr = currentURL.toString();
     let defaultLink = document.getElementById("default-view-link");
-    let filename = decodeURIComponent(currentstr.slice(currentstr.search("=") + 1));
+    let url = new URL(currentURL);
+    let params = url.searchParams;
+
+    let filename = params.get("pdf");
     let file = filename.substring(filename.lastIndexOf("/") + 1);
     let title = document.createElement("title");
     let navbarName = document.getElementById("pdf-name");
