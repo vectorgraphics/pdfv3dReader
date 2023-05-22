@@ -1,0 +1,23 @@
+\documentclass[12pt]{article}
+\usepackage[bigfiles]{media9}
+\usepackage{hyperref}
+\begin{document}
+text before
+\hyperlink{teapot}{Link to teapot.}
+\\
+\href{http://www.texample.net/tikz/resources/}{\TeX Example Site}
+\\
+\includemedia[noplaybutton, activate=pagevisible, 3Droo=300,width=416px,height=416px]{}{teapot.v3d}%
+\\
+text after
+\pagebreak
+\include{Introduction}
+\include{chapter_1}
+\include{chapter_2}
+\include{chapter_3}
+\include{chapter_4}
+\hypertarget{teapot}
+This is a teapot.
+\vfill
+\includemedia[noplaybutton, activate=pagevisible, 3Droo=300,width=416px,height=416px]{}{teapot.v3d}%
+\end{document}

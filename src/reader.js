@@ -55,3 +55,13 @@ zoomoutbutton.onclick = function () {
 window.onscroll = function () {
   process.visiblePages();
 }
+
+let pageNumber = document.getElementById("pageNumber");
+
+pageNumber.addEventListener("keyup", ({ key }) => {
+  if (key == "Enter") {
+    //Pop into page
+    process.gotoPage(+pageNumber.value);
+  }
+
+});

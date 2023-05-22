@@ -1,15 +1,51 @@
 // This is the pdf processor
 
+//TODO reduce popping by rendering pages infront and behind all visible pages, else it hurts  my eyes to scroll lol.
+// TODO reduce popping when zooming
+//TODO FIX PHONE?? Why is it like that on a phone???
+//TODO add input to page menu
+//TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
+//TODO Zoom resets to first page
+// Zoom too big and page gets cut off? 
+//Set minimize to true in webpack config
 import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
 import { TextLayerBuilder } from "pdfjs-dist/lib/web/text_layer_builder";
+import { AnnotationLayerBuilder } from "pdfjs-dist/lib/web/annotation_layer_builder";
 import { Ref } from "pdfjs-dist/lib/core/primitives";
 import * as pdfjsViewer from "pdfjs-dist/web/pdf_viewer";
-import { AnnotationLayerBuilder } from "pdfjs-dist/web/pdf_viewer";
+import { PDFLinkService } from "pdfjs-dist/lib/web/pdf_link_service";
+import { EventBus } from "pdfjs-dist/lib/web/event_utils";
 
 
 //Changes pdfjs by removing sdtats in xref.js and changed xrefstats in parser.js
+
+class V3DViewer {
+  currentPageNumber;
+  pagesRotation;
+  constructor() {
+
+  }
+
+  scrollPageIntoView({ pageNumber, destArray, ignoreDestinationZoom }) {
+    if (ignoreDestinationZoom) {
+      setScale(1.5);
+    }
+
+    let pageContainer = document.getElementById(`Page ${pageNumber} Container`);
+    pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
+
+    let xCord = pageContainer.clientWidth - (destArray[2] * scale);
+    let yCord = pageContainer.clientHeight - (destArray[3] * scale) - document.getElementById("navbar").clientHeight;
+    console.log(yCord);
+    console.log(yCord + document.getElementById("navbar").clientHeight);
+    window.scrollBy({ top: yCord, left: xCord, behavior: "smooth" });
+    console.log(destArray);
+
+
+  }
+}
 
 let v3dFile;
 let scale = 1.5;
@@ -97,8 +133,10 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
 
 export function visiblePages() {
   let pages = document.getElementsByClassName("container");
+  let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
     let container = pages.item(i);
+    //If container out of frame dont render it and mark it as not visible
     if (container.offsetTop + container.offsetHeight < window.scrollY ||
       container.offsetTop > window.scrollY + window.outerHeight) {
       if (container.classList.contains("visible")) {
@@ -106,11 +144,20 @@ export function visiblePages() {
       }
     }
     else {
+      if (i + 1 < minVisPage) {
+        minVisPage = 1 + i;
+      }
+
       if (!container.classList.contains("visible")) {
         renderPage(i + 1, container, container.firstChild);
+
       }
     }
   }
+  let topPage = document.getElementById("pageNumber");
+  topPage.value = minVisPage.toString();
+
+
 }
 
 function removePage(i) {
@@ -149,7 +196,6 @@ function renderPage(i, containerDiv, textLayerDiv) {
       containerDiv.style.width = mainCanvas.width.toString() + "px";
 
 
-
       let context = mainCanvas.getContext("2d");
       let renderContext = {
         canvasContext: context,
@@ -175,14 +221,45 @@ function renderPage(i, containerDiv, textLayerDiv) {
         textLayer.render();
 
       });
+
+      //TODO look into faking an event bus for internal scrolling
+      let eventBus = new EventBus;
+      let linkService = new PDFLinkService({ eventBus: eventBus });
+      linkService.setDocument(pdf);
+      linkService.setViewer(new V3DViewer);
+      console.log(pdf.constructor.name);
+      //TODO look into faking a pdf viewer as well (check the code for link services to see)
+      let annotationLayer = new AnnotationLayerBuilder({
+        pageDiv: containerDiv,
+        pdfPage: page,
+        enableScripting: true,
+        linkService: linkService
+      });
+
+
+      annotationLayer.render(viewport).then(
+        function (data) {
+          annotationLayer.div.style.height = viewport.height + "px";
+          annotationLayer.div.style.width = viewport.width + "px";
+          annotationLayer.div.style.top = mainCanvas.offsetTop;
+          annotationLayer.div.style.left = mainCanvas.offsetLeft;
+        }
+      );
+
     }
   )
   containerDiv.classList.add("visible");
 }
 
+export function gotoPage(i) {
 
+  let pageContainer = document.getElementById(`Page ${i} Container`);
+  pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
+}
 
 function setUpPages(pdf, pages) {
+  let totalPageNumber = document.getElementById("totalPageNumber");
+  totalPageNumber.textContent = pages
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";
   document.body.appendChild(pdfDiv);
