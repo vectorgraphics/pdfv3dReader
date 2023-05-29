@@ -3,12 +3,29 @@
 <html title="PDF File Reader">
   <head>
     <meta charset=" UTF-8" />
-    <link rel="stylesheet" href="./overlay.css" />
+    <link rel="stylesheet" href="./overlayTest.css" />
   </head>
   <body>
     <div id="navbar" class="sticky">
       <div id="left-navbar">
-        <a id="pdf-name">LOADING</a>
+        <div id="HamburgerMenu">
+          <svg class="hamburgerLine" height="100%" width="100%">
+            <rect
+              class="btn"
+              x="0"
+              y="0"
+              width="100%"
+              height="100%"
+              onclick="alert('click!')"
+            />
+            <line x1="25%" y1="25%" x2="75%" y2="25%" />
+            <line x1="25%" y1="50%" x2="75%" y2="50%" />
+            <line x1="25%" y1="75%" x2="75%" y2="75%" />
+          </svg>
+        </div>
+        <div id="PDFName">
+          <a id="pdf-name">LOADING</a>
+        </div>
       </div>
       <div id="center-navbar">
         <div id="pageMenu">
@@ -16,16 +33,24 @@
           <a id="divider">/</a>
           <a id="totalPageNumber">0</a>
         </div>
+        <div id="menuDivider">
+          <svg height="100%" width="100%">
+            <line x1="50%" y1="25%" x2="50%" y2="75%" />
+          </svg>
+        </div>
         <div id="zoom">
-          <button id="zoom-out">-</button>
+          <button title="Zoom out" id="zoom-out">-</button>
           <a id="pageScale"> 150% </a>
-          <button id="zoom-in">+</button>
+          <button title="Zoom in" id="zoom-in">+</button>
         </div>
       </div>
       <div id="right-navbar">
         <div id="save">
-          <a id="default-view-link" href="">DEFAULT VIEWER</a>
-          <button>DEFAULT VIEWER</button>
+          <a id="default-view-link" href="" download>DOWNLOAD</a>
+          <button>DOWNLOAD</button>
+        </div>
+        <div id="optionsMenu">
+          <button id="dropDownButton">:::</button>
         </div>
       </div>
     </div>

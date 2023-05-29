@@ -1,0 +1,522 @@
+body {
+  background-color: gray;
+}
+
+html,
+body {
+  margin: 0%;
+  padding: 0%;
+  border: 0%;
+}
+
+.container {
+  display: inline-block;
+  margin-top: 10px;
+  position: relative;
+}
+
+.page {
+  position: absolute;
+  z-index: 0;
+}
+
+#pdfDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.file-frame {
+  position: absolute;
+  z-index: 3;
+  border: solid black 1px;
+  margin: none;
+  padding: none;
+}
+
+.text-layer {
+  z-index: 2;
+  position: absolute;
+  overflow: hidden;
+  opacity: 0.2;
+  line-height: 1;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  text-size-adjust: none;
+  forced-color-adjust: none;
+}
+
+.text-layer span,
+.text-layer br {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+
+/* Only necessary in Google Chrome, see issue 14205, and most unfortunately
+ * the problem doesn't show up in "text" reference tests. */
+.text-layer span.markedContent {
+  top: 0;
+  height: 0;
+}
+
+.text-layer .highlight {
+  margin: -1px;
+  padding: 1px;
+  background-color: rgba(180, 0, 170, 1);
+  border-radius: 4px;
+}
+
+.text-layer .highlight.appended {
+  position: initial;
+}
+
+.text-layer .highlight.begin {
+  border-radius: 4px 0 0 4px;
+}
+
+.text-layer .highlight.end {
+  border-radius: 0 4px 4px 0;
+}
+
+.text-layer .highlight.middle {
+  border-radius: 0;
+}
+
+.text-layer .highlight.selected {
+  background-color: rgba(0, 100, 0, 1);
+}
+
+.text-layer ::-moz-selection {
+  background: rgba(0, 0, 255, 1);
+}
+
+.text-layer ::selection {
+  background: rgba(0, 0, 255, 1);
+}
+
+/* Avoids https://github.com/mozilla/pdf.js/issues/13840 in Chrome */
+.text-layer br::-moz-selection {
+  background: transparent;
+}
+.text-layer br::selection {
+  background: transparent;
+}
+
+#navbar {
+  user-select: none;
+  -khtml-user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+
+  top: 0;
+  overflow: hidden;
+  background-color: black;
+  height: max(5%, 50px);
+
+}
+
+#navbar a {
+  color: white;
+}
+
+#navbar #left-navbar * {
+  padding: 1%;
+}
+#navbar #left-navbar {
+  height: 100%;
+  width: 33%;
+  float: left;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-family: sans-serif;
+}
+
+#navbar #left-navbar #HamburgerMenu {
+  padding: 3%;
+  height: 75%;
+  width: max(10%, 50px);
+  
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine {
+
+  padding: 0%;
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine:hover {
+  cursor: pointer;
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine:hover line {
+  stroke: black;
+  
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine:hover .btn {
+  opacity: 100%;
+  fill: white;
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine line{
+  transition-duration: 0.3s;
+  stroke: white;
+  stroke-width: 7%;
+}
+
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine .btn{
+
+  transition-duration: 0.3s;
+    opacity: 0;
+}
+
+
+
+
+
+#navbar #left-navbar #PDFNAME {
+  height: 100%;
+  width: 50%;
+  float: left;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-family: sans-serif;
+  padding-left: 2%;
+}
+
+/*Used to be #zoom instead of #center-div*/
+#navbar #center-navbar {
+  height: 100%;
+  width: 33%;
+  float: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: medium;
+}
+
+#navbar #center-navbar #pageMenu {
+  width: 33%;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+#navbar #center-navbar #pageNumber {
+  width: max(10%, 10px);
+  height: max(10%, 10px);
+  background-color:dimgray;
+  color: white;
+  border: none;
+  margin: 1%;
+  font-size: medium;
+  text-align: center;
+  
+}
+
+#navbar #center-navbar #pageMenu * {
+  padding: 1%;
+}
+
+#navbar #center-navbar #menuDivider {
+  width: 10%;
+  height: 100%;
+}
+
+#navbar #center-navbar #menuDivider svg line{
+  stroke: gray;
+  stroke-width: 2%;
+}
+#navbar #center-navbar #zoom {
+  height: 100%;
+  width: 33%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+#navbar #center-navbar #zoom * {
+  padding: 2%;
+}
+#navbar #center-navbar #zoom button{
+  height: 75%;
+  width: 20%;
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-radius: 20%;
+  transition-duration: 0.3s;
+  font-size: 150%;
+  
+}
+
+#navbar #center-navbar #zoom button:hover{
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  border: none;
+  
+}
+
+#navbar #right-navbar {
+  height: 100%;
+  width: 33%;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+
+.sticky {
+  z-index: 4;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
+.sticky + #pdfDiv {
+  padding-top: 60px;
+}
+
+#save a {
+  position: absolute;
+  color: transparent;
+}
+
+.annotationLayer{
+  pointer-events: none;
+  z-index: 2;
+  position: absolute;
+}
+
+
+.annotationLayer section {
+  position: absolute;
+  text-align: initial;
+
+}
+
+.annotationLayer .lineAnnotation {
+  border-style: none;
+}
+
+
+.annotationLayer .linkAnnotation > a,
+.annotationLayer .buttonWidgetAnnotation.pushButton > a {
+  pointer-events: auto;
+  position: absolute;
+  font-size: 1em;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.annotationLayer .buttonWidgetAnnotation.pushButton > canvas {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.annotationLayer .linkAnnotation > a:hover,
+.annotationLayer .buttonWidgetAnnotation.pushButton > a:hover {
+  opacity: 0.2;
+  background: rgba(255, 255, 0, 1);
+  box-shadow: 0 2px 10px rgba(255, 255, 0, 1);
+}
+
+.annotationLayer .textAnnotation img {
+  position: absolute;
+  cursor: pointer;
+}
+
+.annotationLayer .textWidgetAnnotation input,
+.annotationLayer .textWidgetAnnotation textarea,
+.annotationLayer .choiceWidgetAnnotation select,
+.annotationLayer .buttonWidgetAnnotation.checkBox input,
+.annotationLayer .buttonWidgetAnnotation.radioButton input {
+  background-image: var(--annotation-unfocused-field-background);
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  font-size: 9px;
+  height: 100%;
+  margin: 0;
+  padding: 0 3px;
+  vertical-align: top;
+  width: 100%;
+}
+
+.annotationLayer .choiceWidgetAnnotation select option {
+  padding: 0;
+}
+
+.annotationLayer .buttonWidgetAnnotation.radioButton input {
+  border-radius: 50%;
+}
+
+.annotationLayer .textWidgetAnnotation textarea {
+  font: message-box;
+  font-size: 9px;
+  resize: none;
+}
+
+.annotationLayer .textWidgetAnnotation input[disabled],
+.annotationLayer .textWidgetAnnotation textarea[disabled],
+.annotationLayer .choiceWidgetAnnotation select[disabled],
+.annotationLayer .buttonWidgetAnnotation.checkBox input[disabled],
+.annotationLayer .buttonWidgetAnnotation.radioButton input[disabled] {
+  background: none;
+  border: 1px solid transparent;
+  cursor: not-allowed;
+}
+
+.annotationLayer .textWidgetAnnotation input:hover,
+.annotationLayer .textWidgetAnnotation textarea:hover,
+.annotationLayer .choiceWidgetAnnotation select:hover,
+.annotationLayer .buttonWidgetAnnotation.checkBox input:hover,
+.annotationLayer .buttonWidgetAnnotation.radioButton input:hover {
+  border: 1px solid rgba(0, 0, 0, 1);
+}
+
+.annotationLayer .textWidgetAnnotation input:focus,
+.annotationLayer .textWidgetAnnotation textarea:focus,
+.annotationLayer .choiceWidgetAnnotation select:focus {
+  background: none;
+  border: 1px solid transparent;
+}
+
+.annotationLayer .textWidgetAnnotation input :focus,
+.annotationLayer .textWidgetAnnotation textarea :focus,
+.annotationLayer .choiceWidgetAnnotation select :focus,
+.annotationLayer .buttonWidgetAnnotation.checkBox :focus,
+.annotationLayer .buttonWidgetAnnotation.radioButton :focus {
+  background-image: none;
+  background-color: transparent;
+  outline: auto;
+}
+
+.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before,
+.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after,
+.annotationLayer .buttonWidgetAnnotation.radioButton input:checked:before {
+  background-color: rgba(0, 0, 0, 1);
+  content: "";
+  display: block;
+  position: absolute;
+}
+
+.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before,
+.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after {
+  height: 80%;
+  left: 45%;
+  width: 1px;
+}
+
+.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before {
+  transform: rotate(45deg);
+}
+
+.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after {
+  transform: rotate(-45deg);
+}
+
+.annotationLayer .buttonWidgetAnnotation.radioButton input:checked:before {
+  border-radius: 50%;
+  height: 50%;
+  left: 30%;
+  top: 20%;
+  width: 50%;
+}
+
+.annotationLayer .textWidgetAnnotation input.comb {
+  font-family: monospace;
+  padding-left: 2px;
+  padding-right: 0;
+}
+
+.annotationLayer .textWidgetAnnotation input.comb:focus {
+  /*
+   * Letter spacing is placed on the right side of each character. Hence, the
+   * letter spacing of the last character may be placed outside the visible
+   * area, causing horizontal scrolling. We avoid this by extending the width
+   * when the element has focus and revert this when it loses focus.
+   */
+  width: 103%;
+}
+
+.annotationLayer .buttonWidgetAnnotation.checkBox input,
+.annotationLayer .buttonWidgetAnnotation.radioButton input {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  padding: 0;
+}
+
+.annotationLayer .popupWrapper {
+  position: absolute;
+  width: 20em;
+}
+
+.annotationLayer .popup {
+  position: absolute;
+  z-index: 200;
+  max-width: 20em;
+  background-color: rgba(255, 255, 153, 1);
+  box-shadow: 0 2px 5px rgba(136, 136, 136, 1);
+  border-radius: 2px;
+  padding: 6px;
+  margin-left: 5px;
+  cursor: pointer;
+  font: message-box;
+  font-size: 9px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.annotationLayer .popup > * {
+  font-size: 9px;
+}
+
+.annotationLayer .popup h1 {
+  display: inline-block;
+}
+
+.annotationLayer .popupDate {
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.annotationLayer .popupContent {
+  border-top: 1px solid rgba(51, 51, 51, 1);
+  margin-top: 2px;
+  padding-top: 2px;
+}
+
+.annotationLayer .richText > * {
+  white-space: pre-wrap;
+}
+
+.annotationLayer .highlightAnnotation,
+.annotationLayer .underlineAnnotation,
+.annotationLayer .squigglyAnnotation,
+.annotationLayer .strikeoutAnnotation,
+.annotationLayer .freeTextAnnotation,
+.annotationLayer .lineAnnotation svg line,
+.annotationLayer .squareAnnotation svg rect,
+.annotationLayer .circleAnnotation svg ellipse,
+.annotationLayer .polylineAnnotation svg polyline,
+.annotationLayer .polygonAnnotation svg polygon,
+.annotationLayer .caretAnnotation,
+.annotationLayer .inkAnnotation svg polyline,
+.annotationLayer .stampAnnotation,
+.annotationLayer .fileAttachmentAnnotation {
+  cursor: pointer;
+}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.1)  8 MAY 2023 20:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.1)  23 MAY 2023 20:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -194,7 +194,8 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip49
 )
-(./small2.aux)
+(./small2.aux (./Introduction.aux) (./chapter_1.aux) (./chapter_2.aux)
+(./chapter_3.aux) (./chapter_4.aux))
 \openout1 = `small2.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
@@ -215,7 +216,8 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 4.
 LaTeX Font Info:    ... okay on input line 4.
 \AtBeginShipoutBox=\box48
 Package hyperref Info: Link coloring OFF on input line 4.
- (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 
 (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
@@ -286,10 +288,10 @@ Package rerunfilecheck Info: File `small2.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 23.
  ) 
 Here is how much of TeX's memory you used:
- 5768 strings out of 482600
- 105451 string characters out of 5949961
- 361722 words of memory out of 5000000
- 20752 multiletter control sequences out of 15000+600000
+ 5783 strings out of 482600
+ 105660 string characters out of 5949961
+ 363262 words of memory out of 5000000
+ 20757 multiletter control sequences out of 15000+600000
  532636 words of font info for 25 fonts, out of 8000000 for 9000
  350 hyphenation exceptions out of 8191
  36i,6n,46p,210b,311s stack positions out of 5000i,500n,10000p,200000b,80000s

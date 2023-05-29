@@ -46,7 +46,7 @@ if (filename != null) {
         </div>
         <div id="right-navbar">
           <div id="save">
-            <a id="default-view-link" href="">DEFAULT VIEWER</a>
+            <a id="default-view-link" href="" download >DEFAULT VIEWER</a>
             <button>DEFAULT VIEWER</button>
           </div>
         </div>

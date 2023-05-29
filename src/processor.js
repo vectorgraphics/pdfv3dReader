@@ -254,6 +254,8 @@ function renderPage(i, containerDiv, textLayerDiv) {
 export function gotoPage(i) {
 
   let pageContainer = document.getElementById(`Page ${i} Container`);
+  //Render the page before scrolling to it for a smoother experience
+  renderPage(i, pageContainer, null);
   pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
 }
 

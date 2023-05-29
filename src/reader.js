@@ -33,11 +33,10 @@ fetch(filename)
 let pageScale = document.getElementById("pageScale");
 let zoominbutton = document.getElementById("zoom-in");
 zoominbutton.onclick = function () {
-  process.setScale(process.getScale() + 0.25);
-  pageScale.textContent = process.getScale() * 100;
-  document.body.removeChild(document.getElementById("pdfDiv"));
-  process.processPDF(pdfContent);
-  process.visiblePages();
+  if (process.getScale() >= 5) {
+    return;
+  }
+  zoom(0.25);
 };
 
 let zoomoutbutton = document.getElementById("zoom-out");
@@ -45,11 +44,7 @@ zoomoutbutton.onclick = function () {
   if (process.getScale() <= 0.25) {
     return;
   }
-  process.setScale(process.getScale() - 0.25);
-  pageScale.textContent = process.getScale() * 100;
-  document.body.removeChild(document.getElementById("pdfDiv"));
-  process.processPDF(pdfContent);
-  process.visiblePages();
+  zoom(-0.25);
 };
 
 window.onscroll = function () {
@@ -65,3 +60,12 @@ pageNumber.addEventListener("keyup", ({ key }) => {
   }
 
 });
+
+
+function zoom(zoomAmount) {
+  process.setScale(process.getScale() + zoomAmount);
+  pageScale.textContent = process.getScale() * 100;
+  document.body.removeChild(document.getElementById("pdfDiv"));
+  process.processPDF(pdfContent);
+  process.visiblePages();
+}
