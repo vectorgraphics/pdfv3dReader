@@ -247,7 +247,7 @@ body {
 }
 #navbar #center-navbar #zoom button{
   height: 75%;
-  width: 20%;
+  width: max(20%, 30px);
   background-color: transparent;
   color: white;
   border: none;
@@ -273,6 +273,34 @@ body {
   align-items: center;
 }
 
+#save {
+  height: 100%;
+  width: 10%;
+  
+}
+
+
+#save svg {
+  height: 100%;
+  width: max(100%, 40px);
+}
+
+#save svg * {
+stroke: white;
+stroke-width: 5%;
+}
+
+
+#hamburgerMenuDiv {
+  position: fixed;
+  height: 100vh;
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+  background-color: #50514F;
+  z-index: 4;
+  top: max(5%, 50px);
+}
 
 .sticky {
   z-index: 4;
@@ -281,15 +309,12 @@ body {
   width: 100%;
 }
 
+
 /* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
 .sticky + #pdfDiv {
   padding-top: 60px;
 }
 
-#save a {
-  position: absolute;
-  color: transparent;
-}
 
 .annotationLayer{
   pointer-events: none;

@@ -1,6 +1,6 @@
 <!--- This is just the pdf reader in a testable format-->
 <!DOCTYPE html>
-<html title="PDF File Reader">
+<html>
   <head>
     <meta charset=" UTF-8" />
     <link rel="stylesheet" href="./overlayTest.css" />
@@ -8,15 +8,17 @@
   <body>
     <div id="navbar" class="sticky">
       <div id="left-navbar">
-        <div id="HamburgerMenu">
+        <div title="Menu" id="HamburgerMenu">
           <svg class="hamburgerLine" height="100%" width="100%">
             <rect
+              id="hamburgerButton"
               class="btn"
               x="0"
               y="0"
+              rx="10"
+              ry="10"
               width="100%"
               height="100%"
-              onclick="alert('click!')"
             />
             <line x1="25%" y1="25%" x2="75%" y2="25%" />
             <line x1="25%" y1="50%" x2="75%" y2="50%" />
@@ -29,7 +31,7 @@
       </div>
       <div id="center-navbar">
         <div id="pageMenu">
-          <input type="text" id="pageNumber" value="0" />
+          <input title="Page Number" type="text" id="pageNumber" value="0" />
           <a id="divider">/</a>
           <a id="totalPageNumber">0</a>
         </div>
@@ -46,13 +48,26 @@
       </div>
       <div id="right-navbar">
         <div id="save">
-          <a id="default-view-link" href="" download>DOWNLOAD</a>
-          <button>DOWNLOAD</button>
+          <svg>
+            <line x1="50%" y1="25%" x2="50%" y2="75%" />
+            <line x1="25%" y1="55%" x2="50%" y2="75%" />
+            <line x1="75%" y1="55%" x2="50%" y2="75%" />
+            <line x1="10%" y1="85%" x2="90%" y2="85%" />
+          </svg>
+        </div>
+        <div>
+          <button>PRINT</button>
         </div>
         <div id="optionsMenu">
           <button id="dropDownButton">:::</button>
         </div>
       </div>
+    </div>
+    <div id="hamburgerMenuDiv">
+      <a href="#">About</a>
+      <a href="#">Services</a>
+      <a href="#">Clients</a>
+      <a href="#">Contact</a>
     </div>
   </body>
 </html>
