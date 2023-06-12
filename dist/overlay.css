@@ -369,9 +369,12 @@ body {
 
 
 #hamburgerContent {
-  height: 100%;
+    height: 100%;
+    overflow-y: scroll;
 }
-
+::-webkit-scrollbar {
+  width: 0%;
+}
 #hamburgerContent div:hover {
   background-color: rgb(185, 185, 185);
 }
@@ -382,6 +385,7 @@ body {
   background-color: transparent;
   border: none;
   color: white;
+  font-size: medium;
 }
 
 #hamburgerContent div button:hover {
