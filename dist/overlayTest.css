@@ -1,3 +1,8 @@
+:root{
+  --lightColor1:#FFECD1 ;
+  --darkColor1:  ;
+}
+
 body {
   background-color: gray;
 }
@@ -294,7 +299,7 @@ stroke-width: 5%;
 #hamburgerMenuDiv {
   position: fixed;
   height: 100vh;
-  width: 15%;
+  width: max(15%, 200px);
   display: flex;
   flex-direction: column;
   background-color: #50514F;
@@ -314,6 +319,25 @@ stroke-width: 5%;
 .sticky + #pdfDiv {
   padding-top: 60px;
 }
+
+#optionsMenu {
+  display: flex;
+  flex-direction: row;
+  background-color: black;
+  
+}
+
+#optionsMenu * {
+  width: 50%;
+}
+#optionsMenu * button{
+  width: 100%;
+  font-size: medium;
+  background-color: var(--lightColor1);
+  border: none;
+}
+
+
 
 
 .annotationLayer{

@@ -1,4 +1,5 @@
 //This is the script for the pdf viewer
+import { b } from "../dist/reader.js";
 import * as process from "./processor.js";
 
 let pdfContent;
@@ -69,3 +70,60 @@ function zoom(zoomAmount) {
   process.processPDF(pdfContent);
   process.visiblePages();
 }
+
+let hamburgerMenuButton = document.getElementById("hamburgerButton");
+let hamburgerMenu = document.getElementById("hamburgerMenuDiv");
+
+hamburgerMenu.style.width = "0%";
+
+hamburgerMenuButton.onclick = function () {
+  if (hamburgerMenu.style.width != "0%") {
+    hamburgerMenu.style.width = "0%";
+  }
+  else {
+    hamburgerMenu.style.width = "max(15%, 200px)";
+  }
+}
+
+let outline = process.getOutline();
+
+let optionButtons = document.getElementsByClassName("optionBtn");
+
+for (let i = 0; i < optionButtons.length; i++) {
+  //Add the active tag 
+  optionButtons.item(i).onclick = function () {
+    //Make all buttons inactive
+    for (let j = 0; j < optionButtons.length; j++) {
+      optionButtons.item(j).classList.remove("active");
+    }
+    optionButtons.item(i).classList.add("active");
+    let content = document.getElementById("hamburgerContent");
+    //Cleat the html
+    content.innerHTML = "";
+
+    //Handle the specific cases for each button selection
+    let button = optionButtons.item(i);
+    if (button.textContent == "Outline") {
+      for (let j = 0; j < outline.length; j++) {
+        let ref = outline[j];
+        let refContainer = document.createElement("div");
+        let button = document.createElement("button");
+        button.innerText = ref.title;
+        let viewer = new process.V3DViewer();
+
+        button.onclick = function () {
+
+          viewer.scrollPageIntoView({ pageNumber: ref.pageNumber, destArray: ref.destArray };
+        }
+
+        refContainer.style.height = `10%`;
+        refContainer.style.width = "100%";
+        refContainer.appendChild(button);
+        content.appendChild(refContainer);
+      }
+    }
+    else if (button.textContent == "Tools") {
+
+    }
+  }
+} 

@@ -1,13 +1,14 @@
 // This is the pdf processor
 
-//TODO reduce popping by rendering pages infront and behind all visible pages, else it hurts  my eyes to scroll lol.
+// TODO reduce popping by rendering pages infront and behind all visible pages, else it hurts  my eyes to scroll lol.
 // TODO reduce popping when zooming
-//TODO FIX PHONE?? Why is it like that on a phone???
-//TODO add input to page menu
-//TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
-//TODO Zoom resets to first page
+// TODO FIX PHONE?? Why is it like that on a phone???
+// TODO add input to page menu
+// TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
+// TODO Zoom resets to first page
 // Zoom too big and page gets cut off? 
-//Set minimize to true in webpack config
+// Set minimize to true in webpack config
+// Move first pdf page below navbar
 import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
@@ -21,7 +22,9 @@ import { EventBus } from "pdfjs-dist/lib/web/event_utils";
 
 //Changes pdfjs by removing sdtats in xref.js and changed xrefstats in parser.js
 
-class V3DViewer {
+//Collection of outlineObjects
+let outlineObjects = [];
+export class V3DViewer {
   currentPageNumber;
   pagesRotation;
   constructor() {
@@ -284,6 +287,10 @@ function setUpPages(pdf, pages) {
   }
 }
 
+export function getOutline() {
+  return outlineObjects;
+}
+
 export function processPDF(arrayBuffer) {
   let pdftask = pdfjs.getDocument(arrayBuffer);
 
@@ -296,5 +303,21 @@ export function processPDF(arrayBuffer) {
     coreDocument.parseStartXRef();
     coreDocument.parse();
     setUpPages(pdf, numPages);
+    //Set up outline
+    pdf.getOutline().then(function (outline) {
+      if (outline) {
+        for (let i = 0; i < outline.length; i++) {
+          pdf.getDestination(outline[i].dest).then(function (dest) {
+            pdf.getPageIndex(dest[0]).then(function (id) {
+              let pageNumber = parseInt(id) + 1;
+              let title = outline[i].title;
+              let destArray = dest;
+              let outlineObject = { pageNumber: pageNumber, title: title, destArray: destArray };
+              outlineObjects.push(outlineObject);
+            });
+          });
+        }
+      }
+    });
   });
 }

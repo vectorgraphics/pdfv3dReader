@@ -1,11 +1,16 @@
+:root {
+  --lightColor1: #FFECD1;
+  --darkColor1: ;
+}
 body {
   background-color: gray;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
+  margin: 0%;
+    padding: 0%;
+    border: 0%;
 }
 
 .container {
@@ -115,8 +120,7 @@ body {
   top: 0;
   overflow: hidden;
   background-color: black;
-  height: 4%;
-  padding-bottom: 5px;
+  height: max(5%, 50px);
 
 }
 
@@ -124,6 +128,9 @@ body {
   color: white;
 }
 
+#navbar #left-navbar * {
+  padding: 1%;
+}
 #navbar #left-navbar {
   height: 100%;
   width: 33%;
@@ -133,9 +140,62 @@ body {
   align-items: center;
   font-family: sans-serif;
 }
-#navbar #left-navbar a {
+#navbar #left-navbar #HamburgerMenu {
+  padding: 3%;
+  height: 75%;
+  width: max(10%, 50px);
+
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine {
+
+  padding: 0%;
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine:hover {
+  cursor: pointer;
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine:hover line {
+  stroke: black;
+
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine:hover .btn {
+  opacity: 100%;
+  fill: white;
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine:active line {
+  stroke: black;
+
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine:active .btn {
+  opacity: 100%;
+  fill: white;
+}
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine line {
+  transition-duration: 0.3s;
+  stroke: white;
+  stroke-width: 7%;
+}
+
+
+#navbar #left-navbar #HamburgerMenu .hamburgerLine .btn {
+
+  transition-duration: 0.3s;
+  opacity: 0;
+}
+
+
+
+
+
+#navbar #left-navbar #PDFNAME {
   height: 100%;
-  width: 33%;
+  width: 50%;
   float: left;
   display: flex;
   justify-content: left;
@@ -157,14 +217,15 @@ body {
 }
 
 #navbar #center-navbar #pageMenu {
-  width: 50%;
+  width: 33%;
   display: flex;
-  justify-content:center;
+  justify-content: right;
   align-items: center;
 }
 
 #navbar #center-navbar #pageNumber {
-  width: 5%;
+  width: max(10%, 10px);
+    height: max(10%, 10px);
   background-color:dimgray;
   color: white;
   border: none;
@@ -177,14 +238,45 @@ body {
 #navbar #center-navbar #pageMenu * {
   padding: 1%;
 }
-#navbar #center-navbar #zoom {
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+#navbar #center-navbar #menuDivider {
+  width: 10%;
+  height: 100%;
 }
 
+#navbar #center-navbar #menuDivider svg line {
+  stroke: gray;
+  stroke-width: 2%;
+}
+#navbar #center-navbar #zoom {
+  height: 100%;
+    width: 33%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+#navbar #center-navbar #zoom * {
+  padding: 2%;
+}
 
+#navbar #center-navbar #zoom button {
+  height: 75%;
+  width: max(20%, 30px);
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-radius: 20%;
+  transition-duration: 0.3s;
+  font-size: 150%;
+
+}
+
+#navbar #center-navbar #zoom button:hover {
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  border: none;
+
+}
 
 #navbar #right-navbar {
   height: 100%;
@@ -194,6 +286,36 @@ body {
   align-items: center;
 }
 
+#save {
+  height: 100%;
+  width: 10%;
+
+}
+
+
+#save svg {
+  height: 100%;
+  width: max(100%, 40px);
+}
+
+#save svg * {
+  stroke: white;
+  stroke-width: 5%;
+}
+
+
+#hamburgerMenuDiv {
+  position: fixed;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #50514F;
+  z-index: 4;
+  top: max(5%, 50px);
+
+  overflow: hidden;
+  transition-duration: 0.3s;
+}
 
 .sticky {
   z-index: 4;
@@ -202,15 +324,70 @@ body {
   width: 100%;
 }
 
+
 /* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
 .sticky + #pdfDiv {
   padding-top: 60px;
 }
 
-#save a {
-  position: absolute;
-  color: transparent;
+#optionsMenu {
+  height: 5%;
+  display: flex;
+  flex-direction: row;
+  background-color: var(--lightColor1);
+
+
 }
+
+#optionsMenu * {
+  padding-top: 1%;
+  width: 50%;
+}
+
+#optionsMenu * button {
+  width: 100%;
+  height: 100%;
+  font-size: medium;
+  background-color: black;
+  border: none;
+  color: white;
+
+
+}
+
+
+#optionsMenu * button.active {
+  background-color: var(--lightColor1);
+  color: black;
+}
+
+#optionsMenu * button:hover {
+  cursor: pointer;
+  background-color: white;
+  color: black;
+}
+
+
+#hamburgerContent {
+  height: 100%;
+}
+
+#hamburgerContent div:hover {
+  background-color: rgb(185, 185, 185);
+}
+
+#hamburgerContent div button {
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  color: white;
+}
+
+#hamburgerContent div button:hover {
+  cursor: pointer;
+}
+
 
 .annotationLayer{
   pointer-events: none;
