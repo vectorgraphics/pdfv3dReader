@@ -69,19 +69,56 @@ if (filename != null) {
           </div>
         </div>
         <div id="right-navbar">
-          <div id="save">
+          <div id="save" title= "Save PDF">
+  
+          <a download id="default-view-link">
             <svg>
+            
+                        
+            <rect
+            id="saveButton"
+            class="btn"
+            x="0"
+            y="0"
+            rx="10"
+            ry="10"
+            width="100%"
+            height="100%"
+          />
               <line x1="50%" y1="25%" x2="50%" y2="75%" />
               <line x1="25%" y1="55%" x2="50%" y2="75%" />
               <line x1="75%" y1="55%" x2="50%" y2="75%" />
               <line x1="10%" y1="85%" x2="90%" y2="85%" />
+  
+            
             </svg>
+            </a>
           </div>
-          <div>
-            <button>PRINT</button>
-          </div>
-          <div id="optionsMenu">
-            <button id="dropDownButton">:::</button>
+          <div id="print" title="Print PDF">
+            <svg height="100%" width="100%">
+              <rect
+              id="print-button"
+              class="btn"
+              x="0"
+              y="0"
+              rx="10"
+              ry="10"
+              width="100%"
+              height="100%"
+            />
+              <line x1="25%" y1="85%" x2="75%" y2="85%" />
+              <line x1="25%" y1="55%" x2="75%" y2="55%"/>
+              <line x1="25%" y1="55%" x2="25%" y2="85%"/>
+              <line x1="75%" y1="55%" x2="75%" y2="85%"/>
+              <line x1="37.5%" y1="75%" x2="62.5%" y2="75%" />
+  
+              <line x1="35%" y1="25%" x2="65%" y2="25%" />
+              <line x1="35%" y1="25%" x2="35%" y2="55%" />
+              <line x1="65%" y1="25%" x2="65%" y2="55%" />
+  
+              <line class="paperLine" x1="40%" y1="35%" x2="60%" y2="35%" />
+              <line class="paperLine" x1="40%" y1="40%" x2="60%" y2="40%" />
+            </svg>
           </div>
         </div>
       </div>
@@ -95,12 +132,18 @@ if (filename != null) {
           </div>
         </div>
         <div id="hamburgerContent">
-          <a href="#" id="default-view-link">Default PDF Viewer</a>
-          <a href="#">Help</a>
-          <a href="#">Contact</a>
+          <div>
+            <a> DEFAULT PDF VIEWER </a>
+          </div>
+          <div>
+            <a> DRAW (To be implemented) </a>
+          </div>
+          <div>
+            <a> ANNOTATE (To be implemented) </a>
+          </div>
         </div>
       </div>
-    </body>
+  
     `;
 
       })

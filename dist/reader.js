@@ -105139,7 +105139,7 @@ module.exports = pdfjs;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = function Worker_fn() {
-          let script = document.getElementById("workerScript");
+  let script = document.getElementById("workerScript");
 
           let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
           let workerBlobUrl = URL.createObjectURL(workerBlob);
@@ -105301,6 +105301,7 @@ var event_utils = __webpack_require__(9982);
 // Zoom too big and page gets cut off? 
 // Set minimize to true in webpack config
 // Move first pdf page below navbar
+// Print button is finicky
 
 
 
@@ -105679,6 +105680,11 @@ pageNumber.addEventListener("keyup", ({ key }) => {
 
 });
 
+  let saveButton = document.getElementById("saveButton");
+
+  saveButton.onclick = function () {
+    dow
+  }
 
 function zoom(zoomAmount) {
   setScale(getScale() + zoomAmount);
@@ -105702,6 +105708,11 @@ hamburgerMenuButton.onclick = function () {
   }
 }
 
+  let printButton = document.getElementById("print-button");
+  printButton.onclick = function () {
+    let w = window.open(filename);
+    w.print(filename);
+  }
 let outline = getOutline();
 
 let optionButtons = document.getElementsByClassName("optionBtn");
@@ -105729,8 +105740,8 @@ for (let i = 0; i < optionButtons.length; i++) {
         let viewer = new V3DViewer();
 
         button.onclick = function () {
-          console.log(ref.pageNumber);
-          viewer.scrollPageIntoView({pageNumber: ref.pageNumber, destArray: ref.destArray});
+
+          viewer.scrollPageIntoView({ pageNumber: ref.pageNumber, destArray: ref.destArray });
         }
 
         refContainer.style.height = `10%`;
@@ -105740,7 +105751,30 @@ for (let i = 0; i < optionButtons.length; i++) {
       }
     }
     else if (button.textContent == "Tools") {
+      //TODO, make the tool section in the pdfDisplay thing and just copy the html over
+      //Make default viewer link
+      /*
+      let defaultViewContainer = document.createElement("div");
+      defaultViewContainer.style.height = "10%";
+      defaultViewContainer.style.width = "100%";
+      let defaultViewLink = document.createElement("a");
+      defaultViewLink.style.height = "10%";
+      defaultViewLink.style.width = "100%";
+      defaultViewLink.innerText = "Default Viewer (To be removed)";
+      defaultViewLink.href = filename;
+      defaultViewContainer.appendChild(defaultViewLink);
+      content.appendChild(defaultViewContainer);
 
+      */
+      content.innerHTML = `          <div>
+     <a> DEFAULT PDF VIEWER </a>
+   </div>
+   <div>
+     <a> DRAW (To be implemented) </a>
+   </div>
+   <div>
+     <a> ANNOTATE (To be implemented) </a>
+   </div>`;
     }
   }
 } 

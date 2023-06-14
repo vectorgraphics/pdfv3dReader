@@ -62,6 +62,11 @@ pageNumber.addEventListener("keyup", ({ key }) => {
 
 });
 
+let saveButton = document.getElementById("saveButton");
+
+saveButton.onclick = function () {
+  dow
+}
 
 function zoom(zoomAmount) {
   process.setScale(process.getScale() + zoomAmount);
@@ -85,6 +90,11 @@ hamburgerMenuButton.onclick = function () {
   }
 }
 
+let printButton = document.getElementById("print-button");
+printButton.onclick = function () {
+  let w = window.open(filename);
+  w.print(filename);
+}
 let outline = process.getOutline();
 
 let optionButtons = document.getElementsByClassName("optionBtn");
@@ -113,7 +123,7 @@ for (let i = 0; i < optionButtons.length; i++) {
 
         button.onclick = function () {
 
-          viewer.scrollPageIntoView({ pageNumber: ref.pageNumber, destArray: ref.destArray };
+          viewer.scrollPageIntoView({ pageNumber: ref.pageNumber, destArray: ref.destArray });
         }
 
         refContainer.style.height = `10%`;
@@ -123,7 +133,30 @@ for (let i = 0; i < optionButtons.length; i++) {
       }
     }
     else if (button.textContent == "Tools") {
+      //TODO, make the tool section in the pdfDisplay thing and just copy the html over
+      //Make default viewer link
+      /*
+      let defaultViewContainer = document.createElement("div");
+      defaultViewContainer.style.height = "10%";
+      defaultViewContainer.style.width = "100%";
+      let defaultViewLink = document.createElement("a");
+      defaultViewLink.style.height = "10%";
+      defaultViewLink.style.width = "100%";
+      defaultViewLink.innerText = "Default Viewer (To be removed)";
+      defaultViewLink.href = filename;
+      defaultViewContainer.appendChild(defaultViewLink);
+      content.appendChild(defaultViewContainer);
 
+      */
+      content.innerHTML = `          <div>
+     <a> DEFAULT PDF VIEWER </a>
+   </div>
+   <div>
+     <a> DRAW (To be implemented) </a>
+   </div>
+   <div>
+     <a> ANNOTATE (To be implemented) </a>
+   </div>`;
     }
   }
 } 

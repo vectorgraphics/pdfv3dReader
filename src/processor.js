@@ -9,6 +9,7 @@
 // Zoom too big and page gets cut off? 
 // Set minimize to true in webpack config
 // Move first pdf page below navbar
+// Print button is finicky
 import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
