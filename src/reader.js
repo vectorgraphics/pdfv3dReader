@@ -114,6 +114,7 @@ for (let i = 0; i < optionButtons.length; i++) {
     //Handle the specific cases for each button selection
     let button = optionButtons.item(i);
     if (button.textContent == "Outline") {
+      console.log(outline);
       for (let j = 0; j < outline.length; j++) {
         let ref = outline[j];
         let refContainer = document.createElement("div");
@@ -127,27 +128,20 @@ for (let i = 0; i < optionButtons.length; i++) {
         }
 
         refContainer.style.height = `10%`;
+        if (ref.children.length != 0) {
+          refContainer.style.width = "90%";
+          let dropdownButton = document.createElement("button");
+          dropdownButton.innerHTML = ">";
+          dropdownButton.style.height = "100%";
+          dropdownButton.style.width = "10%";
+          refContainer.appendChild(dropdownButton);
+        }
         refContainer.style.width = "100%";
         refContainer.appendChild(button);
         content.appendChild(refContainer);
       }
     }
     else if (button.textContent == "Tools") {
-      //TODO, make the tool section in the pdfDisplay thing and just copy the html over
-      //Make default viewer link
-      /*
-      let defaultViewContainer = document.createElement("div");
-      defaultViewContainer.style.height = "10%";
-      defaultViewContainer.style.width = "100%";
-      let defaultViewLink = document.createElement("a");
-      defaultViewLink.style.height = "10%";
-      defaultViewLink.style.width = "100%";
-      defaultViewLink.innerText = "Default Viewer (To be removed)";
-      defaultViewLink.href = filename;
-      defaultViewContainer.appendChild(defaultViewLink);
-      content.appendChild(defaultViewContainer);
-
-      */
       content.innerHTML = `          <div>
      <a> DEFAULT PDF VIEWER </a>
    </div>

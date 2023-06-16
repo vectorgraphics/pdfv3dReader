@@ -133,7 +133,7 @@ if (filename != null) {
         </div>
         <div id="hamburgerContent">
           <div>
-            <a> DEFAULT PDF VIEWER </a>
+            <a> DEFAULT PDF VIEWER (To be implemented) </a>
           </div>
           <div>
             <a> DRAW (To be implemented) </a>

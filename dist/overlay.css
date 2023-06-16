@@ -355,7 +355,7 @@ body {
 
 #print svg line {
   stroke: white;
-  stroke-width: 5%;
+  stroke-width: 3.5%;
 }
 
 
@@ -369,7 +369,7 @@ body {
 }
 #hamburgerMenuDiv {
   position: fixed;
-  height: 100vh;
+  height: calc(100vh - max(5%, 50px));
   display: flex;
   flex-direction: column;
   background-color: #50514F;
@@ -435,12 +435,22 @@ body {
     height: 100%;
     overflow-y: scroll;
 }
+#hamburgerContent div {
+  display: flex;
+  flex-direction: row;
+}
+
+#hamburgerContent div button:hover {
+  background-color: #FFECD1;
+  color: black;
+}
 ::-webkit-scrollbar {
   width: 0%;
 }
 #hamburgerContent div:hover {
-  background-color: rgb(185, 185, 185);
-}
+  opacity: 0.4;
+  }
+  
 
 #hamburgerContent div button {
   height: 100%;

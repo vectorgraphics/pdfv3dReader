@@ -9,7 +9,19 @@
 // Zoom too big and page gets cut off? 
 // Set minimize to true in webpack config
 // Move first pdf page below navbar
-// Print button is finicky
+// Print button is finicky on diff resolutions
+// have to scroll for pdf pages to show at first
+// Add percent to number after and before zooming
+// Mayybe add an input to the percent
+// Add a loading bar?
+//Expand page number when too much
+//Add SCROLL BAR PLEASE 
+//WOW just all of searching sucks
+
+//ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
+//ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
+// Ask if we
+
 import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
 import { Stream } from "pdfjs-dist/lib/core/stream";
@@ -171,6 +183,32 @@ function removePage(i) {
 }
 
 
+function getOutlineItem(item) {
+  return new Promise(function (resolve, reject) {
+    pdf.getDestination(item.dest).then(function (dest) {
+      pdf.getPageIndex(dest[0]).then(function (id) {
+        let pageNumber = parseInt(id) + 1;
+        let title = item.title;
+        let destArray = dest;
+
+        let outlineObject = {
+          pageNumber: pageNumber, title: title,
+          destArray: destArray, children: []
+        };
+
+        //recurively get children
+        for (let i = 0; i < item.items.length; i++) {
+          getOutlineItem(item.items[i]).then(function (obj) {
+            outlineObject.children.push(obj);
+          });
+        }
+        resolve(outlineObject);
+      });
+    });
+  })
+
+}
+
 function renderPage(i, containerDiv, textLayerDiv) {
   let loadPage = pdf.getPage(i);
   loadPage.then(
@@ -308,15 +346,10 @@ export function processPDF(arrayBuffer) {
     pdf.getOutline().then(function (outline) {
       if (outline) {
         for (let i = 0; i < outline.length; i++) {
-          pdf.getDestination(outline[i].dest).then(function (dest) {
-            pdf.getPageIndex(dest[0]).then(function (id) {
-              let pageNumber = parseInt(id) + 1;
-              let title = outline[i].title;
-              let destArray = dest;
-              let outlineObject = { pageNumber: pageNumber, title: title, destArray: destArray };
-              outlineObjects.push(outlineObject);
-            });
+          getOutlineItem(outline[i]).then(function (obj) {
+            outlineObjects.push(obj);
           });
+
         }
       }
     });

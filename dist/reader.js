@@ -105301,7 +105301,19 @@ var event_utils = __webpack_require__(9982);
 // Zoom too big and page gets cut off? 
 // Set minimize to true in webpack config
 // Move first pdf page below navbar
-// Print button is finicky
+// Print button is finicky on diff resolutions
+// have to scroll for pdf pages to show at first
+// Add percent to number after and before zooming
+// Mayybe add an input to the percent
+// Add a loading bar?
+//Expand page number when too much
+//Add SCROLL BAR PLEASE 
+//WOW just all of searching sucks
+
+//ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
+//ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
+// Ask if we
+
 
 
 
@@ -105463,6 +105475,32 @@ function removePage(i) {
 }
 
 
+  function getOutlineItem(item) {
+    return new Promise(function (resolve, reject) {
+      pdf.getDestination(item.dest).then(function (dest) {
+        pdf.getPageIndex(dest[0]).then(function (id) {
+          let pageNumber = parseInt(id) + 1;
+          let title = item.title;
+          let destArray = dest;
+
+          let outlineObject = {
+            pageNumber: pageNumber, title: title,
+            destArray: destArray, children: []
+          };
+
+          //recurively get children
+          for (let i = 0; i < item.items.length; i++) {
+            getOutlineItem(item.items[i]).then(function (obj) {
+              outlineObject.children.push(obj);
+            });
+          }
+          resolve(outlineObject);
+        });
+      });
+    })
+
+  }
+
 function renderPage(i, containerDiv, textLayerDiv) {
   let loadPage = pdf.getPage(i);
   loadPage.then(
@@ -105600,15 +105638,10 @@ function processPDF(arrayBuffer) {
     pdf.getOutline().then(function (outline) {
       if (outline) {
         for (let i = 0; i < outline.length; i++) {
-          pdf.getDestination(outline[i].dest).then(function (dest) {
-            pdf.getPageIndex(dest[0]).then(function (id) {
-              let pageNumber = parseInt(id) + 1;
-              let title = outline[i].title;
-              let destArray = dest;
-              let outlineObject = { pageNumber: pageNumber, title: title, destArray: destArray };
-              outlineObjects.push(outlineObject);
-            });
+          getOutlineItem(outline[i]).then(function (obj) {
+            outlineObjects.push(obj);
           });
+
         }
       }
     });
@@ -105732,6 +105765,7 @@ for (let i = 0; i < optionButtons.length; i++) {
     //Handle the specific cases for each button selection
     let button = optionButtons.item(i);
     if (button.textContent == "Outline") {
+      console.log(outline);
       for (let j = 0; j < outline.length; j++) {
         let ref = outline[j];
         let refContainer = document.createElement("div");
@@ -105745,27 +105779,20 @@ for (let i = 0; i < optionButtons.length; i++) {
         }
 
         refContainer.style.height = `10%`;
+        if (ref.children.length != 0) {
+          refContainer.style.width = "90%";
+          let dropdownButton = document.createElement("button");
+          dropdownButton.innerHTML = ">";
+          dropdownButton.style.height = "100%";
+          dropdownButton.style.width = "10%";
+          refContainer.appendChild(dropdownButton);
+        }
         refContainer.style.width = "100%";
         refContainer.appendChild(button);
         content.appendChild(refContainer);
       }
     }
     else if (button.textContent == "Tools") {
-      //TODO, make the tool section in the pdfDisplay thing and just copy the html over
-      //Make default viewer link
-      /*
-      let defaultViewContainer = document.createElement("div");
-      defaultViewContainer.style.height = "10%";
-      defaultViewContainer.style.width = "100%";
-      let defaultViewLink = document.createElement("a");
-      defaultViewLink.style.height = "10%";
-      defaultViewLink.style.width = "100%";
-      defaultViewLink.innerText = "Default Viewer (To be removed)";
-      defaultViewLink.href = filename;
-      defaultViewContainer.appendChild(defaultViewLink);
-      content.appendChild(defaultViewContainer);
-
-      */
       content.innerHTML = `          <div>
      <a> DEFAULT PDF VIEWER </a>
    </div>
