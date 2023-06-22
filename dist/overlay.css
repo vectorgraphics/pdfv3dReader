@@ -225,8 +225,9 @@ body {
 }
 
 #navbar #center-navbar #pageNumber {
-  width: max(10%, 10px);
-    height: max(10%, 10px);
+  max-width: fit-content;
+    width: max(10%, 10px);
+      height: max(10%, 10px);
   background-color:dimgray;
   color: white;
   border: none;
@@ -435,21 +436,12 @@ body {
     height: 100%;
     overflow-y: scroll;
 }
-#hamburgerContent div {
-  display: flex;
-  flex-direction: row;
-}
 
-#hamburgerContent div button:hover {
-  background-color: #FFECD1;
-  color: black;
-}
+
 ::-webkit-scrollbar {
   width: 0%;
 }
-#hamburgerContent div:hover {
-  opacity: 0.4;
-  }
+
   
 
 #hamburgerContent div button {
@@ -463,14 +455,24 @@ body {
 
 #hamburgerContent div button:hover {
   cursor: pointer;
+  background-color: #FFECD1;
+    color: black;
+}
+  
+.refContainer {
+  display: flex;
+  flex-direction: row;
+}
+.dropdownContainer * {
+  position: relative;
+  left: 2%;
+  padding-bottom: 2%;
+  padding-top: 2%;
 }
 
-/* Special padding to make sure we arent hiding anything under navbar
-div[id="Page 1 Container"] {
-  padding-top: 3%;
+.refContainer:hover {
+  opacity: 0.4;
 }
-*/
-
 .annotationLayer{
   pointer-events: none;
   z-index: 2;

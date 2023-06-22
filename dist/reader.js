@@ -105483,23 +105483,23 @@ function removePage(i) {
           let title = item.title;
           let destArray = dest;
 
-          let outlineObject = {
-            pageNumber: pageNumber, title: title,
-            destArray: destArray, children: []
-          };
+        let outlineObject = {
+          pageNumber: pageNumber, title: title,
+          destArray: destArray, children: []
+        };
 
-          //recurively get children
-          for (let i = 0; i < item.items.length; i++) {
-            getOutlineItem(item.items[i]).then(function (obj) {
-              outlineObject.children.push(obj);
-            });
-          }
-          resolve(outlineObject);
-        });
+        //recurively get children
+        for (let i = 0; i < item.items.length; i++) {
+          getOutlineItem(item.items[i]).then(function (obj) {
+            outlineObject.children.push(obj);
+          });
+        }
+        resolve(outlineObject);
       });
-    })
+    });
+  })
 
-  }
+}
 
 function renderPage(i, containerDiv, textLayerDiv) {
   let loadPage = pdf.getPage(i);
@@ -105750,47 +105750,72 @@ let outline = getOutline();
 
 let optionButtons = document.getElementsByClassName("optionBtn");
 
-for (let i = 0; i < optionButtons.length; i++) {
-  //Add the active tag 
-  optionButtons.item(i).onclick = function () {
-    //Make all buttons inactive
-    for (let j = 0; j < optionButtons.length; j++) {
-      optionButtons.item(j).classList.remove("active");
+
+  function makeDropDown(outline, container) {
+    container.classList.add("dropdownContainer");
+    for (let j = 0; j < outline.length; j++) {
+      let ref = outline[j];
+      let refContainer = document.createElement("div");
+    refContainer.classList.add("refContainer");
+    let button = document.createElement("button");
+    button.innerText = ref.title;
+    let viewer = new V3DViewer();
+
+    button.onclick = function () {
+
+      viewer.scrollPageIntoView({ pageNumber: ref.pageNumber, destArray: ref.destArray });
     }
+
+    refContainer.style.height = `10%`;
+    if (ref.children.length != 0) {
+      refContainer.style.width = "90%";
+      let dropdownButton = document.createElement("button");
+      dropdownButton.innerHTML = ">";
+      dropdownButton.style.height = "100%";
+      dropdownButton.style.width = "10%";
+      refContainer.appendChild(dropdownButton);
+      dropdownButton.onclick = function () {
+        if (dropdownButton.classList.contains("active")) {
+          //remove dropdown list
+          refContainer.nextSibling.remove();
+          dropdownButton.classList.remove("active");
+        }
+        else {
+          // add dropdown list
+          let dropdownDiv = document.createElement("div");
+          dropdownDiv.style.left = "10%";
+          refContainer.after(dropdownDiv);
+          dropdownButton.classList.add("active");
+          makeDropDown(ref.children, dropdownDiv);
+        }
+      }
+    }
+    refContainer.style.width = "100%";
+    refContainer.appendChild(button);
+      container.appendChild(refContainer);
+    }
+  }
+
+
+  for (let i = 0; i < optionButtons.length; i++) {
+    //Add the active tag 
+    optionButtons.item(i).onclick = function () {
+      //Make all buttons inactive
+      for (let j = 0; j < optionButtons.length; j++) {
+        optionButtons.item(j).classList.remove("active");
+      }
     optionButtons.item(i).classList.add("active");
     let content = document.getElementById("hamburgerContent");
-    //Cleat the html
+    //Clear the html
     content.innerHTML = "";
+    content.classList.remove("dropdownContainer");
+
 
     //Handle the specific cases for each button selection
     let button = optionButtons.item(i);
     if (button.textContent == "Outline") {
-      console.log(outline);
-      for (let j = 0; j < outline.length; j++) {
-        let ref = outline[j];
-        let refContainer = document.createElement("div");
-        let button = document.createElement("button");
-        button.innerText = ref.title;
-        let viewer = new V3DViewer();
+      makeDropDown(outline, content);
 
-        button.onclick = function () {
-
-          viewer.scrollPageIntoView({ pageNumber: ref.pageNumber, destArray: ref.destArray });
-        }
-
-        refContainer.style.height = `10%`;
-        if (ref.children.length != 0) {
-          refContainer.style.width = "90%";
-          let dropdownButton = document.createElement("button");
-          dropdownButton.innerHTML = ">";
-          dropdownButton.style.height = "100%";
-          dropdownButton.style.width = "10%";
-          refContainer.appendChild(dropdownButton);
-        }
-        refContainer.style.width = "100%";
-        refContainer.appendChild(button);
-        content.appendChild(refContainer);
-      }
     }
     else if (button.textContent == "Tools") {
       content.innerHTML = `          <div>
