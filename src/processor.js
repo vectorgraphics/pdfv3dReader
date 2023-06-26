@@ -17,7 +17,7 @@
 //Expand page number when too much
 //Add SCROLL BAR PLEASE 
 //WOW just all of searching sucks
-
+//Reduce width of dropdown in hmburger to 90% to account for padding
 //ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
 //ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
 // Ask if we
@@ -303,6 +303,8 @@ export function gotoPage(i) {
 
 function setUpPages(pdf, pages) {
   let totalPageNumber = document.getElementById("totalPageNumber");
+  let input = document.getElementById("pageNumber");
+  input.style.width = `${pages.toString().length}ch`;
   totalPageNumber.textContent = pages
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";

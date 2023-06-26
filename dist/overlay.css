@@ -225,9 +225,7 @@ body {
 }
 
 #navbar #center-navbar #pageNumber {
-  max-width: fit-content;
-    width: max(10%, 10px);
-      height: max(10%, 10px);
+  height: max(10%, 10px);
   background-color:dimgray;
   color: white;
   border: none;
@@ -438,11 +436,7 @@ body {
 }
 
 
-::-webkit-scrollbar {
-  width: 0%;
-}
 
-  
 
 #hamburgerContent div button {
   height: 100%;

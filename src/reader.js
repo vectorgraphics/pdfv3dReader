@@ -100,8 +100,8 @@ let outline = process.getOutline();
 let optionButtons = document.getElementsByClassName("optionBtn");
 
 
-function makeDropDown(outline, container) {
-  container.classList.add("dropdownContainer");
+function makeDropDown(outline, container, dropdown) {
+
   for (let j = 0; j < outline.length; j++) {
     let ref = outline[j];
     let refContainer = document.createElement("div");
@@ -135,7 +135,7 @@ function makeDropDown(outline, container) {
           dropdownDiv.style.left = "10%";
           refContainer.after(dropdownDiv);
           dropdownButton.classList.add("active");
-          makeDropDown(ref.children, dropdownDiv);
+          makeDropDown(ref.children, dropdownDiv, true);
         }
       }
     }
@@ -163,7 +163,7 @@ for (let i = 0; i < optionButtons.length; i++) {
     //Handle the specific cases for each button selection
     let button = optionButtons.item(i);
     if (button.textContent == "Outline") {
-      makeDropDown(outline, content);
+      makeDropDown(outline, content, false);
 
     }
     else if (button.textContent == "Tools") {

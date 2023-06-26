@@ -105309,7 +105309,7 @@ var event_utils = __webpack_require__(9982);
 //Expand page number when too much
 //Add SCROLL BAR PLEASE 
 //WOW just all of searching sucks
-
+//Reduce width of dropdown in hmburger to 90% to account for padding
 //ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
 //ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
 // Ask if we
@@ -105595,6 +105595,8 @@ function gotoPage(i) {
 
 function setUpPages(pdf, pages) {
   let totalPageNumber = document.getElementById("totalPageNumber");
+  let input = document.getElementById("pageNumber");
+  input.style.width = `${pages.toString().length}ch`;
   totalPageNumber.textContent = pages
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";
@@ -105751,8 +105753,8 @@ let outline = getOutline();
 let optionButtons = document.getElementsByClassName("optionBtn");
 
 
-  function makeDropDown(outline, container) {
-    container.classList.add("dropdownContainer");
+  function makeDropDown(outline, container, dropdown) {
+
     for (let j = 0; j < outline.length; j++) {
       let ref = outline[j];
       let refContainer = document.createElement("div");
@@ -105786,15 +105788,15 @@ let optionButtons = document.getElementsByClassName("optionBtn");
           dropdownDiv.style.left = "10%";
           refContainer.after(dropdownDiv);
           dropdownButton.classList.add("active");
-          makeDropDown(ref.children, dropdownDiv);
+          makeDropDown(ref.children, dropdownDiv, true);
         }
       }
     }
     refContainer.style.width = "100%";
     refContainer.appendChild(button);
-      container.appendChild(refContainer);
-    }
+    container.appendChild(refContainer);
   }
+}
 
 
   for (let i = 0; i < optionButtons.length; i++) {
@@ -105814,7 +105816,7 @@ let optionButtons = document.getElementsByClassName("optionBtn");
     //Handle the specific cases for each button selection
     let button = optionButtons.item(i);
     if (button.textContent == "Outline") {
-      makeDropDown(outline, content);
+      makeDropDown(outline, content, false);
 
     }
     else if (button.textContent == "Tools") {
