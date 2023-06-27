@@ -132,7 +132,7 @@ function makeDropDown(outline, container, dropdown) {
         else {
           // add dropdown list
           let dropdownDiv = document.createElement("div");
-          dropdownDiv.style.left = "10%";
+          dropdownDiv.classList.add("dropdownContainer");
           refContainer.after(dropdownDiv);
           dropdownButton.classList.add("active");
           makeDropDown(ref.children, dropdownDiv, true);

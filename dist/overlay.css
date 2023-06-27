@@ -1,6 +1,7 @@
 :root {
   --lightColor1: #FFECD1;
-  --darkColor1: ;
+  --lightColor2: #8f765f;
+    --darkColor1: #50514F;
 }
 body {
   background-color: gray;
@@ -328,7 +329,7 @@ body {
   
   #print {
   height: 100%;
-  width: 20%;
+  width: max(10%, 80px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -340,8 +341,8 @@ body {
     padding: 0%;
     border: 0%;
     margin: 0%;
-    height: 90%;
-    width: max(60%, 40px);
+    height: 80%;
+      width: 100%;
   }
   
   #print svg * {
@@ -371,7 +372,7 @@ body {
   height: calc(100vh - max(5%, 50px));
   display: flex;
   flex-direction: column;
-  background-color: #50514F;
+  background-color: var(--darkColor1);
   z-index: 4;
   top: max(5%, 50px);
 
@@ -418,6 +419,7 @@ body {
 }
 
 
+
 #optionsMenu * button.active {
   background-color: var(--lightColor1);
   color: black;
@@ -433,6 +435,7 @@ body {
 #hamburgerContent {
     height: 100%;
     overflow-y: scroll;
+
 }
 
 
@@ -449,7 +452,7 @@ body {
 
 #hamburgerContent div button:hover {
   cursor: pointer;
-  background-color: #FFECD1;
+  background-color: var(--lightColor1);
     color: black;
 }
   
@@ -457,11 +460,18 @@ body {
   display: flex;
   flex-direction: row;
 }
+#hamburgerContent div button.active {
+  background-color: var(--lightColor2);
+  color: black;
+}
+
+.dropdownContainer {
+  background-color: var(--lightColor2);
+}
 .dropdownContainer * {
   position: relative;
   left: 2%;
-  padding-bottom: 2%;
-  padding-top: 2%;
+  background-color: var(--darkColor1);
 }
 
 .refContainer:hover {

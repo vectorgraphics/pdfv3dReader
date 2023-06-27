@@ -2,15 +2,11 @@
 
 // TODO reduce popping by rendering pages infront and behind all visible pages, else it hurts  my eyes to scroll lol.
 // TODO reduce popping when zooming
-// TODO FIX PHONE?? Why is it like that on a phone???
-// TODO add input to page menu
 // TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
 // TODO Zoom resets to first page
 // Zoom too big and page gets cut off? 
 // Set minimize to true in webpack config
 // Move first pdf page below navbar
-// Print button is finicky on diff resolutions
-// have to scroll for pdf pages to show at first
 // Add percent to number after and before zooming
 // Mayybe add an input to the percent
 // Add a loading bar?
@@ -153,7 +149,7 @@ export function visiblePages() {
   for (let i = 0; i < pages.length; i++) {
     let container = pages.item(i);
     let position = container.getBoundingClientRect();
-
+    //If container out of frame render it, else dont
     if (position.top < window.innerHeight && position.bottom >= 0) {
       if (i + 1 < minVisPage) {
         minVisPage = 1 + i;
@@ -169,25 +165,6 @@ export function visiblePages() {
         removePage(i);
       }
     }
-    /*
-    //If container out of frame dont render it and mark it as not visible
-    if (container.offsetTop + container.offsetHeight < window.scrollY ||
-      container.offsetTop > window.scrollY + window.outerHeight) {
-      if (container.classList.contains("visible")) {
-        removePage(i);
-      }
-    }
-    else {
-      if (i + 1 < minVisPage) {
-        minVisPage = 1 + i;
-      }
-
-      if (!container.classList.contains("visible")) {
-        renderPage(i + 1, container, container.firstChild);
-
-      }
-    }
-    */
   }
   let topPage = document.getElementById("pageNumber");
   topPage.value = minVisPage.toString();
