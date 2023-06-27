@@ -152,6 +152,24 @@ export function visiblePages() {
   let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
     let container = pages.item(i);
+    let position = container.getBoundingClientRect();
+
+    if (position.top < window.innerHeight && position.bottom >= 0) {
+      if (i + 1 < minVisPage) {
+        minVisPage = 1 + i;
+      }
+
+      if (!container.classList.contains("visible")) {
+        renderPage(i + 1, container, container.firstChild);
+
+      }
+    }
+    else {
+      if (container.classList.contains("visible")) {
+        removePage(i);
+      }
+    }
+    /*
     //If container out of frame dont render it and mark it as not visible
     if (container.offsetTop + container.offsetHeight < window.scrollY ||
       container.offsetTop > window.scrollY + window.outerHeight) {
@@ -169,6 +187,7 @@ export function visiblePages() {
 
       }
     }
+    */
   }
   let topPage = document.getElementById("pageNumber");
   topPage.value = minVisPage.toString();

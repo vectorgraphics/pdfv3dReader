@@ -105444,6 +105444,24 @@ function visiblePages() {
   let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
     let container = pages.item(i);
+    let position = container.getBoundingClientRect();
+
+    if (position.top < window.innerHeight && position.bottom >= 0) {
+      if (i + 1 < minVisPage) {
+        minVisPage = 1 + i;
+      }
+
+      if (!container.classList.contains("visible")) {
+        renderPage(i + 1, container, container.firstChild);
+
+      }
+    }
+    else {
+      if (container.classList.contains("visible")) {
+        removePage(i);
+      }
+    }
+    /*
     //If container out of frame dont render it and mark it as not visible
     if (container.offsetTop + container.offsetHeight < window.scrollY ||
       container.offsetTop > window.scrollY + window.outerHeight) {
@@ -105461,6 +105479,7 @@ function visiblePages() {
 
       }
     }
+    */
   }
   let topPage = document.getElementById("pageNumber");
   topPage.value = minVisPage.toString();
@@ -105755,9 +105774,9 @@ let optionButtons = document.getElementsByClassName("optionBtn");
 
   function makeDropDown(outline, container, dropdown) {
 
-    for (let j = 0; j < outline.length; j++) {
-      let ref = outline[j];
-      let refContainer = document.createElement("div");
+  for (let j = 0; j < outline.length; j++) {
+    let ref = outline[j];
+    let refContainer = document.createElement("div");
     refContainer.classList.add("refContainer");
     let button = document.createElement("button");
     button.innerText = ref.title;
