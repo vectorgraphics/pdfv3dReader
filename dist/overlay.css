@@ -18,6 +18,7 @@ body {
   display: inline-block;
   margin-top: 10px;
   position: relative;
+  background-color: white;
 }
 
 .page {
@@ -472,11 +473,13 @@ body {
   position: relative;
   left: 2%;
   background-color: var(--darkColor1);
+  padding-top: 3%;
 }
 
 .refContainer:hover {
   opacity: 0.4;
 }
+
 .annotationLayer{
   pointer-events: none;
   z-index: 2;

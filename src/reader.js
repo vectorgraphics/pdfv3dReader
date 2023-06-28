@@ -179,3 +179,10 @@ for (let i = 0; i < optionButtons.length; i++) {
     }
   }
 } 
+
+window.onkeydown = function (e) {
+  var ck = e.keyCode ? e.keyCode : e.which;
+  if (e.ctrlKey && ck == 70) {
+    alert('Searching...');
+  }
+}

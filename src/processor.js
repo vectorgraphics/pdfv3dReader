@@ -9,11 +9,7 @@
 // Move first pdf page below navbar
 // Add percent to number after and before zooming
 // Mayybe add an input to the percent
-// Add a loading bar?
-//Expand page number when too much
-//Add SCROLL BAR PLEASE 
 //WOW just all of searching sucks
-//Reduce width of dropdown in hmburger to 90% to account for padding
 //ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
 //ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
 // Ask if we
