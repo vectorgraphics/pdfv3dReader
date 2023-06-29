@@ -34,7 +34,7 @@ fetch(filename)
 let pageScale = document.getElementById("pageScale");
 let zoominbutton = document.getElementById("zoom-in");
 zoominbutton.onclick = function () {
-  if (process.getScale() >= 5) {
+  if (process.getScale() >= 3) {
     return;
   }
   zoom(0.25);
@@ -70,10 +70,13 @@ saveButton.onclick = function () {
 
 function zoom(zoomAmount) {
   process.setScale(process.getScale() + zoomAmount);
-  pageScale.textContent = process.getScale() * 100;
-  document.body.removeChild(document.getElementById("pdfDiv"));
-  process.processPDF(pdfContent);
+  pageScale.textContent = `${process.getScale() * 100}%`;
+
+  let oldDiv = document.getElementById("pdfDiv");
+  process.processPDF(pdfContent, { x: scrollX, y: scrollY });
+  document.body.removeChild(oldDiv);
   process.visiblePages();
+
 }
 
 let hamburgerMenuButton = document.getElementById("hamburgerButton");

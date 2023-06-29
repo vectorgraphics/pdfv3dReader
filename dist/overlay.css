@@ -473,6 +473,9 @@ body {
   position: relative;
   left: 2%;
   background-color: var(--darkColor1);
+}
+
+.dropdownContainer .refContainer button {
   padding-top: 3%;
 }
 
@@ -480,6 +483,9 @@ body {
   opacity: 0.4;
 }
 
+.dropdownContainer .refContainer button {
+  background-color: black;
+}
 .annotationLayer{
   pointer-events: none;
   z-index: 2;

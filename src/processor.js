@@ -1,14 +1,8 @@
 // This is the pdf processor
 
-// TODO reduce popping by rendering pages infront and behind all visible pages, else it hurts  my eyes to scroll lol.
-// TODO reduce popping when zooming
 // TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
 // TODO Zoom resets to first page
-// Zoom too big and page gets cut off? 
 // Set minimize to true in webpack config
-// Move first pdf page below navbar
-// Add percent to number after and before zooming
-// Mayybe add an input to the percent
 //WOW just all of searching sucks
 //ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
 //ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
@@ -293,11 +287,12 @@ export function gotoPage(i) {
   pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
 }
 
-function setUpPages(pdf, pages) {
+function setUpPages(pdf, pages, zoom) {
+
   let totalPageNumber = document.getElementById("totalPageNumber");
   let input = document.getElementById("pageNumber");
   input.style.width = `${pages.toString().length}ch`;
-  totalPageNumber.textContent = pages
+  totalPageNumber.textContent = pages;
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";
   document.body.appendChild(pdfDiv);
@@ -315,8 +310,11 @@ function setUpPages(pdf, pages) {
       containerDiv.style.height = viewport.height + "px";
       containerDiv.style.width = viewport.width + "px";
 
-      visiblePages();
+      visiblePages(); //in here because loading pages is async (inneficient see if you can do this faster)
     });
+  }
+  if (zoom) {
+    scrollTo({ top: zoom.x, left: zoom.y, behavior: "instant" });
   }
 }
 
@@ -324,7 +322,7 @@ export function getOutline() {
   return outlineObjects;
 }
 
-export function processPDF(arrayBuffer) {
+export function processPDF(arrayBuffer, zoom = {}) {
   let pdftask = pdfjs.getDocument(arrayBuffer);
 
   pdftask.promise.then(function (_pdf) {
@@ -335,7 +333,7 @@ export function processPDF(arrayBuffer) {
 
     coreDocument.parseStartXRef();
     coreDocument.parse();
-    setUpPages(pdf, numPages);
+    setUpPages(pdf, numPages, zoom);
     //Set up outline
     pdf.getOutline().then(function (outline) {
       if (outline) {

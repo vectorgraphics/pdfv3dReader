@@ -105292,22 +105292,10 @@ var event_utils = __webpack_require__(9982);
 ;// CONCATENATED MODULE: ./src/processor.js
 // This is the pdf processor
 
-// TODO reduce popping by rendering pages infront and behind all visible pages, else it hurts  my eyes to scroll lol.
-// TODO reduce popping when zooming
 // TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
 // TODO Zoom resets to first page
-// Zoom too big and page gets cut off? 
 // Set minimize to true in webpack config
-// Move first pdf page below navbar
-// Print button is finicky on diff resolutions
-// have to scroll for pdf pages to show at first
-// Add percent to number after and before zooming
-// Mayybe add an input to the percent
-// Add a loading bar?
-//Expand page number when too much
-//Add SCROLL BAR PLEASE 
 //WOW just all of searching sucks
-//Reduce width of dropdown in hmburger to 90% to account for padding
 //ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
 //ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
 // Ask if we
@@ -105362,7 +105350,7 @@ function setScale(newScale) {
   scale = newScale;
 }
 
-function getScale() {
+  function processor_getScale() {
   return scale;
 }
 
@@ -105591,11 +105579,12 @@ function gotoPage(i) {
   pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
 }
 
-function setUpPages(pdf, pages) {
+  function setUpPages(pdf, pages, zoom) {
+
   let totalPageNumber = document.getElementById("totalPageNumber");
   let input = document.getElementById("pageNumber");
   input.style.width = `${pages.toString().length}ch`;
-  totalPageNumber.textContent = pages
+    totalPageNumber.textContent = pages;
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";
   document.body.appendChild(pdfDiv);
@@ -105613,16 +105602,23 @@ function setUpPages(pdf, pages) {
       containerDiv.style.height = viewport.height + "px";
       containerDiv.style.width = viewport.width + "px";
 
-      visiblePages();
+      visiblePages(); //in here because loading pages is async (inneficient see if you can do this faster)
     });
   }
+    if (zoom) {
+      console.log(zoom);
+
+    }
+    else {
+      console.log(zoom);
+    }
 }
 
 function getOutline() {
   return outlineObjects;
 }
 
-function processPDF(arrayBuffer) {
+  function processPDF(arrayBuffer, zoom = {}) {
   let pdftask = webpack.getDocument(arrayBuffer);
 
   pdftask.promise.then(function (_pdf) {
@@ -105633,7 +105629,7 @@ function processPDF(arrayBuffer) {
 
     coreDocument.parseStartXRef();
     coreDocument.parse();
-    setUpPages(pdf, numPages);
+    setUpPages(pdf, numPages, zoom);
     //Set up outline
     pdf.getOutline().then(function (outline) {
       if (outline) {
@@ -105685,7 +105681,7 @@ fetch(filename)
 let pageScale = document.getElementById("pageScale");
 let zoominbutton = document.getElementById("zoom-in");
 zoominbutton.onclick = function () {
-  if (getScale() >= 5) {
+  if (processor_getScale() >= 3) {
     return;
   }
   zoom(0.25);
@@ -105693,7 +105689,7 @@ zoominbutton.onclick = function () {
 
 let zoomoutbutton = document.getElementById("zoom-out");
 zoomoutbutton.onclick = function () {
-  if (getScale() <= 0.25) {
+  if (processor_getScale() <= 0.25) {
     return;
   }
   zoom(-0.25);
@@ -105720,11 +105716,14 @@ pageNumber.addEventListener("keyup", ({ key }) => {
   }
 
 function zoom(zoomAmount) {
-  setScale(getScale() + zoomAmount);
-  pageScale.textContent = getScale() * 100;
-  document.body.removeChild(document.getElementById("pdfDiv"));
-  processPDF(pdfContent);
+  setScale(processor_getScale() + zoomAmount);
+  pageScale.textContent = `${processor_getScale() * 100}%`;
+
+  let oldDiv = document.getElementById("pdfDiv");
+  processPDF(pdfContent, { x: scrollX, y: scrollY });
+  document.body.removeChild(oldDiv);
   visiblePages();
+
 }
 
 let hamburgerMenuButton = document.getElementById("hamburgerButton");
@@ -105830,6 +105829,13 @@ let optionButtons = document.getElementsByClassName("optionBtn");
     }
   }
 } 
+
+  window.onkeydown = function (e) {
+    var ck = e.keyCode ? e.keyCode : e.which;
+    if (e.ctrlKey && ck == 70) {
+      alert('Searching...');
+    }
+  }
 })();
 
 /******/ })()
