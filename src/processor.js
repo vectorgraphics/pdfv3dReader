@@ -1,12 +1,10 @@
 // This is the pdf processor
 
 // TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
-// TODO Zoom resets to first page
 // Set minimize to true in webpack config
 //WOW just all of searching sucks
 //ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
-//ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
-// Ask if we
+
 
 import * as pdfjs from "pdfjs-dist/webpack";
 import * as pdfJsDocument from "pdfjs-dist/lib/core/document";
