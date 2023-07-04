@@ -105350,7 +105350,7 @@ function setScale(newScale) {
   scale = newScale;
 }
 
-  function processor_getScale() {
+  function getScale() {
   return scale;
 }
 
@@ -105603,16 +105603,13 @@ function gotoPage(i) {
       containerDiv.style.width = viewport.width + "px";
 
       visiblePages(); //in here because loading pages is async (inneficient see if you can do this faster)
+      // Also inneficient
+      scrollTo({ top: zoom.y, left: zoom.x, behavior: "instant" });
+
     });
   }
-    if (zoom) {
-      console.log(zoom);
 
-    }
-    else {
-      console.log(zoom);
-    }
-}
+  }
 
 function getOutline() {
   return outlineObjects;
@@ -105681,7 +105678,7 @@ fetch(filename)
 let pageScale = document.getElementById("pageScale");
 let zoominbutton = document.getElementById("zoom-in");
 zoominbutton.onclick = function () {
-  if (processor_getScale() >= 3) {
+  if (getScale() >= 3) {
     return;
   }
   zoom(0.25);
@@ -105689,7 +105686,7 @@ zoominbutton.onclick = function () {
 
 let zoomoutbutton = document.getElementById("zoom-out");
 zoomoutbutton.onclick = function () {
-  if (processor_getScale() <= 0.25) {
+  if (getScale() <= 0.25) {
     return;
   }
   zoom(-0.25);
@@ -105716,14 +105713,16 @@ pageNumber.addEventListener("keyup", ({ key }) => {
   }
 
 function zoom(zoomAmount) {
-  setScale(processor_getScale() + zoomAmount);
-  pageScale.textContent = `${processor_getScale() * 100}%`;
-
+  let oldScale = getScale();
+  let newScale = oldScale + zoomAmount;
+  let ratio = newScale / oldScale;
+  setScale(newScale);
+  pageScale.textContent = `${newScale * 100}%`;
   let oldDiv = document.getElementById("pdfDiv");
-  processPDF(pdfContent, { x: scrollX, y: scrollY });
+  console.log(ratio);
+  console.log(scrollY * ratio);
+  processPDF(pdfContent, { x: scrollX * ratio, y: scrollY * ratio });
   document.body.removeChild(oldDiv);
-  visiblePages();
-
 }
 
 let hamburgerMenuButton = document.getElementById("hamburgerButton");

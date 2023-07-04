@@ -477,6 +477,7 @@ body {
 
 .dropdownContainer .refContainer button {
   padding-top: 3%;
+  padding-bottom: 3%;
 }
 
 .refContainer:hover {

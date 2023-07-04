@@ -311,11 +311,12 @@ function setUpPages(pdf, pages, zoom) {
       containerDiv.style.width = viewport.width + "px";
 
       visiblePages(); //in here because loading pages is async (inneficient see if you can do this faster)
+      // Also inneficient
+      scrollTo({ top: zoom.y, left: zoom.x, behavior: "instant" });
+
     });
   }
-  if (zoom) {
-    scrollTo({ top: zoom.x, left: zoom.y, behavior: "instant" });
-  }
+
 }
 
 export function getOutline() {

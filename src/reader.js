@@ -69,14 +69,16 @@ saveButton.onclick = function () {
 }
 
 function zoom(zoomAmount) {
-  process.setScale(process.getScale() + zoomAmount);
-  pageScale.textContent = `${process.getScale() * 100}%`;
-
+  let oldScale = process.getScale();
+  let newScale = oldScale + zoomAmount;
+  let ratio = newScale / oldScale;
+  process.setScale(newScale);
+  pageScale.textContent = `${newScale * 100}%`;
   let oldDiv = document.getElementById("pdfDiv");
-  process.processPDF(pdfContent, { x: scrollX, y: scrollY });
+  console.log(ratio);
+  console.log(scrollY * ratio);
+  process.processPDF(pdfContent, { x: scrollX * ratio, y: scrollY * ratio });
   document.body.removeChild(oldDiv);
-  process.visiblePages();
-
 }
 
 let hamburgerMenuButton = document.getElementById("hamburgerButton");
