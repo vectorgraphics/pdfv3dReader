@@ -16,12 +16,12 @@ if (filename != null) {
         workerScript.innerHTML = data;
 
         let readerScript = document.createElement("script");
-        readerScript.src = "./dist/reader.js"
+        readerScript.src = "'https://sean-madu.github.io/PDF_ReaderLib/dist/reader.js"
         readerScript.defer = true;
         readerScript.type = "module";
 
         document.head.innerHTML = `<meta charset=" UTF-8" />
-    <link rel="stylesheet" href="./dist/overlay.css" />
+    <link rel="stylesheet" href="'https://sean-madu.github.io/PDF_ReaderLib/dist/overlay.css" />
     `;
 
         document.head.appendChild(workerScript);
