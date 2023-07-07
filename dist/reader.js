@@ -105144,6 +105144,7 @@ module.exports = function Worker_fn() {
           let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
           let workerBlobUrl = URL.createObjectURL(workerBlob);
           return new Worker(workerBlobUrl);
+
 }
 
 
@@ -105293,12 +105294,10 @@ var event_utils = __webpack_require__(9982);
 // This is the pdf processor
 
 // TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
-// TODO Zoom resets to first page
 // Set minimize to true in webpack config
 //WOW just all of searching sucks
 //ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
-//ASK IF outline or chapter for navbar (depends on if we get bitmaps i guess)
-// Ask if we
+
 
 
 
@@ -105335,9 +105334,6 @@ class V3DViewer {
     console.log(yCord);
     console.log(yCord + document.getElementById("navbar").clientHeight);
     window.scrollBy({ top: yCord, left: xCord, behavior: "smooth" });
-    console.log(destArray);
-
-
   }
 }
 
@@ -105584,10 +105580,11 @@ function gotoPage(i) {
   let totalPageNumber = document.getElementById("totalPageNumber");
   let input = document.getElementById("pageNumber");
   input.style.width = `${pages.toString().length}ch`;
-    totalPageNumber.textContent = pages;
+  totalPageNumber.textContent = pages;
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";
   document.body.appendChild(pdfDiv);
+
   for (let i = 1; i <= pages; i++) {
     let loadPage = pdf.getPage(i);
     loadPage.then(function (page) {
@@ -105609,7 +105606,7 @@ function gotoPage(i) {
     });
   }
 
-  }
+}
 
 function getOutline() {
   return outlineObjects;
@@ -105715,14 +105712,22 @@ pageNumber.addEventListener("keyup", ({ key }) => {
 function zoom(zoomAmount) {
   let oldScale = getScale();
   let newScale = oldScale + zoomAmount;
-  let ratio = newScale / oldScale;
   setScale(newScale);
   pageScale.textContent = `${newScale * 100}%`;
-  let oldDiv = document.getElementById("pdfDiv");
-  console.log(ratio);
-  console.log(scrollY * ratio);
-  processPDF(pdfContent, { x: scrollX * ratio, y: scrollY * ratio });
-  document.body.removeChild(oldDiv);
+  //resize all the pdf pages
+  let pages = document.getElementsByClassName("container");
+  for (let i = 0; i < pages.length; i++) {
+    let page = pages.item(i);
+    let oldy = page.clientHeight;
+    let oldx = page.clientWidth;
+
+    page.style.height = `${(oldy / oldScale) * newScale}px`;
+    page.style.width = `${(oldx / oldScale) * newScale}px`;
+    page.classList.remove("visible");
+    page.innerHTML = '';
+  }
+  scrollTo({ top: scrollY, left: scrollX, behavior: "instant" });
+  visiblePages();
 }
 
 let hamburgerMenuButton = document.getElementById("hamburgerButton");
@@ -105817,7 +105822,7 @@ let optionButtons = document.getElementsByClassName("optionBtn");
     }
     else if (button.textContent == "Tools") {
       content.innerHTML = `          <div>
-     <a> DEFAULT PDF VIEWER </a>
+     <button> DEFAULT PDF VIEWER(To be implemented) </button>
    </div>
    <div>
      <a> DRAW (To be implemented) </a>

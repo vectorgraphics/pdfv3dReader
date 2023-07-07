@@ -41,9 +41,6 @@ export class V3DViewer {
     console.log(yCord);
     console.log(yCord + document.getElementById("navbar").clientHeight);
     window.scrollBy({ top: yCord, left: xCord, behavior: "smooth" });
-    console.log(destArray);
-
-
   }
 }
 
@@ -294,6 +291,7 @@ function setUpPages(pdf, pages, zoom) {
   let pdfDiv = document.createElement("div");
   pdfDiv.id = "pdfDiv";
   document.body.appendChild(pdfDiv);
+
   for (let i = 1; i <= pages; i++) {
     let loadPage = pdf.getPage(i);
     loadPage.then(function (page) {

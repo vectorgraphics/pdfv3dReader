@@ -71,14 +71,22 @@ saveButton.onclick = function () {
 function zoom(zoomAmount) {
   let oldScale = process.getScale();
   let newScale = oldScale + zoomAmount;
-  let ratio = newScale / oldScale;
   process.setScale(newScale);
   pageScale.textContent = `${newScale * 100}%`;
-  let oldDiv = document.getElementById("pdfDiv");
-  console.log(ratio);
-  console.log(scrollY * ratio);
-  process.processPDF(pdfContent, { x: scrollX * ratio, y: scrollY * ratio });
-  document.body.removeChild(oldDiv);
+  //resize all the pdf pages
+  let pages = document.getElementsByClassName("container");
+  for (let i = 0; i < pages.length; i++) {
+    let page = pages.item(i);
+    let oldy = page.clientHeight;
+    let oldx = page.clientWidth;
+
+    page.style.height = `${(oldy / oldScale) * newScale}px`;
+    page.style.width = `${(oldx / oldScale) * newScale}px`;
+    page.classList.remove("visible");
+    page.innerHTML = '';
+  }
+  scrollTo({ top: scrollY, left: scrollX, behavior: "instant" });
+  process.visiblePages();
 }
 
 let hamburgerMenuButton = document.getElementById("hamburgerButton");
@@ -173,7 +181,7 @@ for (let i = 0; i < optionButtons.length; i++) {
     }
     else if (button.textContent == "Tools") {
       content.innerHTML = `          <div>
-     <a> DEFAULT PDF VIEWER </a>
+     <button> DEFAULT PDF VIEWER(To be implemented) </button>
    </div>
    <div>
      <a> DRAW (To be implemented) </a>
