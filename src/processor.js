@@ -21,6 +21,7 @@ import { EventBus } from "pdfjs-dist/lib/web/event_utils";
 
 //Collection of outlineObjects
 let outlineObjects = [];
+let pdfMetadata;
 export class V3DViewer {
   currentPageNumber;
   pagesRotation;
@@ -318,7 +319,9 @@ function setUpPages(pdf, pages, zoom) {
 export function getOutline() {
   return outlineObjects;
 }
-
+export function getMeta() {
+  return pdfMetadata;
+}
 export function processPDF(arrayBuffer, zoom = {}) {
   let pdftask = pdfjs.getDocument(arrayBuffer);
 
@@ -331,6 +334,13 @@ export function processPDF(arrayBuffer, zoom = {}) {
     coreDocument.parseStartXRef();
     coreDocument.parse();
     setUpPages(pdf, numPages, zoom);
+    pdf.getMetadata().then(function (metadata) {
+      pdfMetadata = metadata;
+      let pdfTitle = document.getElementById("pdf-name");
+      let title = document.createElement("title");
+      pdfTitle.textContent = title.text = metadata.info.Title;
+      document.head.appendChild(title);
+    });
     //Set up outline
     pdf.getOutline().then(function (outline) {
       if (outline) {

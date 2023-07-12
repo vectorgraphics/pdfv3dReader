@@ -105143,8 +105143,7 @@ module.exports = function Worker_fn() {
 
           let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
           let workerBlobUrl = URL.createObjectURL(workerBlob);
-          return new Worker(workerBlobUrl);
-
+  return new Worker(workerBlobUrl);
 }
 
 
@@ -105314,6 +105313,7 @@ var event_utils = __webpack_require__(9982);
 
 //Collection of outlineObjects
 let outlineObjects = [];
+  let pdfMetadata;
 class V3DViewer {
   currentPageNumber;
   pagesRotation;
@@ -105611,7 +105611,9 @@ function gotoPage(i) {
 function getOutline() {
   return outlineObjects;
 }
-
+  function getMeta() {
+    return pdfMetadata;
+  }
   function processPDF(arrayBuffer, zoom = {}) {
   let pdftask = webpack.getDocument(arrayBuffer);
 
@@ -105624,6 +105626,13 @@ function getOutline() {
     coreDocument.parseStartXRef();
     coreDocument.parse();
     setUpPages(pdf, numPages, zoom);
+    pdf.getMetadata().then(function (metadata) {
+      pdfMetadata = metadata;
+      let pdfTitle = document.getElementById("pdf-name");
+      let title = document.createElement("title");
+      pdfTitle.textContent = title.text = metadata.info.Title;
+      document.head.appendChild(title);
+    });
     //Set up outline
     pdf.getOutline().then(function (outline) {
       if (outline) {
@@ -105653,12 +105662,11 @@ let url = new URL(currentURL);
 let params = url.searchParams;
 
 let filename = params.get("pdf");
-let file = filename.substring(filename.lastIndexOf("/") + 1);
-let title = document.createElement("title");
+  let file = filename.substring(filename.lastIndexOf("/") + 1);
 let navbarName = document.getElementById("pdf-name");
-navbarName.textContent = title.text = file;
+  navbarName.textContent = file;
 defaultLink.href = filename;
-document.head.appendChild(title);
+
 
 fetch(filename)
   .then((response) => response.arrayBuffer())
@@ -105812,6 +105820,7 @@ let optionButtons = document.getElementsByClassName("optionBtn");
     //Clear the html
     content.innerHTML = "";
     content.classList.remove("dropdownContainer");
+    content.classList.remove("Tools");
 
 
     //Handle the specific cases for each button selection
@@ -105821,8 +105830,9 @@ let optionButtons = document.getElementsByClassName("optionBtn");
 
     }
     else if (button.textContent == "Tools") {
+      content.classList.add("Tools");
       content.innerHTML = `          <div>
-     <button> DEFAULT PDF VIEWER(To be implemented) </button>
+      <a href=${defaultLink}> DEFAULT PDF VIEWER</a>
    </div>
    <div>
      <a> DRAW (To be implemented) </a>

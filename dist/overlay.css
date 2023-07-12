@@ -207,6 +207,10 @@ body {
   padding-left: 2%;
 }
 
+#pdf-name {
+  font-size: large;
+  font-weight: bolder;
+}
 /*Used to be #zoom instead of #center-div*/
 #navbar #center-navbar {
   height: 100%;
@@ -439,8 +443,32 @@ body {
 
 }
 
+.Tools div {
+  padding: 5%;
+}
 
+.Tools div:hover {
+  background-color: var(--lightColor1);
+  opacity: 0.3;
+}
 
+.Tools div a {
+  text-decoration: none;
+  color: white;
+
+}
+
+.Tools div:hover a {
+  color: black;
+
+}
+
+.Tools div a:hover {
+  color: gray;
+  text-decoration: underline;
+  cursor: pointer;
+
+}
 
 #hamburgerContent div button {
   height: 100%;
