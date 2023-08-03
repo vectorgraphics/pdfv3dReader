@@ -146,7 +146,7 @@ if (filename != null) {
         </div>
       </div>
       <div id="searchBar">
-        <input height="100%" width="100%" placeholder="Search...">
+        <input id="searchInput" height="100%" width="100%" placeholder="Search...">
       </div>
   
     `;

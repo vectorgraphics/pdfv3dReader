@@ -105870,7 +105870,7 @@ let optionButtons = document.getElementsByClassName("optionBtn");
               pageTextContent += c.items[i].str;
 
             }
-            let searchItem = "d ";
+            let searchItem = document.getElementById("searchInput").value;
             let word = new RegExp(searchItem, "gi");
             let firstIndex = pageTextContent.search(word);
             let searchIndex = firstIndex;
@@ -105923,20 +105923,26 @@ let optionButtons = document.getElementsByClassName("optionBtn");
                     }
                     firstIndex = search + firstIndex + searchItem.length;
                     let newSearchIndex = firstIndex - lengthChecked;
-
+                    console.log(` search = ${search}search inde = ${searchIndex} remainder : ${remainder} firstInde ${firstIndex}`);
 
                     //word appears in the same object
                     if (newSearchIndex < 0) {
-                      console.log(` search = ${search}search inde = ${searchIndex} remainder : ${remainder} firstInde ${firstIndex}`);
                       index = 0;
                       while (newSearchIndex < 0) {
+                        console.log(newSearchIndex);
                         searchIndex = str.substring(0, searchIndex + searchItem.length).length + search; //next occurence of searhItem in word
-                        //wrap the new word only :(
                         let inner = span.innerHTML;
                         let adjust = (index + 1) * 46; //How many characters we have inserted into the original string
                         span.innerHTML = inner.substring(0, searchIndex + adjust) + `<span style="background-color: yellow">` + inner.substring(searchIndex + adjust, searchIndex + adjust + searchItem.length) + "</span>" + inner.substring(searchIndex + searchItem.length + adjust);
                         index++;
-                        break;
+                        remainder = pageTextContent.substring(firstIndex + searchItem.length);
+                        search = remainder.search(word);
+                        //word does not appear in this page again
+                        if (search < 0) {
+                          break;
+                        }
+                        firstIndex = search + firstIndex + searchItem.length;
+                        newSearchIndex = firstIndex - lengthChecked;
                       }
                     }
                     searchIndex = newSearchIndex;
@@ -105945,7 +105951,6 @@ let optionButtons = document.getElementsByClassName("optionBtn");
                 }
                 else {
                   searchIndex -= str.length;
-                  console.log(`not in word firstIndex = ${firstIndex} lengthChecked = ${lengthChecked}`);
                 }
 
               }
