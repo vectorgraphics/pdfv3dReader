@@ -22,6 +22,11 @@ import { EventBus } from "pdfjs-dist/lib/web/event_utils";
 //Collection of outlineObjects
 let outlineObjects = [];
 let pdfMetadata;
+
+export function getPDFPage(i) {
+  return pdf.getPage(i);
+}
+
 export class V3DViewer {
   currentPageNumber;
   pagesRotation;
@@ -231,6 +236,7 @@ function renderPage(i, containerDiv, textLayerDiv) {
         renderV3DFiles(page.ref, coreDocument, containerDiv, i);
       });
       page.getTextContent().then(function (textContent) {
+
         let textLayer = new TextLayerBuilder({
           textLayerDiv: textLayerDiv,
           pageIndex: i - 1,

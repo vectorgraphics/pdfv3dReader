@@ -4,6 +4,7 @@
   <head>
     <meta charset=" UTF-8" />
     <link rel="stylesheet" href="./overlayTest.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   </head>
   <body>
     <div id="navbar" class="sticky">
@@ -47,7 +48,8 @@
         </div>
       </div>
       <div id="right-navbar">
-        <div id="save">
+
+        <div id="save" title= "Save PDF">
 
         <a download id="default-view-link">
           <svg>
@@ -72,7 +74,7 @@
           </svg>
           </a>
         </div>
-        <div id="print">
+        <div id="print" title="Print PDF">
           <svg height="100%" width="100%">
             <rect
             id="print-button"
@@ -109,9 +111,9 @@
           <button class="optionBtn active">Tools</button>
         </div>
       </div>
-      <div id="hamburgerContent">
+      <div id="hamburgerContent" class="Tools">
         <div>
-          <a> DEFAULT PDF VIEWER </a>
+        <a href=${filename}> DEFAULT PDF VIEWER</a>
         </div>
         <div>
           <a> DRAW (To be implemented) </a>
@@ -120,6 +122,9 @@
           <a> ANNOTATE (To be implemented) </a>
         </div>
       </div>
+    </div>
+    <div id="searchBar">
+      <input height="100%" width="100%" placeholder="Search...">
     </div>
   </body>
 </html>

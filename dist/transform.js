@@ -17,10 +17,11 @@ if (filename != null) {
 
         let readerScript = document.createElement("script");
         readerScript.src = "http://127.0.0.1:5500/dist/reader.js"
-        readerScript.defer = true;
+        //readerScript.defer = true;
         readerScript.type = "module";
 
         document.head.innerHTML = `<meta charset=" UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <link rel="stylesheet" href="http://127.0.0.1:5500/dist/overlay.css" />
     `;
 
@@ -69,6 +70,7 @@ if (filename != null) {
           </div>
         </div>
         <div id="right-navbar">
+  
           <div id="save" title= "Save PDF">
   
           <a download id="default-view-link">
@@ -142,6 +144,9 @@ if (filename != null) {
             <a> ANNOTATE (To be implemented) </a>
           </div>
         </div>
+      </div>
+      <div id="searchBar">
+        <input height="100%" width="100%" placeholder="Search...">
       </div>
   
     `;

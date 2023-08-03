@@ -384,6 +384,24 @@ body {
   overflow: hidden;
   transition-duration: 0.3s;
 }
+#searchBar {
+  height: 10ex;
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--darkColor1);
+  z-index: 4;
+  top: max(5%, 50px);
+  overflow: hidden;
+  transition-duration: 0.3s;
+  right: 0;
+}
+
+#searchBar * {
+  height: 100%;
+}
 
 .sticky {
   z-index: 4;

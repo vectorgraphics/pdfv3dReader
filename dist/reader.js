@@ -105314,6 +105314,12 @@ var event_utils = __webpack_require__(9982);
 //Collection of outlineObjects
 let outlineObjects = [];
   let pdfMetadata;
+
+  function getPDFPage(i) {
+
+    return pdf.getPage(i);
+  }
+
 class V3DViewer {
   currentPageNumber;
   pagesRotation;
@@ -105523,6 +105529,7 @@ function renderPage(i, containerDiv, textLayerDiv) {
         renderV3DFiles(page.ref, coreDocument, containerDiv, i);
       });
       page.getTextContent().then(function (textContent) {
+
         let textLayer = new text_layer_builder/* TextLayerBuilder */.b({
           textLayerDiv: textLayerDiv,
           pageIndex: i - 1,
@@ -105844,12 +105851,113 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   }
 } 
 
+
+//TODO, whenever we wrap handle the case of going over the lien
+//IDEA find where the next line in input is and remove them and procee as normal
+//by searching a fake page docment text
   window.onkeydown = function (e) {
     var ck = e.keyCode ? e.keyCode : e.which;
     if (e.ctrlKey && ck == 70) {
-      alert('Searching...');
+      let pageNum = +document.getElementById("pageNumber").value;
+      let page = getPDFPage(pageNum);
+      page.then(
+        function (page) {
+          let content = page.getTextContent();
+          content.then(function (c) {
+            let pageTextContent = "";
+            for (let i = 0; i < c.items.length; i++) {
+
+              pageTextContent += c.items[i].str;
+
+            }
+            let searchItem = "d ";
+            let word = new RegExp(searchItem, "gi");
+            let firstIndex = pageTextContent.search(word);
+            let searchIndex = firstIndex;
+            console.log(firstIndex);
+            if (firstIndex >= 0) {
+              let lengthChecked = 0;
+              for (let i = 0; i < c.items.length; i++) {
+
+                let str = c.items[i].str;
+                lengthChecked = lengthChecked + str.length;
+                console.log(lengthChecked);
+                //Search item is in the item 
+                if (firstIndex < lengthChecked) {
+                  //Check to see if the whole word is contained in this item
+
+                  // get the element with the inner html (MOCE THIS OUTSIDE SO WE JUST GET IT ONCE)
+                  let container = document.getElementById(`Page ${pageNum} Container`);
+                  let textLayer = container.getElementsByClassName("text-layer");
+                  let spans = textLayer.item(0).querySelectorAll("span");
+                  let span;
+                  let index = 0;
+                  for (; index < spans.length; index++) {
+                    if (spans.item(index).innerHTML == str) {
+                      span = spans.item(index);
+                      break;
+                    }
+                  }
+                  console.log(span);
+                  span.innerHTML = str.substring(0, searchIndex) + `<span style="background-color: yellow">` + str.substring(searchIndex, searchIndex + searchItem.length) + "</span>" + str.substring(searchIndex + searchItem.length);
+                  if (searchItem.length > str.substring(searchIndex).length) {
+                    //Item is not fully contained, so we wrap the whole word
+                    //Continue looking through span index for other 
+                    let remainder = searchItem.substring(str.substring(searchIndex).length); // get the rest of the word that hasnt been foun yet
+                    console.log(remainder);
+                    while (remainder.length > 0) {
+                      index++;
+                      span = spans.item(index);
+                      let inner = span.innerHTML;
+                      span.innerHTML = `<span style="background-color: yellow">` + inner.substring(0, remainder.length) + "</span>" + inner.substring(remainder.length);
+                      remainder = searchItem.substring(inner.length);
+                    }
+                  }
+                  else {
+                    //Item has been fully wrapped, keep looking
+                    let remainder = pageTextContent.substring(firstIndex + searchItem.length);
+                    let search = remainder.search(word);
+                    //word does not appear in this page again
+                    if (search < 0) {
+                      break;
+                    }
+                    firstIndex = search + firstIndex + searchItem.length;
+                    let newSearchIndex = firstIndex - lengthChecked;
+
+
+                    //word appears in the same object
+                    if (newSearchIndex < 0) {
+                      console.log(` search = ${search}search inde = ${searchIndex} remainder : ${remainder} firstInde ${firstIndex}`);
+                      index = 0;
+                      while (newSearchIndex < 0) {
+                        searchIndex = str.substring(0, searchIndex + searchItem.length).length + search; //next occurence of searhItem in word
+                        //wrap the new word only :(
+                        let inner = span.innerHTML;
+                        let adjust = (index + 1) * 46; //How many characters we have inserted into the original string
+                        span.innerHTML = inner.substring(0, searchIndex + adjust) + `<span style="background-color: yellow">` + inner.substring(searchIndex + adjust, searchIndex + adjust + searchItem.length) + "</span>" + inner.substring(searchIndex + searchItem.length + adjust);
+                        index++;
+                        break;
+                      }
+                    }
+                    searchIndex = newSearchIndex;
+                  }
+
+                }
+                else {
+                  searchIndex -= str.length;
+                  console.log(`not in word firstIndex = ${firstIndex} lengthChecked = ${lengthChecked}`);
+                }
+
+              }
+            }
+
+          })
+        }
+      )
     }
   }
+
+
 })();
 
 /******/ })()
