@@ -105852,6 +105852,9 @@ let optionButtons = document.getElementsByClassName("optionBtn");
 } 
 
 
+
+
+
 //TODO, whenever we wrap handle the case of going over the lien
 //IDEA find where the next line in input is and remove them and procee as normal
 //by searching a fake page docment text
@@ -105867,92 +105870,52 @@ let optionButtons = document.getElementsByClassName("optionBtn");
             let pageTextContent = "";
             for (let i = 0; i < c.items.length; i++) {
 
-              pageTextContent += c.items[i].str;
-
+              pageTextContent += '\u0000' + c.items[i].str + '\u0000';
             }
+            console.log(pageTextContent);
             let searchItem = document.getElementById("searchInput").value;
-            let word = new RegExp(searchItem, "gi");
-            let firstIndex = pageTextContent.search(word);
-            let searchIndex = firstIndex;
-            console.log(firstIndex);
-            if (firstIndex >= 0) {
-              let lengthChecked = 0;
-              for (let i = 0; i < c.items.length; i++) {
-
-                let str = c.items[i].str;
-                lengthChecked = lengthChecked + str.length;
-                console.log(lengthChecked);
-                //Search item is in the item 
-                if (firstIndex < lengthChecked) {
-                  //Check to see if the whole word is contained in this item
-
-                  // get the element with the inner html (MOCE THIS OUTSIDE SO WE JUST GET IT ONCE)
-                  let container = document.getElementById(`Page ${pageNum} Container`);
-                  let textLayer = container.getElementsByClassName("text-layer");
-                  let spans = textLayer.item(0).querySelectorAll("span");
-                  let span;
-                  let index = 0;
-                  for (; index < spans.length; index++) {
-                    if (spans.item(index).innerHTML == str) {
-                      span = spans.item(index);
-                      break;
-                    }
+            if (searchItem == "") {
+              searchItem = " ";
+            }
+            let regItem = "";
+            for (let i = 0; i < searchItem.length; i++) {
+              let char = searchItem.charAt(i);
+              regItem += `(${char}` + '\u0000' + `+|${char})`; //match the character then any number of flags between it
+            }
+            console.log(regItem);
+            let word = new RegExp(regItem, "gi");
+            let matches = pageTextContent.match(word);
+            let match;
+            let newPageContent = pageTextContent;
+            let uniqueMatches = [];
+            while ((match = word.exec(pageTextContent)) !== null) {
+              if (!uniqueMatches.includes(match[0])) {
+                uniqueMatches.push(match[0]);
+                console.log(match.index);
+                console.log(match[0]);
+                let arr = match[0].split('\u0000'); //each split is a span
+                console.log(arr);
+                for (let i = 0; i < arr.length; i++) {
+                  if (i % 2 == 0) {
+                    arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+                    console.log(arr);
                   }
-                  console.log(span);
-                  span.innerHTML = str.substring(0, searchIndex) + `<span style="background-color: yellow">` + str.substring(searchIndex, searchIndex + searchItem.length) + "</span>" + str.substring(searchIndex + searchItem.length);
-                  if (searchItem.length > str.substring(searchIndex).length) {
-                    //Item is not fully contained, so we wrap the whole word
-                    //Continue looking through span index for other 
-                    let remainder = searchItem.substring(str.substring(searchIndex).length); // get the rest of the word that hasnt been foun yet
-                    console.log(remainder);
-                    while (remainder.length > 0) {
-                      index++;
-                      span = spans.item(index);
-                      let inner = span.innerHTML;
-                      span.innerHTML = `<span style="background-color: yellow">` + inner.substring(0, remainder.length) + "</span>" + inner.substring(remainder.length);
-                      remainder = searchItem.substring(inner.length);
-                    }
-                  }
-                  else {
-                    //Item has been fully wrapped, keep looking
-                    let remainder = pageTextContent.substring(firstIndex + searchItem.length);
-                    let search = remainder.search(word);
-                    //word does not appear in this page again
-                    if (search < 0) {
-                      break;
-                    }
-                    firstIndex = search + firstIndex + searchItem.length;
-                    let newSearchIndex = firstIndex - lengthChecked;
-                    console.log(` search = ${search}search inde = ${searchIndex} remainder : ${remainder} firstInde ${firstIndex}`);
-
-                    //word appears in the same object
-                    if (newSearchIndex < 0) {
-                      index = 0;
-                      while (newSearchIndex < 0) {
-                        console.log(newSearchIndex);
-                        searchIndex = str.substring(0, searchIndex + searchItem.length).length + search; //next occurence of searhItem in word
-                        let inner = span.innerHTML;
-                        let adjust = (index + 1) * 46; //How many characters we have inserted into the original string
-                        span.innerHTML = inner.substring(0, searchIndex + adjust) + `<span style="background-color: yellow">` + inner.substring(searchIndex + adjust, searchIndex + adjust + searchItem.length) + "</span>" + inner.substring(searchIndex + searchItem.length + adjust);
-                        index++;
-                        remainder = pageTextContent.substring(firstIndex + searchItem.length);
-                        search = remainder.search(word);
-                        //word does not appear in this page again
-                        if (search < 0) {
-                          break;
-                        }
-                        firstIndex = search + firstIndex + searchItem.length;
-                        newSearchIndex = firstIndex - lengthChecked;
-                      }
-                    }
-                    searchIndex = newSearchIndex;
-                  }
-
-                }
-                else {
-                  searchIndex -= str.length;
                 }
 
+                let newStr = arr.join('\u0000');
+                newPageContent = newPageContent.replaceAll(match[0], newStr);
+                let content = newPageContent.split('\u0000');
+                console.log(content);
+                let filteredContent = content.filter((word) => word != "");
+                console.log(filteredContent);
+                console.log(c.items);
+                let spans = document.querySelectorAll("span");
+                for (let i = 0; i < spans.length; i++) {
+                  let span = spans.item(i);
+                  if (!span.innerHTML == "") {
+                    span.innerHTML = filteredContent[i];
+                  }
+                }
               }
             }
 

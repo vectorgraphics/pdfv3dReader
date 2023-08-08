@@ -275,9 +275,11 @@ window.onkeydown = function (e) {
           content.then(function (c) {
             let pageTextContent = "";
             for (let i = 0; i < c.items.length; i++) {
+
               pageTextContent += c.items[i].str;
+
             }
-            let searchItem = "d ";
+            let searchItem = document.getElementById("searchInput").value;
             let word = new RegExp(searchItem, "gi");
             let firstIndex = pageTextContent.search(word);
             let searchIndex = firstIndex;
@@ -302,32 +304,62 @@ window.onkeydown = function (e) {
                   for (; index < spans.length; index++) {
                     if (spans.item(index).innerHTML == str) {
                       span = spans.item(index);
+                      break;
                     }
                   }
                   console.log(span);
-                  span.innerHTML = str.substring(0, searchIndex) + `<span style="background-color: yellow">` + str.substring(searchIndex, searchIndex + searchItem.length) + "</span>" + str.substring(searchIndex + searchItem.length);
+                  span.innerHTML = str.substring(0, searchIndex) + `<span style="background-color: yellow" class="highlighter">` + str.substring(searchIndex, searchIndex + searchItem.length) + "</span>" + str.substring(searchIndex + searchItem.length);
                   if (searchItem.length > str.substring(searchIndex).length) {
                     //Item is not fully contained, so we wrap the whole word
                     //Continue looking through span index for other 
-
+                    let remainder = searchItem.substring(str.substring(searchIndex).length); // get the rest of the word that hasnt been foun yet
+                    console.log(remainder);
+                    while (remainder.length > 0) {
+                      index++;
+                      span = spans.item(index);
+                      let inner = span.innerHTML;
+                      span.innerHTML = `<span style="background-color: yellow" class="highlighter">` + inner.substring(0, remainder.length) + "</span>" + inner.substring(remainder.length);
+                      remainder = searchItem.substring(inner.length);
+                    }
                   }
                   else {
                     //Item has been fully wrapped, keep looking
                     let remainder = pageTextContent.substring(firstIndex + searchItem.length);
-                    firstIndex = remainder.search(word) + firstIndex + searchItem.length;
-                    searchIndex = firstIndex - lengthChecked;
-                    console.log(` search inde = ${searchIndex} remainder : ${remainder} firstInde ${firstIndex}`);
-                    if (firstIndex < 0) {
+                    let search = remainder.search(word);
+                    //word does not appear in this page again
+                    if (search < 0) {
                       break;
                     }
-                    //checking to see if reapears in the same word again
+                    firstIndex = search + firstIndex + searchItem.length;
+                    let newSearchIndex = firstIndex - lengthChecked;
+                    console.log(` search = ${search}search inde = ${searchIndex} remainder : ${remainder} firstInde ${firstIndex}`);
 
+                    //word appears in the same object
+                    if (newSearchIndex < 0) {
+                      index = 0;
+                      while (newSearchIndex < 0) {
+                        console.log(newSearchIndex);
+                        searchIndex = str.substring(0, searchIndex + searchItem.length).length + search; //next occurence of searhItem in word
+                        let inner = span.innerHTML;
+                        let adjust = (index + 1) * 66; //How many characters we have inserted into the original string
+                        span.innerHTML = inner.substring(0, searchIndex + adjust) + `<span style="background-color: yellow" class="highlighter">` + inner.substring(searchIndex + adjust, searchIndex + adjust + searchItem.length) + "</span>" + inner.substring(searchIndex + searchItem.length + adjust);
+                        index++;
+                        remainder = pageTextContent.substring(firstIndex + searchItem.length);
+                        search = remainder.search(word);
+                        //word does not appear in this page again
+                        if (search < 0) {
+                          break;
+                        }
+                        firstIndex = search + firstIndex + searchItem.length;
+                        newSearchIndex = firstIndex - lengthChecked;
+                      }
+                    }
+                    searchIndex = newSearchIndex;
                   }
 
                 }
                 else {
                   searchIndex -= str.length;
-                  console.log(`not in word firstIndex = ${firstIndex} lengthChecked = ${lengthChecked}`);
                 }
 
               }
@@ -338,4 +370,6 @@ window.onkeydown = function (e) {
       )
     }
   }
+
+
   */

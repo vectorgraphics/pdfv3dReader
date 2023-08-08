@@ -533,6 +533,11 @@ body {
 .dropdownContainer .refContainer button {
   background-color: black;
 }
+.highlighter {
+  font-size: inherit;
+  font-family: inherit;
+  background-color: yellow;
+}
 .annotationLayer{
   pointer-events: none;
   z-index: 2;
