@@ -105881,13 +105881,17 @@ let optionButtons = document.getElementsByClassName("optionBtn");
 
   let searchButton = document.getElementById("searchBarButton");
   searchButton.onclick = function () {
-  let pageNum = +document.getElementById("pageNumber").value;
-  let page = getPDFPage(pageNum);
-  page.then(
-    function (page) {
-      let content = page.getTextContent();
-      content.then(function (c) {
-        let pageTextContent = "";
+    let totalMatches = 0;
+    let containers = document.getElementsByClassName("container");
+    let pageNum = +document.getElementById("pageNumber").value;
+    for (let i = 0; i < containers.length; i++) {
+      let container = containers.item(i);
+      let page = getPDFPage(i + 1)
+      page.then(
+        function (page) {
+          let content = page.getTextContent();
+          content.then(function (c) {
+            let pageTextContent = "";
         for (let i = 0; i < c.items.length; i++) {
 
           pageTextContent += '\u0000' + c.items[i].str + '\u0000';
@@ -105897,7 +105901,7 @@ let optionButtons = document.getElementsByClassName("optionBtn");
         if (searchItem == "") {
           searchItem = " ";
         }
-        removeHighlights();
+        //removeHighlights(); TODO add this back!
         let regItem = "";
         for (let i = 0; i < searchItem.length; i++) {
           let char = searchItem.charAt(i);
@@ -105905,39 +105909,56 @@ let optionButtons = document.getElementsByClassName("optionBtn");
         }
 
         let word = new RegExp(regItem, "gi");
-        let match;
-        let newPageContent = pageTextContent;
-        let uniqueMatches = [];
-        while ((match = word.exec(pageTextContent)) !== null) {
-          if (!uniqueMatches.includes(match[0])) {
-            uniqueMatches.push(match[0]);
+            let matchesArray = pageTextContent.match(word);
+            console.log(`matches array = ${matchesArray}`);
+            if (matchesArray != null) {
+              totalMatches += matchesArray.length; // update the total here
+              console.log(`current total matches = ${totalMatches}`);
+            }
 
-            let arr = match[0].split('\u0000'); //each split is a span
+            //This page is visible do highlights
+            if (container.classList.contains("visible")) {
+              let match;
+              let newPageContent = pageTextContent;
+              let uniqueMatches = [];
+              while ((match = word.exec(pageTextContent)) !== null) {
+                if (!uniqueMatches.includes(match[0])) {
+                  uniqueMatches.push(match[0]);
 
-            for (let i = 0; i < arr.length; i++) {
-              if (i % 2 == 0) {
-                arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+                  let arr = match[0].split('\u0000'); //each split is a span
 
+                  for (let i = 0; i < arr.length; i++) {
+                    if (i % 2 == 0) {
+                      arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+
+                    }
+                  }
+
+                  let newStr = arr.join('\u0000');
+                  newPageContent = newPageContent.replaceAll(match[0], newStr);
+                  let content = newPageContent.split('\u0000');
+                  let filteredContent = content.filter((word) => word != "");
+                  let spans = document.querySelectorAll("span");
+                  for (let i = 0; i < spans.length; i++) {
+                    let span = spans.item(i);
+                    if (!span.innerHTML == "") {
+                      span.innerHTML = filteredContent[i];
+                    }
+                  }
+                }
+              }
+              if (i + 1 == pageNum) {
+                // Make the first one in this active and scroll to it
+                console.log(`Current Match number = ${totalMatches - matchesArray.length + 1}`);
               }
             }
 
-            let newStr = arr.join('\u0000');
-            newPageContent = newPageContent.replaceAll(match[0], newStr);
-            let content = newPageContent.split('\u0000');
-            let filteredContent = content.filter((word) => word != "");
-            let spans = document.querySelectorAll("span");
-            for (let i = 0; i < spans.length; i++) {
-              let span = spans.item(i);
-              if (!span.innerHTML == "") {
-                span.innerHTML = filteredContent[i];
-              }
-            }
-          }
+          });
         }
+      )
 
-      })
+
     }
-  )
   }
 
   let closeSearchBarButton = document.getElementById("closeSearchBarButton");
