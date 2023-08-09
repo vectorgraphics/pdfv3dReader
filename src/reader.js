@@ -204,12 +204,13 @@ function wrap(searchIndex, string, wordLength) {
 
 
 let searching = false;
+let searchBar = document.getElementById("searchBar");
 window.onkeydown = function (e) {
 
   var ck = e.keyCode ? e.keyCode : e.which;
   if (e.ctrlKey && ck == 70) {
     e.preventDefault();
-    let searchBar = document.getElementById("searchBar");
+
     if (!searching) {
       searchBar.style.height = "10ex";
       searching = true;
@@ -240,6 +241,7 @@ searchButton.onclick = function () {
         if (searchItem == "") {
           searchItem = " ";
         }
+        removeHighlights();
         let regItem = "";
         for (let i = 0; i < searchItem.length; i++) {
           let char = searchItem.charAt(i);
@@ -281,6 +283,25 @@ searchButton.onclick = function () {
     }
   )
 }
+
+let closeSearchBarButton = document.getElementById("closeSearchBarButton");
+closeSearchBarButton.onclick = function () {
+  removeHighlights();
+  searching = false;
+  searchBar.style.height = "0ex";
+}
+
+//re render the texts of all visible pages
+function removeHighlights() {
+  let highlights = document.getElementsByClassName("highlighter");
+  while (highlights.length > 0) {
+    let highlight = highlights.item(0);
+    highlight.outerHTML = highlight.innerHTML; //removing the highlight but keeping the word
+  }
+}
+
+
+
 /*
   window.onkeydown = function (e) {
     var ck = e.keyCode ? e.keyCode : e.which;

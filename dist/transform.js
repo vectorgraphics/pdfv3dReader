@@ -145,13 +145,13 @@ if (filename != null) {
           </div>
         </div>
       </div>
-      <div id="searchBar" style="height: 10ex;">
+      <div id="searchBar" style="height: 0ex;">
         <input id="searchInput" height="100%" width="100%" placeholder="Search...">
         <button id="searchBarButton"> Search </button>
         <a>0/0</a>
         <button style="font-size: xx-large;">↑</button>
         <button style="font-size: xx-large;">↓</button>
-        <button> X</button>
+        <button id="closeSearchBarButton"> X</button>
       </div>
   
     `;

@@ -196,7 +196,7 @@ function getOutlineItem(item) {
 
 }
 
-function renderPage(i, containerDiv, textLayerDiv) {
+export function renderPage(i, containerDiv, textLayerDiv) {
   let loadPage = pdf.getPage(i);
   loadPage.then(
     function (page) {
