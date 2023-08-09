@@ -202,67 +202,85 @@ function wrap(searchIndex, string, wordLength) {
 
 //Custom search function
 
+
+let searching = false;
 window.onkeydown = function (e) {
+
   var ck = e.keyCode ? e.keyCode : e.which;
   if (e.ctrlKey && ck == 70) {
-    let pageNum = +document.getElementById("pageNumber").value;
-    let page = process.getPDFPage(pageNum);
-    page.then(
-      function (page) {
-        let content = page.getTextContent();
-        content.then(function (c) {
-          let pageTextContent = "";
-          for (let i = 0; i < c.items.length; i++) {
-            pageTextContent += c.items[i].str;
-          }
-          let searchItem = "dif-fe";
-          let regItem = new RegExp(searchItem, "gi");
-          let firstIndex = pageTextContent.search(regItem);
-          if (firstIndex >= 0) {
-            console.log(firstIndex);
-            let searchIndex = firstIndex;
-            for (let i = 0; i < c.items.length; i++) {
-              let str = c.items[i].str;
-              //Search item is in the item, either partially or fully
-              if (firstIndex < str.length) {
-
-                //Check to see if the whole word is contained in this item
-                if (searchItem.length <= str.substring(searchIndexIndex).length) {
-                  //whole word is in this item
-                  //Wrap the whole thing
-
-                }
-                else {
-                  //word is not fully in item
-                  //wrap till the end, put back into function
-                }
-              }
-              else {
-                searchIndex -= str.length;
-              }
-
-            }
-            //start loop for through c again but skip first one so i starts at 1
-            // check to see if index > length
-            // If index < length then we know it was in the previous one
-
-            //Make this a recursive function?
-            // Check the previous one to see if the whole word is contained, that is if the first 
-            // index minus the length is less than the length of what we are looking for
-            // wrap the appropriate thing anyway (either the whole length or till the end) in a span with the class so we 
-            // know to highlight
-            //send the unfinished back to function that will handle the rest of the word being cutoff
-
-            // If there is another match (pgeTextContent being sliced after the total length is returnred which will be returned by the fucntion above)
-            // then update first index and continue the loop
-            // else just breaks
-          }
-        })
-      }
-    )
+    e.preventDefault();
+    let searchBar = document.getElementById("searchBar");
+    if (!searching) {
+      searchBar.style.height = "10ex";
+      searching = true;
+    }
+    else {
+      searching = false;
+      searchBar.style.height = "0ex";
+    }
   }
 }
 
+
+let searchButton = document.getElementById("searchBarButton");
+searchButton.onclick = function () {
+  let pageNum = +document.getElementById("pageNumber").value;
+  let page = process.getPDFPage(pageNum);
+  page.then(
+    function (page) {
+      let content = page.getTextContent();
+      content.then(function (c) {
+        let pageTextContent = "";
+        for (let i = 0; i < c.items.length; i++) {
+
+          pageTextContent += '\u0000' + c.items[i].str + '\u0000';
+        }
+
+        let searchItem = document.getElementById("searchInput").value;
+        if (searchItem == "") {
+          searchItem = " ";
+        }
+        let regItem = "";
+        for (let i = 0; i < searchItem.length; i++) {
+          let char = searchItem.charAt(i);
+          regItem += `(${char}` + '\u0000' + `+|${char})`; //match the character then any number of flags between it
+        }
+
+        let word = new RegExp(regItem, "gi");
+        let match;
+        let newPageContent = pageTextContent;
+        let uniqueMatches = [];
+        while ((match = word.exec(pageTextContent)) !== null) {
+          if (!uniqueMatches.includes(match[0])) {
+            uniqueMatches.push(match[0]);
+
+            let arr = match[0].split('\u0000'); //each split is a span
+
+            for (let i = 0; i < arr.length; i++) {
+              if (i % 2 == 0) {
+                arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+
+              }
+            }
+
+            let newStr = arr.join('\u0000');
+            newPageContent = newPageContent.replaceAll(match[0], newStr);
+            let content = newPageContent.split('\u0000');
+            let filteredContent = content.filter((word) => word != "");
+            let spans = document.querySelectorAll("span");
+            for (let i = 0; i < spans.length; i++) {
+              let span = spans.item(i);
+              if (!span.innerHTML == "") {
+                span.innerHTML = filteredContent[i];
+              }
+            }
+          }
+        }
+
+      })
+    }
+  )
+}
 /*
   window.onkeydown = function (e) {
     var ck = e.keyCode ? e.keyCode : e.which;

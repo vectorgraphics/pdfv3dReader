@@ -385,12 +385,9 @@ body {
   transition-duration: 0.3s;
 }
 #searchBar {
-  height: 10ex;
   display: flex;
   flex-direction: row;
   position: fixed;
-  display: flex;
-  flex-direction: column;
   background-color: var(--darkColor1);
   z-index: 4;
   top: max(5%, 50px);
