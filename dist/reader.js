@@ -105867,31 +105867,39 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   if (e.ctrlKey && ck == 70) {
     e.preventDefault();
 
-      if (!searching) {
-        searchBar.style.height = "10ex";
-        searching = true;
-      }
-      else {
-        searching = false;
-        searchBar.style.height = "0ex";
-      }
+    if (!searching) {
+      searchBar.style.height = "10ex";
+      searching = true;
+    }
+    else {
+      searching = false;
+      searchBar.style.height = "0ex";
     }
   }
+}
 
 
   let searchButton = document.getElementById("searchBarButton");
   searchButton.onclick = function () {
-    let totalMatches = 0;
-    let containers = document.getElementsByClassName("container");
-    let pageNum = +document.getElementById("pageNumber").value;
-    for (let i = 0; i < containers.length; i++) {
-      let container = containers.item(i);
-      let page = getPDFPage(i + 1)
-      page.then(
-        function (page) {
-          let content = page.getTextContent();
-          content.then(function (c) {
-            let pageTextContent = "";
+  removeHighlights();
+
+  let totalMatches = 0;
+  let containers = document.getElementsByClassName("container");
+  let totalMatchElement = document.getElementById("totalMatchNumber");
+
+  let currentMatchElement = document.getElementById("currentMatchNumber");
+  totalMatchElement.innerText = currentMatchElement.innerText = "0";
+  let earliestPage = containers.length;
+  let pagesCompared = 0;
+  for (let i = 0; i < containers.length; i++) {
+
+    let container = containers.item(i);
+    let page = getPDFPage(i + 1)
+    page.then(
+      function (page) {
+        let content = page.getTextContent();
+        content.then(function (c) {
+          let pageTextContent = "";
         for (let i = 0; i < c.items.length; i++) {
 
           pageTextContent += '\u0000' + c.items[i].str + '\u0000';
@@ -105901,7 +105909,6 @@ let optionButtons = document.getElementsByClassName("optionBtn");
         if (searchItem == "") {
           searchItem = " ";
         }
-        //removeHighlights(); TODO add this back!
         let regItem = "";
         for (let i = 0; i < searchItem.length; i++) {
           let char = searchItem.charAt(i);
@@ -105909,57 +105916,63 @@ let optionButtons = document.getElementsByClassName("optionBtn");
         }
 
         let word = new RegExp(regItem, "gi");
-            let matchesArray = pageTextContent.match(word);
-            console.log(`matches array = ${matchesArray}`);
-            if (matchesArray != null) {
-              totalMatches += matchesArray.length; // update the total here
-              console.log(`current total matches = ${totalMatches}`);
+          let matchesArray = pageTextContent.match(word);
+          pagesCompared++;
+          if (matchesArray != null) {
+            totalMatches += matchesArray.length;
+            totalMatchElement.innerText = totalMatches;
+            if (i < earliestPage) {
+              earliestPage = i;
             }
+          }
+          if (pagesCompared == containers.length) {
 
-            //This page is visible do highlights
-            if (container.classList.contains("visible")) {
-              let match;
-              let newPageContent = pageTextContent;
-              let uniqueMatches = [];
-              while ((match = word.exec(pageTextContent)) !== null) {
-                if (!uniqueMatches.includes(match[0])) {
-                  uniqueMatches.push(match[0]);
+            gotoPage(earliestPage + 1);
+            if (totalMatches != 0) {
+              currentMatchElement.innerText = "1";
+            }
+          }
 
-                  let arr = match[0].split('\u0000'); //each split is a span
+          //This page is visible do highlights
+          if (container.classList.contains("visible")) {
+            let match;
+            let newPageContent = pageTextContent;
+            let uniqueMatches = [];
+            while ((match = word.exec(pageTextContent)) !== null) {
+              if (!uniqueMatches.includes(match[0])) {
+                uniqueMatches.push(match[0]);
 
-                  for (let i = 0; i < arr.length; i++) {
-                    if (i % 2 == 0) {
-                      arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+                let arr = match[0].split('\u0000'); //each split is a span
+
+                for (let i = 0; i < arr.length; i++) {
+                  if (i % 2 == 0) {
+                    arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
 
                     }
                   }
 
-                  let newStr = arr.join('\u0000');
-                  newPageContent = newPageContent.replaceAll(match[0], newStr);
-                  let content = newPageContent.split('\u0000');
-                  let filteredContent = content.filter((word) => word != "");
-                  let spans = document.querySelectorAll("span");
-                  for (let i = 0; i < spans.length; i++) {
-                    let span = spans.item(i);
-                    if (!span.innerHTML == "") {
-                      span.innerHTML = filteredContent[i];
-                    }
+                let newStr = arr.join('\u0000');
+                newPageContent = newPageContent.replaceAll(match[0], newStr);
+                let content = newPageContent.split('\u0000');
+                let filteredContent = content.filter((word) => word != "");
+                let spans = document.querySelectorAll("span");
+                for (let i = 0; i < spans.length; i++) {
+                  let span = spans.item(i);
+                  if (!span.innerHTML == "") {
+                    span.innerHTML = filteredContent[i];
                   }
                 }
               }
-              if (i + 1 == pageNum) {
-                // Make the first one in this active and scroll to it
-                console.log(`Current Match number = ${totalMatches - matchesArray.length + 1}`);
-              }
             }
+          }
 
-          });
-        }
-      )
+        });
+      }
+    )
 
 
-    }
   }
+}
 
   let closeSearchBarButton = document.getElementById("closeSearchBarButton");
   closeSearchBarButton.onclick = function () {

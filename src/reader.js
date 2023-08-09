@@ -195,9 +195,6 @@ for (let i = 0; i < optionButtons.length; i++) {
 } 
 
 
-function wrap(searchIndex, string, wordLength) {
-
-}
 
 
 //Custom search function
@@ -225,13 +222,25 @@ window.onkeydown = function (e) {
 
 let searchButton = document.getElementById("searchBarButton");
 searchButton.onclick = function () {
-  let pageNum = +document.getElementById("pageNumber").value;
-  let page = process.getPDFPage(pageNum);
-  page.then(
-    function (page) {
-      let content = page.getTextContent();
-      content.then(function (c) {
-        let pageTextContent = "";
+  removeHighlights();
+
+  let totalMatches = 0;
+  let containers = document.getElementsByClassName("container");
+  let totalMatchElement = document.getElementById("totalMatchNumber");
+
+  let currentMatchElement = document.getElementById("currentMatchNumber");
+  totalMatchElement.innerText = currentMatchElement.innerText = "0";
+  let earliestPage = containers.length;
+  let pagesCompared = 0;
+  for (let i = 0; i < containers.length; i++) {
+
+    let container = containers.item(i);
+    let page = process.getPDFPage(i + 1)
+    page.then(
+      function (page) {
+        let content = page.getTextContent();
+        content.then(function (c) {
+          let pageTextContent = "";
         for (let i = 0; i < c.items.length; i++) {
 
           pageTextContent += '\u0000' + c.items[i].str + '\u0000';
@@ -241,7 +250,6 @@ searchButton.onclick = function () {
         if (searchItem == "") {
           searchItem = " ";
         }
-        removeHighlights();
         let regItem = "";
         for (let i = 0; i < searchItem.length; i++) {
           let char = searchItem.charAt(i);
@@ -249,39 +257,62 @@ searchButton.onclick = function () {
         }
 
         let word = new RegExp(regItem, "gi");
-        let match;
-        let newPageContent = pageTextContent;
-        let uniqueMatches = [];
-        while ((match = word.exec(pageTextContent)) !== null) {
-          if (!uniqueMatches.includes(match[0])) {
-            uniqueMatches.push(match[0]);
-
-            let arr = match[0].split('\u0000'); //each split is a span
-
-            for (let i = 0; i < arr.length; i++) {
-              if (i % 2 == 0) {
-                arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
-
-              }
+          let matchesArray = pageTextContent.match(word);
+          pagesCompared++;
+          if (matchesArray != null) {
+            totalMatches += matchesArray.length;
+            totalMatchElement.innerText = totalMatches;
+            if (i < earliestPage) {
+              earliestPage = i;
             }
+          }
+          if (pagesCompared == containers.length) {
 
-            let newStr = arr.join('\u0000');
-            newPageContent = newPageContent.replaceAll(match[0], newStr);
-            let content = newPageContent.split('\u0000');
-            let filteredContent = content.filter((word) => word != "");
-            let spans = document.querySelectorAll("span");
-            for (let i = 0; i < spans.length; i++) {
-              let span = spans.item(i);
-              if (!span.innerHTML == "") {
-                span.innerHTML = filteredContent[i];
+            process.gotoPage(earliestPage + 1);
+            if (totalMatches != 0) {
+              currentMatchElement.innerText = "1";
+            }
+          }
+
+          //This page is visible do highlights
+          if (container.classList.contains("visible")) {
+            let match;
+            let newPageContent = pageTextContent;
+            let uniqueMatches = [];
+            while ((match = word.exec(pageTextContent)) !== null) {
+              if (!uniqueMatches.includes(match[0])) {
+                uniqueMatches.push(match[0]);
+
+                let arr = match[0].split('\u0000'); //each split is a span
+
+                for (let i = 0; i < arr.length; i++) {
+                  if (i % 2 == 0) {
+                    arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+
+                  }
+                }
+
+                let newStr = arr.join('\u0000');
+                newPageContent = newPageContent.replaceAll(match[0], newStr);
+                let content = newPageContent.split('\u0000');
+                let filteredContent = content.filter((word) => word != "");
+                let spans = document.querySelectorAll("span");
+                for (let i = 0; i < spans.length; i++) {
+                  let span = spans.item(i);
+                  if (!span.innerHTML == "") {
+                    span.innerHTML = filteredContent[i];
+                  }
+                }
               }
             }
           }
-        }
 
-      })
-    }
-  )
+        });
+      }
+    )
+
+
+  }
 }
 
 let closeSearchBarButton = document.getElementById("closeSearchBarButton");
