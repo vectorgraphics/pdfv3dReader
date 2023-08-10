@@ -44,8 +44,6 @@ export class V3DViewer {
 
     let xCord = pageContainer.clientWidth - (destArray[2] * scale);
     let yCord = pageContainer.clientHeight - (destArray[3] * scale) - document.getElementById("navbar").clientHeight;
-    console.log(yCord);
-    console.log(yCord + document.getElementById("navbar").clientHeight);
     window.scrollBy({ top: yCord, left: xCord, behavior: "smooth" });
   }
 }
@@ -134,7 +132,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
-export function visiblePages() {
+export function visiblePages(searching = { searching: false, visiblePages: {} }) {
   let pages = document.getElementsByClassName("container");
   let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
@@ -159,7 +157,71 @@ export function visiblePages() {
   }
   let topPage = document.getElementById("pageNumber");
   topPage.value = minVisPage.toString();
+  if (searching.searching) {
+    let visiblePages = document.getElementsByClassName("visible");
+    for (let j = 0; j < visiblePages.length; j++) {
+      let visiblePage = visiblePages.item(j);
+      if (!visiblePage.classList.contains("highlighted")) {
+        let page = getPDFPage(+visiblePage.id.split(" ")[1]);
+        page.then(function (page) {
+          let content = page.getTextContent();
+          content.then(function (c) {
+            let pageTextContent = "";
+            for (let i = 0; i < c.items.length; i++) {
 
+              pageTextContent += '\u0000' + c.items[i].str + '\u0000';
+            }
+
+            let searchItem = document.getElementById("searchInput").value;
+            if (searchItem == "") {
+              searchItem = " ";
+            }
+            let regItem = "";
+            for (let i = 0; i < searchItem.length; i++) {
+              let char = searchItem.charAt(i);
+              regItem += `(${char}` + '\u0000' + `+|${char})`; //match the character then any number of flags between it
+            }
+
+            let word = new RegExp(regItem, "gi");
+
+            let match;
+            let newPageContent = pageTextContent;
+            let uniqueMatches = [];
+            while ((match = word.exec(pageTextContent)) !== null) {
+              if (!uniqueMatches.includes(match[0])) {
+                uniqueMatches.push(match[0]);
+
+                let arr = match[0].split('\u0000'); //each split is a span
+
+                for (let i = 0; i < arr.length; i++) {
+                  if (i % 2 == 0) {
+                    arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+
+                  }
+                }
+
+                let newStr = arr.join('\u0000');
+                newPageContent = newPageContent.replaceAll(match[0], newStr);
+                let content = newPageContent.split('\u0000');
+                let filteredContent = content.filter((word) => word != "");
+
+                let spans = visiblePage.querySelectorAll("span");
+                for (let i = 0; i < spans.length; i++) {
+                  let span = spans.item(i);
+                  if (!span.innerHTML == "") {
+                    span.innerHTML = filteredContent[i];
+                  }
+                }
+              }
+            }
+
+
+          });
+        })
+        visiblePage.classList.add("highlighted");
+      }
+    }
+  }
 
 }
 
@@ -167,6 +229,7 @@ function removePage(i) {
   let container = document.getElementById(`Page ${i + 1} Container`);
   container.innerHTML = ``;
   container.classList.remove("visible");
+  container.classList.remove("highlighted");
 }
 
 
@@ -232,7 +295,6 @@ export function renderPage(i, containerDiv, textLayerDiv) {
       };
       let renderTask = page.render(renderContext);
       renderTask.promise.then(function () {
-        console.log("Page rendered");
         renderV3DFiles(page.ref, coreDocument, containerDiv, i);
       });
       page.getTextContent().then(function (textContent) {
@@ -249,7 +311,6 @@ export function renderPage(i, containerDiv, textLayerDiv) {
 
         textLayer.setTextContent(textContent);
         textLayer.render();
-
       });
 
       //TODO look into faking an event bus for internal scrolling
@@ -257,7 +318,6 @@ export function renderPage(i, containerDiv, textLayerDiv) {
       let linkService = new PDFLinkService({ eventBus: eventBus });
       linkService.setDocument(pdf);
       linkService.setViewer(new V3DViewer);
-      console.log(pdf.constructor.name);
       //TODO look into faking a pdf viewer as well (check the code for link services to see)
       let annotationLayer = new AnnotationLayerBuilder({
         pageDiv: containerDiv,

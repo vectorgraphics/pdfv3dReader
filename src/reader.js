@@ -1,12 +1,11 @@
 //This is the script for the pdf viewer
-import { b } from "../dist/reader.js";
 import * as process from "./processor.js";
 
 let pdfContent;
 
 let currentURL = window.location.href;
 
-let currentstr = currentURL.toString();
+
 let defaultLink = document.getElementById("default-view-link");
 let url = new URL(currentURL);
 let params = url.searchParams;
@@ -48,7 +47,19 @@ zoomoutbutton.onclick = function () {
 };
 
 window.onscroll = function () {
-  process.visiblePages();
+
+  if (searching) {
+    let pages = [];
+    for (let i = 0; i < visiblePages.length; i++) {
+      let page = visiblePages.item(i);
+      pages.push(page);
+    }
+    process.visiblePages({ searching: searching, visiblePages: pages });
+  } else {
+    process.visiblePages();
+  }
+
+
 }
 
 let pageNumber = document.getElementById("pageNumber");
@@ -219,11 +230,12 @@ window.onkeydown = function (e) {
   }
 }
 
+let visiblePages;
 
 let searchButton = document.getElementById("searchBarButton");
 searchButton.onclick = function () {
   removeHighlights();
-
+  visiblePages = document.getElementsByClassName("visible");
   let totalMatches = 0;
   let containers = document.getElementsByClassName("container");
   let totalMatchElement = document.getElementById("totalMatchNumber");
