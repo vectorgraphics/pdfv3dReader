@@ -105962,15 +105962,12 @@ let optionButtons = document.getElementsByClassName("optionBtn");
     }
     else if (button.textContent == "Tools") {
       content.classList.add("Tools");
-      content.innerHTML = `          <div>
-      <a href=${defaultLink}> DEFAULT PDF VIEWER</a>
-   </div>
-   <div>
-     <a> DRAW (To be implemented) </a>
-   </div>
-   <div>
-     <a> ANNOTATE (To be implemented) </a>
-   </div>`;
+      content.innerHTML = `         <div>
+      <button><a href=${filename}> DEFAULT PDF VIEWER</a> </button>
+      </div>
+      <div>
+        <button id="hamburgerSearch"> <a>Search</a> </button>
+      </div>`;
     }
   }
 } 
@@ -106001,6 +105998,18 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   }
 }
 
+  let menuSearch = document.getElementById("hamburgerSearch");
+  menuSearch.onclick = function () {
+    if (!searching) {
+      searchBar.style.height = "10ex";
+      searching = true;
+    }
+    else {
+      searching = false;
+      searchBar.style.height = "0ex";
+      removeHighlights();
+    }
+  }
 
   let searchButton = document.getElementById("searchBarButton");
   let pagesWithMatches = [];

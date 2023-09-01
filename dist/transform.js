@@ -135,14 +135,12 @@ if (filename != null) {
         </div>
         <div id="hamburgerContent" class="Tools">
           <div>
-          <a href=${filename}> DEFAULT PDF VIEWER</a>
+          <button><a href=${filename}> DEFAULT PDF VIEWER</a> </button>
           </div>
           <div>
-            <a> DRAW (To be implemented) </a>
+            <button id="hamburgerSearch"> <a>Search</a> </button>
           </div>
-          <div>
-            <a> ANNOTATE (To be implemented) </a>
-          </div>
+
         </div>
       </div>
       <div id="searchBar" style="height: 0ex;">
