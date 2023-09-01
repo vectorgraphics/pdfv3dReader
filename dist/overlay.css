@@ -438,8 +438,22 @@ body {
 
 }
 
+#searchBar div {
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: max-content;
+  padding: 1%;
+}
 
-
+#searchBar div a {
+  height: fit-content;
+  color: white;
+  padding: 2%;
+  width: fit-content;
+}
 #optionsMenu * button.active {
   background-color: var(--lightColor1);
   color: black;
@@ -530,11 +544,17 @@ body {
 .dropdownContainer .refContainer button {
   background-color: black;
 }
+.active.highlighter {
+  font-size: inherit;
+  font-family: inherit;
+  background-color: green;
+}
 .highlighter {
   font-size: inherit;
   font-family: inherit;
   background-color: yellow;
 }
+
 .annotationLayer{
   pointer-events: none;
   z-index: 2;

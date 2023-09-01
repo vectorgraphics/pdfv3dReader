@@ -1,9 +1,8 @@
 // This is the pdf processor
-
-// TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
+// TODO search still has some bugs, like deleting lines and being wierd when searching something before closing again
 // Set minimize to true in webpack config
-//WOW just all of searching sucks
-//ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
+
+
 
 
 import * as pdfjs from "pdfjs-dist/webpack";
@@ -132,7 +131,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
-export function visiblePages(searching = { searching: false, visiblePages: {} }) {
+export function visiblePages(searching = { searching: false, pages: [] }) {
   let pages = document.getElementsByClassName("container");
   let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
@@ -187,15 +186,17 @@ export function visiblePages(searching = { searching: false, visiblePages: {} })
             let match;
             let newPageContent = pageTextContent;
             let uniqueMatches = [];
+            let matchNumber = 0;
             while ((match = word.exec(pageTextContent)) !== null) {
               if (!uniqueMatches.includes(match[0])) {
+                matchNumber++;
                 uniqueMatches.push(match[0]);
 
                 let arr = match[0].split('\u0000'); //each split is a span
-
+                let filter = arr.filter((word) => word != "");
                 for (let i = 0; i < arr.length; i++) {
                   if (i % 2 == 0) {
-                    arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+                    arr[i] = `<span class="highlighter matchLength${filter.length}" >` + arr[i] + `</span>`;
 
                   }
                 }
@@ -214,10 +215,36 @@ export function visiblePages(searching = { searching: false, visiblePages: {} })
                 }
               }
             }
+            if (searching.pages.at(+visiblePage.id.split(" ")[1] - 1) != null) {
+              console.log(searching.pages);
+              //There are matches on this page
+              //Highlight the appropriate match
+              let activeNumber = +document.getElementById("currentMatchNumber").innerText;
+              let page = searching.pages.at(+visiblePage.id.split(" ")[1] - 1);
 
+              // Check that page contains match, i.e the active number is between the previous matches and the total matches
+              let prev = 0;
+              for (let i = 0; i < +visiblePage.id.split(" ")[1] - 1 - 1; i++) {
+                if (searching.pages.at(i) != null) {
+                  prev += +searching.pages.at(i).numMatches;
+                }
+              }
+              if (activeNumber > prev && activeNumber <= +page.numMatches + prev) {
+                let spans = visiblePage.getElementsByClassName("highlighter");
+                let span = spans.item(activeNumber - prev - 1);
+                let matchLength = +span.classList.item(1).substring(11);
+
+                for (let i = 0; i < matchLength; i++) {
+                  spans.item(activeNumber - prev - 1 + i).classList.add("active");
+                }
+                //span.classList.add("active");
+                // span.scrollIntoView({ block: "center" }); <-- should only happen on the first one do TODO
+
+              }
+            }
 
           });
-        })
+        });
         visiblePage.classList.add("highlighted");
       }
     }
@@ -344,8 +371,6 @@ export function renderPage(i, containerDiv, textLayerDiv) {
 export function gotoPage(i) {
 
   let pageContainer = document.getElementById(`Page ${i} Container`);
-  //Render the page before scrolling to it for a smoother experience
-  renderPage(i, pageContainer, null);
   pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
 }
 
@@ -388,6 +413,7 @@ export function getOutline() {
 export function getMeta() {
   return pdfMetadata;
 }
+
 export function processPDF(arrayBuffer, zoom = {}) {
   let pdftask = pdfjs.getDocument(arrayBuffer);
 
@@ -420,3 +446,6 @@ export function processPDF(arrayBuffer, zoom = {}) {
     });
   });
 }
+
+
+

@@ -105291,11 +105291,10 @@ var pdf_link_service = __webpack_require__(6379);
 var event_utils = __webpack_require__(9982);
 ;// CONCATENATED MODULE: ./src/processor.js
 // This is the pdf processor
-
-// TODO Make sure when we search we load all the text so that we can search properly (i.e load all the text contents)
+// TODO search still has some bugs, like deleting lines and being wierd when searching something before closing again
 // Set minimize to true in webpack config
-//WOW just all of searching sucks
-//ASK IF WE HAVE TO KICK PDF to the side when opening pdf div
+
+
 
 
 
@@ -105424,7 +105423,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
-  function visiblePages(searching = { searching: false, visiblePages: {} }) {
+  function visiblePages(searching = { searching: false, pages: [] }) {
   let pages = document.getElementsByClassName("container");
   let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
@@ -105479,15 +105478,17 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
               let match;
               let newPageContent = pageTextContent;
               let uniqueMatches = [];
+              let matchNumber = 0;
               while ((match = word.exec(pageTextContent)) !== null) {
                 if (!uniqueMatches.includes(match[0])) {
+                  matchNumber++;
                   uniqueMatches.push(match[0]);
 
                   let arr = match[0].split('\u0000'); //each split is a span
-
+                  let filter = arr.filter((word) => word != "");
                   for (let i = 0; i < arr.length; i++) {
                     if (i % 2 == 0) {
-                      arr[i] = `<span class="highlighter">` + arr[i] + `</span>`;
+                      arr[i] = `<span class="highlighter matchLength${filter.length}" >` + arr[i] + `</span>`;
 
                     }
                   }
@@ -105506,10 +105507,36 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
                   }
                 }
               }
+              if (searching.pages.at(+visiblePage.id.split(" ")[1] - 1) != null) {
+                console.log(searching.pages);
+                //There are matches on this page
+                //Highlight the appropriate match
+                let activeNumber = +document.getElementById("currentMatchNumber").innerText;
+                let page = searching.pages.at(+visiblePage.id.split(" ")[1] - 1);
 
+                // Check that page contains match, i.e the active number is between the previous matches and the total matches
+                let prev = 0;
+                for (let i = 0; i < +visiblePage.id.split(" ")[1] - 1 - 1; i++) {
+                  if (searching.pages.at(i) != null) {
+                    prev += +searching.pages.at(i).numMatches;
+                  }
+                }
+                if (activeNumber > prev && activeNumber <= +page.numMatches + prev) {
+                  let spans = visiblePage.getElementsByClassName("highlighter");
+                  let span = spans.item(activeNumber - prev - 1);
+                  let matchLength = +span.classList.item(1).substring(11);
+
+                  for (let i = 0; i < matchLength; i++) {
+                    spans.item(activeNumber - prev - 1 + i).classList.add("active");
+                  }
+                  //span.classList.add("active");
+                  // span.scrollIntoView({ block: "center" }); <-- should only happen on the first one do TODO
+
+                }
+              }
 
             });
-          })
+          });
           visiblePage.classList.add("highlighted");
         }
       }
@@ -105636,8 +105663,6 @@ function renderPage(i, containerDiv, textLayerDiv) {
 function gotoPage(i) {
 
   let pageContainer = document.getElementById(`Page ${i} Container`);
-  //Render the page before scrolling to it for a smoother experience
-  renderPage(i, pageContainer, null);
   pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
 }
 
@@ -105680,6 +105705,7 @@ function getOutline() {
   function getMeta() {
     return pdfMetadata;
   }
+
   function processPDF(arrayBuffer, zoom = {}) {
   let pdftask = webpack.getDocument(arrayBuffer);
 
@@ -105713,8 +105739,12 @@ function getOutline() {
   });
 }
 
+
+
+
 ;// CONCATENATED MODULE: ./src/reader.js
 //This is the script for the pdf viewer
+
 
 
 let pdfContent;
@@ -105765,7 +105795,7 @@ zoomoutbutton.onclick = function () {
 window.onscroll = function () {
 
   if (searching) {
-    visiblePages({ searching: searching, visiblePages: null });
+    visiblePages({ searching: searching, pages: pagesWithMatches });
   } else {
     visiblePages();
   }
@@ -105804,6 +105834,7 @@ function zoom(zoomAmount) {
     page.style.height = `${(oldy / oldScale) * newScale}px`;
     page.style.width = `${(oldx / oldScale) * newScale}px`;
     page.classList.remove("visible");
+    page.classList.remove("highlighted");
     page.innerHTML = '';
   }
   scrollTo({ top: scrollY, left: scrollX, behavior: "instant" });
@@ -105937,21 +105968,25 @@ let optionButtons = document.getElementsByClassName("optionBtn");
     else {
       searching = false;
       searchBar.style.height = "0ex";
+      removeHighlights();
     }
   }
 }
 
-  let reader_visiblePages;
 
   let searchButton = document.getElementById("searchBarButton");
-  searchButton.onclick = function () {
-  removeHighlights();
-    reader_visiblePages = document.getElementsByClassName("visible");
-  let totalMatches = 0;
-  let containers = document.getElementsByClassName("container");
+  let pagesWithMatches = [];
+  let currentMatchElement = document.getElementById("currentMatchNumber");
   let totalMatchElement = document.getElementById("totalMatchNumber");
 
-  let currentMatchElement = document.getElementById("currentMatchNumber");
+  searchButton.onclick = function () {
+    pagesWithMatches = [];
+    removeHighlights();
+  let totalMatches = 0;
+    let containers = document.getElementsByClassName("container");
+
+
+
   totalMatchElement.innerText = currentMatchElement.innerText = "0";
   let earliestPage = containers.length;
   let pagesCompared = 0;
@@ -105988,14 +106023,24 @@ let optionButtons = document.getElementsByClassName("optionBtn");
             if (i < earliestPage) {
               earliestPage = i;
             }
+
+            pagesWithMatches[i] = { "page": i, "numMatches": matchesArray.length, "prev": totalMatches - matchesArray.length };
+            console.log(pagesWithMatches);
+          }
+          else {
+            pagesWithMatches.push(null);
           }
           if (pagesCompared == containers.length) {
 
             gotoPage(earliestPage + 1);
+            visiblePages({ searching: searching, pages: pagesWithMatches });
+
             if (totalMatches != 0) {
               currentMatchElement.innerText = "1";
             }
+
           }
+
 
           //This page is visible do highlights
           if (container.classList.contains("visible")) {
@@ -106030,6 +106075,7 @@ let optionButtons = document.getElementsByClassName("optionBtn");
             }
           }
 
+
         });
       }
     )
@@ -106055,118 +106101,39 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   }
 
 
+  //Navigate search results
+  //TODO Check for limits
+  let upsearch = document.getElementById("upSearch");
 
-/*
-  window.onkeydown = function (e) {
-    var ck = e.keyCode ? e.keyCode : e.which;
-    if (e.ctrlKey && ck == 70) {
-      let pageNum = +document.getElementById("pageNumber").value;
-      let page = getPDFPage(pageNum);
-      page.then(
-        function (page) {
-          let content = page.getTextContent();
-          content.then(function (c) {
-            let pageTextContent = "";
-            for (let i = 0; i < c.items.length; i++) {
-
-              pageTextContent += c.items[i].str;
-
-            }
-            let searchItem = document.getElementById("searchInput").value;
-            let word = new RegExp(searchItem, "gi");
-            let firstIndex = pageTextContent.search(word);
-            let searchIndex = firstIndex;
-            console.log(firstIndex);
-            if (firstIndex >= 0) {
-              let lengthChecked = 0;
-              for (let i = 0; i < c.items.length; i++) {
-
-                let str = c.items[i].str;
-                lengthChecked = lengthChecked + str.length;
-                console.log(lengthChecked);
-                //Search item is in the item 
-                if (firstIndex < lengthChecked) {
-                  //Check to see if the whole word is contained in this item
-
-                  // get the element with the inner html (MOCE THIS OUTSIDE SO WE JUST GET IT ONCE)
-                  let container = document.getElementById(`Page ${pageNum} Container`);
-                  let textLayer = container.getElementsByClassName("text-layer");
-                  let spans = textLayer.item(0).querySelectorAll("span");
-                  let span;
-                  let index = 0;
-                  for (; index < spans.length; index++) {
-                    if (spans.item(index).innerHTML == str) {
-                      span = spans.item(index);
-                      break;
-                    }
-                  }
-                  console.log(span);
-                  span.innerHTML = str.substring(0, searchIndex) + `<span style="background-color: yellow" class="highlighter">` + str.substring(searchIndex, searchIndex + searchItem.length) + "</span>" + str.substring(searchIndex + searchItem.length);
-                  if (searchItem.length > str.substring(searchIndex).length) {
-                    //Item is not fully contained, so we wrap the whole word
-                    //Continue looking through span index for other 
-                    let remainder = searchItem.substring(str.substring(searchIndex).length); // get the rest of the word that hasnt been foun yet
-                    console.log(remainder);
-                    while (remainder.length > 0) {
-                      index++;
-                      span = spans.item(index);
-                      let inner = span.innerHTML;
-                      span.innerHTML = `<span style="background-color: yellow" class="highlighter">` + inner.substring(0, remainder.length) + "</span>" + inner.substring(remainder.length);
-                      remainder = searchItem.substring(inner.length);
-                    }
-                  }
-                  else {
-                    //Item has been fully wrapped, keep looking
-                    let remainder = pageTextContent.substring(firstIndex + searchItem.length);
-                    let search = remainder.search(word);
-                    //word does not appear in this page again
-                    if (search < 0) {
-                      break;
-                    }
-                    firstIndex = search + firstIndex + searchItem.length;
-                    let newSearchIndex = firstIndex - lengthChecked;
-                    console.log(` search = ${search}search inde = ${searchIndex} remainder : ${remainder} firstInde ${firstIndex}`);
-
-                    //word appears in the same object
-                    if (newSearchIndex < 0) {
-                      index = 0;
-                      while (newSearchIndex < 0) {
-                        console.log(newSearchIndex);
-                        searchIndex = str.substring(0, searchIndex + searchItem.length).length + search; //next occurence of searhItem in word
-                        let inner = span.innerHTML;
-                        let adjust = (index + 1) * 66; //How many characters we have inserted into the original string
-                        span.innerHTML = inner.substring(0, searchIndex + adjust) + `<span style="background-color: yellow" class="highlighter">` + inner.substring(searchIndex + adjust, searchIndex + adjust + searchItem.length) + "</span>" + inner.substring(searchIndex + searchItem.length + adjust);
-                        index++;
-                        remainder = pageTextContent.substring(firstIndex + searchItem.length);
-                        search = remainder.search(word);
-                        //word does not appear in this page again
-                        if (search < 0) {
-                          break;
-                        }
-                        firstIndex = search + firstIndex + searchItem.length;
-                        newSearchIndex = firstIndex - lengthChecked;
-                      }
-                    }
-                    searchIndex = newSearchIndex;
-                  }
-
-                }
-                else {
-                  searchIndex -= str.length;
-                }
-
-              }
-            }
-
-          })
-        }
-      )
+  upsearch.onclick = function () {
+    if (+currentMatchElement.innerText - 1 != 0) {
+      currentMatchElement.innerText = +currentMatchElement.innerText - 1;
+      rerender();
     }
   }
 
+  let downsearch = document.getElementById("downSearch");
 
-  */
+  downsearch.onclick = function () {
+    if (+currentMatchElement.innerText - 1 != 0) {
+      currentMatchElement.innerText = +currentMatchElement.innerText + 1;
+      rerender();
+    }
+  }
 
+  function rerender() {
+    let visibles = document.getElementsByClassName("visible");
+    for (let i = 0; i < visibles.length; i++) {
+      console.log(visibles);
+      console.log(visibles.item(i));
+      visibles.item(i).innerHTML = "";
+      visibles.item(i).classList.remove("highlighted");
+      visibles.item(i).classList.remove("visible");
+
+
+    }
+    visiblePages({ searching: searching, pages: pagesWithMatches });
+  }
 })();
 
 /******/ })()

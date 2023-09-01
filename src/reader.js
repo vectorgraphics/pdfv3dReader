@@ -1,4 +1,5 @@
 //This is the script for the pdf viewer
+import { UnexpectedResponseException } from "pdfjs-dist/webpack.js";
 import * as process from "./processor.js";
 
 let pdfContent;
@@ -49,12 +50,7 @@ zoomoutbutton.onclick = function () {
 window.onscroll = function () {
 
   if (searching) {
-    let pages = [];
-    for (let i = 0; i < visiblePages.length; i++) {
-      let page = visiblePages.item(i);
-      pages.push(page);
-    }
-    process.visiblePages({ searching: searching, visiblePages: pages });
+    process.visiblePages({ searching: searching, pages: pagesWithMatches });
   } else {
     process.visiblePages();
   }
@@ -72,11 +68,8 @@ pageNumber.addEventListener("keyup", ({ key }) => {
 
 });
 
-let saveButton = document.getElementById("saveButton");
 
-saveButton.onclick = function () {
-  dow
-}
+
 
 function zoom(zoomAmount) {
   let oldScale = process.getScale();
@@ -93,6 +86,7 @@ function zoom(zoomAmount) {
     page.style.height = `${(oldy / oldScale) * newScale}px`;
     page.style.width = `${(oldx / oldScale) * newScale}px`;
     page.classList.remove("visible");
+    page.classList.remove("highlighted");
     page.innerHTML = '';
   }
   scrollTo({ top: scrollY, left: scrollX, behavior: "instant" });
@@ -226,21 +220,25 @@ window.onkeydown = function (e) {
     else {
       searching = false;
       searchBar.style.height = "0ex";
+      removeHighlights();
     }
   }
 }
 
-let visiblePages;
 
 let searchButton = document.getElementById("searchBarButton");
+let pagesWithMatches = [];
+let currentMatchElement = document.getElementById("currentMatchNumber");
+let totalMatchElement = document.getElementById("totalMatchNumber");
+
 searchButton.onclick = function () {
+  pagesWithMatches = [];
   removeHighlights();
-  visiblePages = document.getElementsByClassName("visible");
   let totalMatches = 0;
   let containers = document.getElementsByClassName("container");
-  let totalMatchElement = document.getElementById("totalMatchNumber");
 
-  let currentMatchElement = document.getElementById("currentMatchNumber");
+
+
   totalMatchElement.innerText = currentMatchElement.innerText = "0";
   let earliestPage = containers.length;
   let pagesCompared = 0;
@@ -277,14 +275,24 @@ searchButton.onclick = function () {
             if (i < earliestPage) {
               earliestPage = i;
             }
+
+            pagesWithMatches[i] = { "page": i, "numMatches": matchesArray.length, "prev": totalMatches - matchesArray.length };
+            console.log(pagesWithMatches);
+          }
+          else {
+            pagesWithMatches.push(null);
           }
           if (pagesCompared == containers.length) {
 
             process.gotoPage(earliestPage + 1);
+            process.visiblePages({ searching: searching, pages: pagesWithMatches });
+
             if (totalMatches != 0) {
               currentMatchElement.innerText = "1";
             }
+
           }
+
 
           //This page is visible do highlights
           if (container.classList.contains("visible")) {
@@ -319,6 +327,7 @@ searchButton.onclick = function () {
             }
           }
 
+
         });
       }
     )
@@ -344,114 +353,29 @@ function removeHighlights() {
 }
 
 
+//Navigate search results
+//TODO Check for limits
+let upsearch = document.getElementById("upSearch");
 
-/*
-  window.onkeydown = function (e) {
-    var ck = e.keyCode ? e.keyCode : e.which;
-    if (e.ctrlKey && ck == 70) {
-      let pageNum = +document.getElementById("pageNumber").value;
-      let page = getPDFPage(pageNum);
-      page.then(
-        function (page) {
-          let content = page.getTextContent();
-          content.then(function (c) {
-            let pageTextContent = "";
-            for (let i = 0; i < c.items.length; i++) {
+upsearch.onclick = function () {
+  currentMatchElement.innerText = +currentMatchElement.innerText - 1;
+  rerender();
+}
 
-              pageTextContent += c.items[i].str;
+let downsearch = document.getElementById("downSearch");
 
-            }
-            let searchItem = document.getElementById("searchInput").value;
-            let word = new RegExp(searchItem, "gi");
-            let firstIndex = pageTextContent.search(word);
-            let searchIndex = firstIndex;
-            console.log(firstIndex);
-            if (firstIndex >= 0) {
-              let lengthChecked = 0;
-              for (let i = 0; i < c.items.length; i++) {
+downsearch.onclick = function () {
+  currentMatchElement.innerText = +currentMatchElement.innerText + 1;
+  rerender();
+}
 
-                let str = c.items[i].str;
-                lengthChecked = lengthChecked + str.length;
-                console.log(lengthChecked);
-                //Search item is in the item 
-                if (firstIndex < lengthChecked) {
-                  //Check to see if the whole word is contained in this item
-
-                  // get the element with the inner html (MOCE THIS OUTSIDE SO WE JUST GET IT ONCE)
-                  let container = document.getElementById(`Page ${pageNum} Container`);
-                  let textLayer = container.getElementsByClassName("text-layer");
-                  let spans = textLayer.item(0).querySelectorAll("span");
-                  let span;
-                  let index = 0;
-                  for (; index < spans.length; index++) {
-                    if (spans.item(index).innerHTML == str) {
-                      span = spans.item(index);
-                      break;
-                    }
-                  }
-                  console.log(span);
-                  span.innerHTML = str.substring(0, searchIndex) + `<span style="background-color: yellow" class="highlighter">` + str.substring(searchIndex, searchIndex + searchItem.length) + "</span>" + str.substring(searchIndex + searchItem.length);
-                  if (searchItem.length > str.substring(searchIndex).length) {
-                    //Item is not fully contained, so we wrap the whole word
-                    //Continue looking through span index for other 
-                    let remainder = searchItem.substring(str.substring(searchIndex).length); // get the rest of the word that hasnt been foun yet
-                    console.log(remainder);
-                    while (remainder.length > 0) {
-                      index++;
-                      span = spans.item(index);
-                      let inner = span.innerHTML;
-                      span.innerHTML = `<span style="background-color: yellow" class="highlighter">` + inner.substring(0, remainder.length) + "</span>" + inner.substring(remainder.length);
-                      remainder = searchItem.substring(inner.length);
-                    }
-                  }
-                  else {
-                    //Item has been fully wrapped, keep looking
-                    let remainder = pageTextContent.substring(firstIndex + searchItem.length);
-                    let search = remainder.search(word);
-                    //word does not appear in this page again
-                    if (search < 0) {
-                      break;
-                    }
-                    firstIndex = search + firstIndex + searchItem.length;
-                    let newSearchIndex = firstIndex - lengthChecked;
-                    console.log(` search = ${search}search inde = ${searchIndex} remainder : ${remainder} firstInde ${firstIndex}`);
-
-                    //word appears in the same object
-                    if (newSearchIndex < 0) {
-                      index = 0;
-                      while (newSearchIndex < 0) {
-                        console.log(newSearchIndex);
-                        searchIndex = str.substring(0, searchIndex + searchItem.length).length + search; //next occurence of searhItem in word
-                        let inner = span.innerHTML;
-                        let adjust = (index + 1) * 66; //How many characters we have inserted into the original string
-                        span.innerHTML = inner.substring(0, searchIndex + adjust) + `<span style="background-color: yellow" class="highlighter">` + inner.substring(searchIndex + adjust, searchIndex + adjust + searchItem.length) + "</span>" + inner.substring(searchIndex + searchItem.length + adjust);
-                        index++;
-                        remainder = pageTextContent.substring(firstIndex + searchItem.length);
-                        search = remainder.search(word);
-                        //word does not appear in this page again
-                        if (search < 0) {
-                          break;
-                        }
-                        firstIndex = search + firstIndex + searchItem.length;
-                        newSearchIndex = firstIndex - lengthChecked;
-                      }
-                    }
-                    searchIndex = newSearchIndex;
-                  }
-
-                }
-                else {
-                  searchIndex -= str.length;
-                }
-
-              }
-            }
-
-          })
-        }
-      )
-    }
+function rerender() {
+  let visibles = document.getElementsByClassName("visible");
+  for (let i = 0; i < visibles.length; i++) {
+    visibles.item(i).innerHTML = "";
+    visibles.item(i).classList.remove("highlighted");
+    visibles.item(i).classList.remove("visible");
   }
+  visiblePages({ searching: searching, pages: pagesWithMatches });
 
-
-  */
+}

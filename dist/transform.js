@@ -153,8 +153,8 @@ if (filename != null) {
         <a>/</a>
         <a id="totalMatchNumber">0</a>
         </div>
-        <button style="font-size: xx-large;">↑</button>
-        <button style="font-size: xx-large;">↓</button>
+        <button style="font-size: xx-large;" id="upSearch">↑</button>
+        <button style="font-size: xx-large;" id="downSearch">↓</button>
         <button id="closeSearchBarButton"> X</button>
       </div>
   
