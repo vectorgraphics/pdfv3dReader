@@ -105138,12 +105138,12 @@ module.exports = pdfjs;
 /***/ 3394:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-module.exports = function Worker_fn() {
-  let script = document.getElementById("workerScript");
+    module.exports = function Worker_fn() {
+      let script = document.getElementById("workerScript");
 
-  let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
-  let workerBlobUrl = URL.createObjectURL(workerBlob);
-  return new Worker(workerBlobUrl);
+    let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
+    let workerBlobUrl = URL.createObjectURL(workerBlob);
+    return new Worker(workerBlobUrl);
 }
 
 
@@ -105291,7 +105291,7 @@ var pdf_link_service = __webpack_require__(6379);
 var event_utils = __webpack_require__(9982);
 ;// CONCATENATED MODULE: ./src/processor.js
 // This is the pdf processor
-// TODO search still has some bugs, like deleting lines and being wierd when searching something before closing again
+// TODO  once more than one visibe page it messes up 
 // Set minimize to true in webpack config
 
 
@@ -105423,7 +105423,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
-  function visiblePages(searching = { searching: false, pages: [] }) {
+  function visiblePages(searching = { searching: false, pages: [], toScroll: false }) {
   let pages = document.getElementsByClassName("container");
   let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
@@ -105448,101 +105448,129 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
   let topPage = document.getElementById("pageNumber");
   topPage.value = minVisPage.toString();
-    if (searching.searching) {
-      let visiblePages = document.getElementsByClassName("visible");
-      for (let j = 0; j < visiblePages.length; j++) {
-        let visiblePage = visiblePages.item(j);
-        if (!visiblePage.classList.contains("highlighted")) {
-          let page = getPDFPage(+visiblePage.id.split(" ")[1]);
-          page.then(function (page) {
-            let content = page.getTextContent();
-            content.then(function (c) {
-              let pageTextContent = "";
-              for (let i = 0; i < c.items.length; i++) {
+  if (searching.searching) {
+    let visiblePages = document.getElementsByClassName("visible");
+    for (let j = 0; j < visiblePages.length; j++) {
+      let visiblePage = visiblePages.item(j);
+      if (!visiblePage.classList.contains("highlighted")) {
+        let page = getPDFPage(+visiblePage.id.split(" ")[1]);
+        page.then(function (page) {
+          let content = page.getTextContent();
+          content.then(function (c) {
+            let pageTextContent = "";
+            for (let i = 0; i < c.items.length; i++) {
 
-                pageTextContent += '\u0000' + c.items[i].str + '\u0000';
-              }
+              pageTextContent += '\u0000' + c.items[i].str + '\u0000';
+            }
 
-              let searchItem = document.getElementById("searchInput").value;
-              if (searchItem == "") {
-                searchItem = " ";
-              }
-              let regItem = "";
-              for (let i = 0; i < searchItem.length; i++) {
-                let char = searchItem.charAt(i);
-                regItem += `(${char}` + '\u0000' + `+|${char})`; //match the character then any number of flags between it
-              }
+            let searchItem = document.getElementById("searchInput").value;
+            if (searchItem == "") {
+              searchItem = " ";
+            }
+            let regItem = "";
+            for (let i = 0; i < searchItem.length; i++) {
+              let char = searchItem.charAt(i);
+              regItem += `(${char}` + '\u0000' + `+|${char})`; //match the character then any number of flags between it
+            }
 
-              let word = new RegExp(regItem, "gi");
+            let word = new RegExp(regItem, "gi");
 
-              let match;
-              let newPageContent = pageTextContent;
-              let uniqueMatches = [];
-              let matchNumber = 0;
-              while ((match = word.exec(pageTextContent)) !== null) {
-                if (!uniqueMatches.includes(match[0])) {
-                  matchNumber++;
-                  uniqueMatches.push(match[0]);
+            let match;
+            let newPageContent = pageTextContent;
+            let uniqueMatches = [];
+            let matchNumber = 0;
+            while ((match = word.exec(pageTextContent)) !== null) {
+              if (!uniqueMatches.includes(match[0])) {
+                matchNumber++;
+                uniqueMatches.push(match[0]);
 
-                  let arr = match[0].split('\u0000'); //each split is a span
-                  let filter = arr.filter((word) => word != "");
-                  for (let i = 0; i < arr.length; i++) {
-                    if (i % 2 == 0) {
-                      arr[i] = `<span class="highlighter matchLength${filter.length}" >` + arr[i] + `</span>`;
+                let arr = match[0].split('\u0000'); //each split is a span
+                let filter = arr.filter((word) => word != "");
+                for (let i = 0; i < arr.length; i++) {
+                  if (i % 2 == 0) {
+                    arr[i] = `<span class="highlighter matchLength${filter.length}" >` + arr[i] + `</span>`;
 
-                    }
                   }
+                }
 
-                  let newStr = arr.join('\u0000');
-                  newPageContent = newPageContent.replaceAll(match[0], newStr);
-                  let content = newPageContent.split('\u0000');
-                  let filteredContent = content.filter((word) => word != "");
+                let newStr = arr.join('\u0000');
+                newPageContent = newPageContent.replaceAll(match[0], newStr);
+                let content = newPageContent.split('\u0000');
+                let filteredContent = content.filter((word) => word != "");
 
-                  let spans = visiblePage.querySelectorAll("span");
-                  for (let i = 0; i < spans.length; i++) {
-                    let span = spans.item(i);
-                    if (!span.innerHTML == "") {
-                      span.innerHTML = filteredContent[i];
-                    }
+                let spans = visiblePage.querySelectorAll("span");
+                for (let i = 0; i < spans.length; i++) {
+                  let span = spans.item(i);
+                  if (!span.innerHTML == "") {
+                    span.innerHTML = filteredContent[i];
                   }
                 }
               }
-              if (searching.pages.at(+visiblePage.id.split(" ")[1] - 1) != null) {
-                console.log(searching.pages);
-                //There are matches on this page
-                //Highlight the appropriate match
-                let activeNumber = +document.getElementById("currentMatchNumber").innerText;
-                let page = searching.pages.at(+visiblePage.id.split(" ")[1] - 1);
+            }
+            if (searching.pages.at(+visiblePage.id.split(" ")[1] - 1) != null) {
+              //There are matches on this page
+              //Highlight the appropriate match
+              let activeNumber = +document.getElementById("currentMatchNumber").innerText;
+              let page = searching.pages.at(+visiblePage.id.split(" ")[1] - 1);
 
-                // Check that page contains match, i.e the active number is between the previous matches and the total matches
-                let prev = 0;
-                for (let i = 0; i < +visiblePage.id.split(" ")[1] - 1 - 1; i++) {
-                  if (searching.pages.at(i) != null) {
-                    prev += +searching.pages.at(i).numMatches;
-                  }
-                }
-                if (activeNumber > prev && activeNumber <= +page.numMatches + prev) {
-                  let spans = visiblePage.getElementsByClassName("highlighter");
-                  let span = spans.item(activeNumber - prev - 1);
-                  let matchLength = +span.classList.item(1).substring(11);
-
-                  for (let i = 0; i < matchLength; i++) {
-                    spans.item(activeNumber - prev - 1 + i).classList.add("active");
-                  }
-                  //span.classList.add("active");
-                  // span.scrollIntoView({ block: "center" }); <-- should only happen on the first one do TODO
-
+              // Check that page contains match, i.e the active number is between the previous matches and the total matches
+              let prev = 0;
+              for (let i = 0; i < +visiblePage.id.split(" ")[1] - 1 - 1; i++) {
+                if (searching.pages.at(i) != null) {
+                  prev += +searching.pages.at(i).numMatches;
                 }
               }
+              if (activeNumber > prev && activeNumber <= +page.numMatches + prev) {
+                let spans = visiblePage.getElementsByClassName("highlighter");
+                let span = spans.item(activeNumber - prev - 1);
+                let matchLength = +span.classList.item(1).substring(11);
 
-            });
+                for (let i = 0; i < matchLength; i++) {
+                  spans.item(activeNumber - prev - 1 + i).classList.add("active");
+                }
+
+                if (searching.toScroll) {
+                  span.scrollIntoView({ "behavior": "instant", "block": "center", "inline": "center" });
+                }
+
+              }
+            }
+
           });
-          visiblePage.classList.add("highlighted");
+        });
+
+        if (searching.toScroll) {
+
+          let activeNumber = +document.getElementById("currentMatchNumber").innerText;
+          let prev = 0;
+          //find the next page with the active
+          for (let i = 1; i < searching.pages.length; i++) {
+            if (searching.pages.at(i) != null) {
+              console.log(prev);
+              if (activeNumber > prev && activeNumber <= +searching.pages.at(i).numMatches + prev) {
+                //active is in this page, scroll to this page and scroll to activ
+                gotoPage(i + 1);
+
+                break;
+              }
+              else {
+                console.log(`not in ${i}`);
+              }
+              prev += +searching.pages.at(i).numMatches;
+
+            }
+          }
+
         }
+
+        visiblePage.classList.add("highlighted");
       }
     }
+  }
 
 }
+
+
 
 function removePage(i) {
   let container = document.getElementById(`Page ${i + 1} Container`);
@@ -105813,11 +105841,8 @@ pageNumber.addEventListener("keyup", ({ key }) => {
 
 });
 
-  let saveButton = document.getElementById("saveButton");
 
-  saveButton.onclick = function () {
-    dow
-  }
+
 
 function zoom(zoomAmount) {
   let oldScale = getScale();
@@ -105983,7 +106008,7 @@ let optionButtons = document.getElementsByClassName("optionBtn");
     pagesWithMatches = [];
     removeHighlights();
   let totalMatches = 0;
-    let containers = document.getElementsByClassName("container");
+  let containers = document.getElementsByClassName("container");
 
 
 
@@ -106032,12 +106057,14 @@ let optionButtons = document.getElementsByClassName("optionBtn");
           }
           if (pagesCompared == containers.length) {
 
-            gotoPage(earliestPage + 1);
-            visiblePages({ searching: searching, pages: pagesWithMatches });
-
             if (totalMatches != 0) {
               currentMatchElement.innerText = "1";
             }
+            gotoPage(earliestPage + 1);
+
+            visiblePages({ searching: searching, pages: pagesWithMatches });
+
+
 
           }
 
@@ -106106,34 +106133,38 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   let upsearch = document.getElementById("upSearch");
 
   upsearch.onclick = function () {
-    if (+currentMatchElement.innerText - 1 != 0) {
-      currentMatchElement.innerText = +currentMatchElement.innerText - 1;
-      rerender();
-    }
+
+  if (+currentMatchElement.innerText - 1 != 0) {
+    currentMatchElement.innerText = +currentMatchElement.innerText - 1;
+
+    rerender();
   }
+}
 
   let downsearch = document.getElementById("downSearch");
 
   downsearch.onclick = function () {
-    if (+currentMatchElement.innerText - 1 != 0) {
-      currentMatchElement.innerText = +currentMatchElement.innerText + 1;
-      rerender();
-    }
+
+  if (!(+currentMatchElement.innerText + 1 > +totalMatchElement.innerHTML)) {
+
+    currentMatchElement.innerText = +currentMatchElement.innerText + 1;
+    rerender();
   }
+}
 
   function rerender() {
     let visibles = document.getElementsByClassName("visible");
     for (let i = 0; i < visibles.length; i++) {
-      console.log(visibles);
-      console.log(visibles.item(i));
-      visibles.item(i).innerHTML = "";
-      visibles.item(i).classList.remove("highlighted");
-      visibles.item(i).classList.remove("visible");
+    let length = visibles.length;
+    visibles.item(length - 1).innerHTML = "";
+    visibles.item(length - 1).classList.remove("highlighted");
+    visibles.item(length - 1).classList.remove("visible");
 
 
-    }
-    visiblePages({ searching: searching, pages: pagesWithMatches });
   }
+  visiblePages({ searching: searching, pages: pagesWithMatches, toScroll: true });
+
+}
 })();
 
 /******/ })()

@@ -284,12 +284,14 @@ searchButton.onclick = function () {
           }
           if (pagesCompared == containers.length) {
 
-            process.gotoPage(earliestPage + 1);
-            process.visiblePages({ searching: searching, pages: pagesWithMatches });
-
             if (totalMatches != 0) {
               currentMatchElement.innerText = "1";
             }
+            process.gotoPage(earliestPage + 1);
+
+            process.visiblePages({ searching: searching, pages: pagesWithMatches });
+
+
 
           }
 
@@ -358,24 +360,35 @@ function removeHighlights() {
 let upsearch = document.getElementById("upSearch");
 
 upsearch.onclick = function () {
-  currentMatchElement.innerText = +currentMatchElement.innerText - 1;
-  rerender();
+
+  if (+currentMatchElement.innerText - 1 != 0) {
+    currentMatchElement.innerText = +currentMatchElement.innerText - 1;
+
+    rerender();
+  }
 }
 
 let downsearch = document.getElementById("downSearch");
 
 downsearch.onclick = function () {
-  currentMatchElement.innerText = +currentMatchElement.innerText + 1;
-  rerender();
+
+  if (!(+currentMatchElement.innerText + 1 > +totalMatchElement.innerHTML)) {
+
+    currentMatchElement.innerText = +currentMatchElement.innerText + 1;
+    rerender();
+  }
 }
 
 function rerender() {
   let visibles = document.getElementsByClassName("visible");
   for (let i = 0; i < visibles.length; i++) {
-    visibles.item(i).innerHTML = "";
-    visibles.item(i).classList.remove("highlighted");
-    visibles.item(i).classList.remove("visible");
+    let length = visibles.length;
+    visibles.item(length - 1).innerHTML = "";
+    visibles.item(length - 1).classList.remove("highlighted");
+    visibles.item(length - 1).classList.remove("visible");
+
+
   }
-  visiblePages({ searching: searching, pages: pagesWithMatches });
+  process.visiblePages({ searching: searching, pages: pagesWithMatches, toScroll: true });
 
 }

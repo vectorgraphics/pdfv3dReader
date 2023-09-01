@@ -1,5 +1,5 @@
 // This is the pdf processor
-// TODO search still has some bugs, like deleting lines and being wierd when searching something before closing again
+// TODO  once more than one visibe page it messes up 
 // Set minimize to true in webpack config
 
 
@@ -131,7 +131,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
-export function visiblePages(searching = { searching: false, pages: [] }) {
+export function visiblePages(searching = { searching: false, pages: [], toScroll: false }) {
   let pages = document.getElementsByClassName("container");
   let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
@@ -216,7 +216,6 @@ export function visiblePages(searching = { searching: false, pages: [] }) {
               }
             }
             if (searching.pages.at(+visiblePage.id.split(" ")[1] - 1) != null) {
-              console.log(searching.pages);
               //There are matches on this page
               //Highlight the appropriate match
               let activeNumber = +document.getElementById("currentMatchNumber").innerText;
@@ -237,20 +236,49 @@ export function visiblePages(searching = { searching: false, pages: [] }) {
                 for (let i = 0; i < matchLength; i++) {
                   spans.item(activeNumber - prev - 1 + i).classList.add("active");
                 }
-                //span.classList.add("active");
-                // span.scrollIntoView({ block: "center" }); <-- should only happen on the first one do TODO
+
+                if (searching.toScroll) {
+                  span.scrollIntoView({ "behavior": "instant", "block": "center", "inline": "center" });
+                }
 
               }
             }
 
           });
         });
+
+        if (searching.toScroll) {
+
+          let activeNumber = +document.getElementById("currentMatchNumber").innerText;
+          let prev = 0;
+          //find the next page with the active
+          for (let i = 1; i < searching.pages.length; i++) {
+            if (searching.pages.at(i) != null) {
+              console.log(prev);
+              if (activeNumber > prev && activeNumber <= +searching.pages.at(i).numMatches + prev) {
+                //active is in this page, scroll to this page and scroll to activ
+                gotoPage(i + 1);
+
+                break;
+              }
+              else {
+                console.log(`not in ${i}`);
+              }
+              prev += +searching.pages.at(i).numMatches;
+
+            }
+          }
+
+        }
+
         visiblePage.classList.add("highlighted");
       }
     }
   }
 
 }
+
+
 
 function removePage(i) {
   let container = document.getElementById(`Page ${i + 1} Container`);
