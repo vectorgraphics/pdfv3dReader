@@ -105423,6 +105423,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
+  let toScroll = false;
   function visiblePages(searching = { searching: false, pages: [], toScroll: false }) {
   let pages = document.getElementsByClassName("container");
   let minVisPage = pages.length;
@@ -105529,8 +105530,9 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
                   spans.item(activeNumber - prev - 1 + i).classList.add("active");
                 }
 
-                if (searching.toScroll) {
+                if (searching.toScroll || toScroll) {
                   span.scrollIntoView({ "behavior": "instant", "block": "center", "inline": "center" });
+                  toScroll = false;
                 }
 
               }
@@ -105549,6 +105551,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
               console.log(prev);
               if (activeNumber > prev && activeNumber <= +searching.pages.at(i).numMatches + prev) {
                 //active is in this page, scroll to this page and scroll to activ
+                toScroll = true;
                 gotoPage(i + 1);
 
                 break;
