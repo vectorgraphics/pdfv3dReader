@@ -105138,8 +105138,8 @@ module.exports = pdfjs;
 /***/ 3394:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-    module.exports = function Worker_fn() {
-      let script = document.getElementById("workerScript");
+  module.exports = function Worker_fn() {
+    let script = document.getElementById("workerScript");
 
     let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
     let workerBlobUrl = URL.createObjectURL(workerBlob);
@@ -105312,9 +105312,9 @@ var event_utils = __webpack_require__(9982);
 
 //Collection of outlineObjects
 let outlineObjects = [];
-  let pdfMetadata;
+let pdfMetadata;
 
-  function getPDFPage(i) {
+function getPDFPage(i) {
   return pdf.getPage(i);
 }
 
@@ -105348,7 +105348,7 @@ function setScale(newScale) {
   scale = newScale;
 }
 
-  function getScale() {
+function getScale() {
   return scale;
 }
 
@@ -105423,8 +105423,8 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   }
 }
 
-  let toScroll = false;
-  function visiblePages(searching = { searching: false, pages: [], toScroll: false }) {
+let toScroll = false;
+function visiblePages(searching = { searching: false, pages: [], toScroll: false }) {
   let pages = document.getElementsByClassName("container");
   let minVisPage = pages.length;
   for (let i = 0; i < pages.length; i++) {
@@ -105548,16 +105548,12 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
           //find the next page with the active
           for (let i = 1; i < searching.pages.length; i++) {
             if (searching.pages.at(i) != null) {
-              console.log(prev);
               if (activeNumber > prev && activeNumber <= +searching.pages.at(i).numMatches + prev) {
                 //active is in this page, scroll to this page and scroll to activ
                 toScroll = true;
                 gotoPage(i + 1);
 
                 break;
-              }
-              else {
-                console.log(`not in ${i}`);
               }
               prev += +searching.pages.at(i).numMatches;
 
@@ -105583,13 +105579,13 @@ function removePage(i) {
 }
 
 
-  function getOutlineItem(item) {
-    return new Promise(function (resolve, reject) {
-      pdf.getDestination(item.dest).then(function (dest) {
-        pdf.getPageIndex(dest[0]).then(function (id) {
-          let pageNumber = parseInt(id) + 1;
-          let title = item.title;
-          let destArray = dest;
+function getOutlineItem(item) {
+  return new Promise(function (resolve, reject) {
+    pdf.getDestination(item.dest).then(function (dest) {
+      pdf.getPageIndex(dest[0]).then(function (id) {
+        let pageNumber = parseInt(id) + 1;
+        let title = item.title;
+        let destArray = dest;
 
         let outlineObject = {
           pageNumber: pageNumber, title: title,
@@ -105697,7 +105693,7 @@ function gotoPage(i) {
   pageContainer.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
 }
 
-  function setUpPages(pdf, pages, zoom) {
+function setUpPages(pdf, pages, zoom) {
 
   let totalPageNumber = document.getElementById("totalPageNumber");
   let input = document.getElementById("pageNumber");
@@ -105733,11 +105729,11 @@ function gotoPage(i) {
 function getOutline() {
   return outlineObjects;
 }
-  function getMeta() {
-    return pdfMetadata;
-  }
+function getMeta() {
+  return pdfMetadata;
+}
 
-  function processPDF(arrayBuffer, zoom = {}) {
+function processPDF(arrayBuffer, zoom = {}) {
   let pdftask = webpack.getDocument(arrayBuffer);
 
   pdftask.promise.then(function (_pdf) {
@@ -105788,9 +105784,9 @@ let url = new URL(currentURL);
 let params = url.searchParams;
 
 let filename = params.get("pdf");
-  let file = filename.substring(filename.lastIndexOf("/") + 1);
+let file = filename.substring(filename.lastIndexOf("/") + 1);
 let navbarName = document.getElementById("pdf-name");
-  navbarName.textContent = file;
+navbarName.textContent = file;
 defaultLink.href = filename;
 
 
@@ -105883,17 +105879,17 @@ hamburgerMenuButton.onclick = function () {
   }
 }
 
-  let printButton = document.getElementById("print-button");
-  printButton.onclick = function () {
-    let w = window.open(filename);
-    w.print(filename);
-  }
+let printButton = document.getElementById("print-button");
+printButton.onclick = function () {
+  let w = window.open(filename);
+  w.print(filename);
+}
 let outline = getOutline();
 
 let optionButtons = document.getElementsByClassName("optionBtn");
 
 
-  function makeDropDown(outline, container, dropdown) {
+function makeDropDown(outline, container, dropdown) {
 
   for (let j = 0; j < outline.length; j++) {
     let ref = outline[j];
@@ -105939,13 +105935,13 @@ let optionButtons = document.getElementsByClassName("optionBtn");
 }
 
 
-  for (let i = 0; i < optionButtons.length; i++) {
-    //Add the active tag 
-    optionButtons.item(i).onclick = function () {
-      //Make all buttons inactive
-      for (let j = 0; j < optionButtons.length; j++) {
-        optionButtons.item(j).classList.remove("active");
-      }
+for (let i = 0; i < optionButtons.length; i++) {
+  //Add the active tag 
+  optionButtons.item(i).onclick = function () {
+    //Make all buttons inactive
+    for (let j = 0; j < optionButtons.length; j++) {
+      optionButtons.item(j).classList.remove("active");
+    }
     optionButtons.item(i).classList.add("active");
     let content = document.getElementById("hamburgerContent");
     //Clear the html
@@ -105978,9 +105974,9 @@ let optionButtons = document.getElementsByClassName("optionBtn");
 //Custom search function
 
 
-  let searching = false;
-  let searchBar = document.getElementById("searchBar");
-  window.onkeydown = function (e) {
+let searching = false;
+let searchBar = document.getElementById("searchBar");
+window.onkeydown = function (e) {
 
   var ck = e.keyCode ? e.keyCode : e.which;
   if (e.ctrlKey && ck == 70) {
@@ -105998,27 +105994,27 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   }
 }
 
-  let menuSearch = document.getElementById("hamburgerSearch");
-  menuSearch.onclick = function () {
-    if (!searching) {
-      searchBar.style.height = "10ex";
-      searching = true;
-    }
-    else {
-      searching = false;
-      searchBar.style.height = "0ex";
-      removeHighlights();
-    }
+let menuSearch = document.getElementById("hamburgerSearch");
+menuSearch.onclick = function () {
+  if (!searching) {
+    searchBar.style.height = "10ex";
+    searching = true;
   }
-
-  let searchButton = document.getElementById("searchBarButton");
-  let pagesWithMatches = [];
-  let currentMatchElement = document.getElementById("currentMatchNumber");
-  let totalMatchElement = document.getElementById("totalMatchNumber");
-
-  searchButton.onclick = function () {
-    pagesWithMatches = [];
+  else {
+    searching = false;
+    searchBar.style.height = "0ex";
     removeHighlights();
+  }
+}
+
+let searchButton = document.getElementById("searchBarButton");
+let pagesWithMatches = [];
+let currentMatchElement = document.getElementById("currentMatchNumber");
+let totalMatchElement = document.getElementById("totalMatchNumber");
+
+searchButton.onclick = function () {
+  pagesWithMatches = [];
+  removeHighlights();
   let totalMatches = 0;
   let containers = document.getElementsByClassName("container");
 
@@ -106062,7 +106058,6 @@ let optionButtons = document.getElementsByClassName("optionBtn");
             }
 
             pagesWithMatches[i] = { "page": i, "numMatches": matchesArray.length, "prev": totalMatches - matchesArray.length };
-            console.log(pagesWithMatches);
           }
           else {
             pagesWithMatches.push(null);
@@ -106123,28 +106118,28 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   }
 }
 
-  let closeSearchBarButton = document.getElementById("closeSearchBarButton");
-  closeSearchBarButton.onclick = function () {
-    removeHighlights();
-    searching = false;
-    searchBar.style.height = "0ex";
+let closeSearchBarButton = document.getElementById("closeSearchBarButton");
+closeSearchBarButton.onclick = function () {
+  removeHighlights();
+  searching = false;
+  searchBar.style.height = "0ex";
+}
+
+//re render the texts of all visible pages
+function removeHighlights() {
+  let highlights = document.getElementsByClassName("highlighter");
+  while (highlights.length > 0) {
+    let highlight = highlights.item(0);
+    highlight.outerHTML = highlight.innerHTML; //removing the highlight but keeping the word
   }
-
-  //re render the texts of all visible pages
-  function removeHighlights() {
-    let highlights = document.getElementsByClassName("highlighter");
-    while (highlights.length > 0) {
-      let highlight = highlights.item(0);
-      highlight.outerHTML = highlight.innerHTML; //removing the highlight but keeping the word
-    }
-  }
+}
 
 
-  //Navigate search results
-  //TODO Check for limits
-  let upsearch = document.getElementById("upSearch");
+//Navigate search results
+//TODO Check for limits
+let upsearch = document.getElementById("upSearch");
 
-  upsearch.onclick = function () {
+upsearch.onclick = function () {
 
   if (+currentMatchElement.innerText - 1 != 0) {
     currentMatchElement.innerText = +currentMatchElement.innerText - 1;
@@ -106153,9 +106148,9 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   }
 }
 
-  let downsearch = document.getElementById("downSearch");
+let downsearch = document.getElementById("downSearch");
 
-  downsearch.onclick = function () {
+downsearch.onclick = function () {
 
   if (!(+currentMatchElement.innerText + 1 > +totalMatchElement.innerHTML)) {
 
@@ -106164,9 +106159,9 @@ let optionButtons = document.getElementsByClassName("optionBtn");
   }
 }
 
-  function rerender() {
-    let visibles = document.getElementsByClassName("visible");
-    for (let i = 0; i < visibles.length; i++) {
+function rerender() {
+  let visibles = document.getElementsByClassName("visible");
+  for (let i = 0; i < visibles.length; i++) {
     let length = visibles.length;
     visibles.item(length - 1).innerHTML = "";
     visibles.item(length - 1).classList.remove("highlighted");

@@ -256,16 +256,12 @@ export function visiblePages(searching = { searching: false, pages: [], toScroll
           //find the next page with the active
           for (let i = 1; i < searching.pages.length; i++) {
             if (searching.pages.at(i) != null) {
-              console.log(prev);
               if (activeNumber > prev && activeNumber <= +searching.pages.at(i).numMatches + prev) {
                 //active is in this page, scroll to this page and scroll to activ
                 toScroll = true;
                 gotoPage(i + 1);
 
                 break;
-              }
-              else {
-                console.log(`not in ${i}`);
               }
               prev += +searching.pages.at(i).numMatches;
 

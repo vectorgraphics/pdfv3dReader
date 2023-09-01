@@ -286,7 +286,6 @@ searchButton.onclick = function () {
             }
 
             pagesWithMatches[i] = { "page": i, "numMatches": matchesArray.length, "prev": totalMatches - matchesArray.length };
-            console.log(pagesWithMatches);
           }
           else {
             pagesWithMatches.push(null);

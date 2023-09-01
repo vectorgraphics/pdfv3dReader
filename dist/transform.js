@@ -8,7 +8,7 @@ let filename = params.get("pdf");
 console.log(filename);
 if (filename != null) {
   if (filename.endsWith(".pdf")) {
-    fetch('http://127.0.0.1:5500/dist/pdf.worker.02bb9abcaa6f661db926.js')
+    fetch('https://sean-madu.github.io/PDF_ReaderLib/dist/pdf.worker.02bb9abcaa6f661db926.js')
       .then(response => response.text())
       .then((data) => {
         let workerScript = document.createElement("script");
@@ -16,13 +16,13 @@ if (filename != null) {
         workerScript.innerHTML = data;
 
         let readerScript = document.createElement("script");
-        readerScript.src = "http://127.0.0.1:5500/dist/reader.js"
+        readerScript.src = "https://sean-madu.github.io/PDF_ReaderLib/dist/reader.js"
         //readerScript.defer = true;
         readerScript.type = "module";
 
         document.head.innerHTML = `<meta charset=" UTF-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <link rel="stylesheet" href="http://127.0.0.1:5500/dist/overlay.css" />
+    <link rel="stylesheet" href="https://sean-madu.github.io/PDF_ReaderLib/dist/overlay.css" />
     `;
 
         document.head.appendChild(workerScript);
