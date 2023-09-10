@@ -391,10 +391,10 @@ body {
   background-color: var(--darkColor1);
   z-index: 4;
   top: max(5%, 50px);
-overflow: hidden;
+  overflow: hidden;
   transition-duration: 0.3s;
   right: 2%;
-    width: 19.75%;
+
 }
 
 
@@ -557,6 +557,7 @@ overflow: hidden;
   font-size: inherit;
   font-family: inherit;
   background-color: yellow;
+  z-index: 8;
 }
 
 .annotationLayer{

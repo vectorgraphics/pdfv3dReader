@@ -105976,6 +105976,7 @@ for (let i = 0; i < optionButtons.length; i++) {
 
 let searching = false;
 let searchBar = document.getElementById("searchBar");
+  let firstTime = true;
 window.onkeydown = function (e) {
 
   var ck = e.keyCode ? e.keyCode : e.which;
@@ -105985,6 +105986,10 @@ window.onkeydown = function (e) {
     if (!searching) {
       searchBar.style.height = "10ex";
       searching = true;
+      if (firstTime) {
+        alert("The search feature is experimental. If you encounter any inaccuracies, it is recommended to use the default browser option in the hamburger menu");
+        firstTime = false;
+      }
     }
     else {
       searching = false;
