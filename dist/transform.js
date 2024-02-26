@@ -5,7 +5,7 @@ let filename = params.get("pdf");
 console.log(filename);
 if (filename != null) {
   if (filename.endsWith(".pdf")) {
-    fetch('https://vectorgraphics.github.io/pdfv3dReader/dist/pdf.worker.02bb9abcaa6f661db926.js')
+    fetch('https://vectorgraphics.github.io/pdfv3dReader/dist/pdf.worker.6e464fc4e89902936cb8.js')
       .then(response => response.text())
       .then((data) => {
         let workerScript = document.createElement("script");

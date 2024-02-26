@@ -23,7 +23,7 @@ or if you have multiple query strings, it might look more like this
 ***
 **NOTE FOR FUTURE DEVELOPMENT**
 ***
-webpacks worker script is a bit finicky, so we have to use a tedious workaround, in dist/reader.html paste the generated pdf.worker in the workerScript tag (Do this ONLY if new worker is made) then change the reader.js line
+webpacks worker script requires manually updating transform.js with the generated pdf.worker workerScript tag (Do this ONLY if a  new worker is made).
 
 
 
