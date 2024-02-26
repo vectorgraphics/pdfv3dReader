@@ -105139,7 +105139,7 @@ module.exports = pdfjs;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = function Worker_fn() {
-  return new Worker(__webpack_require__.p + "pdf.worker.js");
+  return new Worker(__webpack_require__.p + "pdf.worker.6e464fc4e89902936cb8.js");
 }
 
 
