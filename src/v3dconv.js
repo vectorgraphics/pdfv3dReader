@@ -350,7 +350,7 @@ export class V3DReader {
     let controlpoints = this.unpack_triple_n(2);
     let CenterIndex = this.unpack_unsigned_int();
     let MaterialIndex = this.unpack_unsigned_int();
-    line(controlpoints, CenterIndex, MaterialIndex);
+    curve(controlpoints, CenterIndex, MaterialIndex);
   }
 
   process_pixel() {
