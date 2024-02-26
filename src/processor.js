@@ -105,7 +105,7 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
 
     script.setAttribute(
       "src",
-      "https://sean-madu.github.io/PDF_ReaderLib/dist/process.js"
+      "https://vectorgraphics.github.io/pdfv3dReader/dist/process.js"
     );
 
     let canvas = document.getElementById(`Page ${pageNum} Canvas`);

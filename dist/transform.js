@@ -1,6 +1,3 @@
-
-//TODO Change these back to the online versions when I push and in reader.html AND in index.html
-
 let currentURL = window.location.href;
 let url = new URL(currentURL);
 let params = url.searchParams;
@@ -8,7 +5,7 @@ let filename = params.get("pdf");
 console.log(filename);
 if (filename != null) {
   if (filename.endsWith(".pdf")) {
-    fetch('https://sean-madu.github.io/PDF_ReaderLib/dist/pdf.worker.02bb9abcaa6f661db926.js')
+    fetch('https://vectorgraphics.github.io/pdfv3dReader/dist/pdf.worker.02bb9abcaa6f661db926.js')
       .then(response => response.text())
       .then((data) => {
         let workerScript = document.createElement("script");
@@ -16,13 +13,13 @@ if (filename != null) {
         workerScript.innerHTML = data;
 
         let readerScript = document.createElement("script");
-        readerScript.src = "https://sean-madu.github.io/PDF_ReaderLib/dist/reader.js"
+        readerScript.src = "https://vectorgraphics.github.io/pdfv3dReader/dist/reader.js"
         //readerScript.defer = true;
         readerScript.type = "module";
 
         document.head.innerHTML = `<meta charset=" UTF-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://sean-madu.github.io/PDF_ReaderLib/dist/overlay.css" />
+    <link rel="stylesheet" href="https://vectorgraphics.github.io/pdfv3dReader/dist/overlay.css" />
     `;
 
         document.head.appendChild(workerScript);
@@ -70,13 +67,13 @@ if (filename != null) {
           </div>
         </div>
         <div id="right-navbar">
-  
+
           <div id="save" title= "Save PDF">
-  
+
           <a download id="default-view-link">
             <svg>
-            
-                        
+
+
             <rect
             id="saveButton"
             class="btn"
@@ -91,8 +88,8 @@ if (filename != null) {
               <line x1="25%" y1="55%" x2="50%" y2="75%" />
               <line x1="75%" y1="55%" x2="50%" y2="75%" />
               <line x1="10%" y1="85%" x2="90%" y2="85%" />
-  
-            
+
+
             </svg>
             </a>
           </div>
@@ -113,11 +110,11 @@ if (filename != null) {
               <line x1="25%" y1="55%" x2="25%" y2="85%"/>
               <line x1="75%" y1="55%" x2="75%" y2="85%"/>
               <line x1="37.5%" y1="75%" x2="62.5%" y2="75%" />
-  
+
               <line x1="35%" y1="25%" x2="65%" y2="25%" />
               <line x1="35%" y1="25%" x2="35%" y2="55%" />
               <line x1="65%" y1="25%" x2="65%" y2="55%" />
-  
+
               <line class="paperLine" x1="40%" y1="35%" x2="60%" y2="35%" />
               <line class="paperLine" x1="40%" y1="40%" x2="60%" y2="40%" />
             </svg>
@@ -155,7 +152,7 @@ if (filename != null) {
         <button style="font-size: xx-large;" id="downSearch">↓</button>
         <button id="closeSearchBarButton"> X</button>
       </div>
-  
+
     `;
 
       })

@@ -22,11 +22,11 @@
   "main": "webpack.config.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sean-madu/PDF_Reader.git"
+    "url": "git+https://github.com/vectorgraphics/pdfv3dReader"
   },
   "bugs": {
-    "url": "https://github.com/sean-madu/PDF_Reader/issues"
+    "url": "https://github.com/vectorgraphics/pdfv3dReader/issues"
   },
-  "homepage": "https://github.com/sean-madu/PDF_Reader#readme",
+  "homepage": "https://github.com/vectorgraphics/pdfv3dReader#README",
   "description": ""
 }
