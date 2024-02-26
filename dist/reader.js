@@ -16139,7 +16139,7 @@ class PDFFetchStreamRangeReader {
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __w_pdfjs_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -16153,14 +16153,14 @@ class PDFFetchStreamRangeReader {
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __w_pdfjs_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 var __nested_webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
@@ -104887,7 +104887,7 @@ exports.GenericScripting = GenericScripting;
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __w_pdfjs_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -104901,14 +104901,14 @@ exports.GenericScripting = GenericScripting;
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __w_pdfjs_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 var __nested_webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
@@ -105139,7 +105139,7 @@ module.exports = pdfjs;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = function Worker_fn() {
-  return new Worker(__webpack_require__.p + "pdf.worker.6e464fc4e89902936cb8.js");
+  return new Worker(__webpack_require__.p + "pdf.worker.js");
 }
 
 
@@ -105233,7 +105233,7 @@ module.exports = function Worker_fn() {
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -105247,20 +105247,20 @@ module.exports = function Worker_fn() {
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
 /******/ 		__webpack_require__.p = "";
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
@@ -105287,7 +105287,7 @@ var pdf_link_service = __webpack_require__(7117);
 var event_utils = __webpack_require__(7378);
 ;// CONCATENATED MODULE: ./src/processor.js
 // This is the pdf processor
-// TODO  once more than one visibe page it messes up 
+// TODO  once more than one visibe page it messes up
 // Set minimize to true in webpack config
 
 
@@ -105932,7 +105932,7 @@ function makeDropDown(outline, container, dropdown) {
 
 
 for (let i = 0; i < optionButtons.length; i++) {
-  //Add the active tag 
+  //Add the active tag
   optionButtons.item(i).onclick = function () {
     //Make all buttons inactive
     for (let j = 0; j < optionButtons.length; j++) {
@@ -105962,7 +105962,7 @@ for (let i = 0; i < optionButtons.length; i++) {
       </div>`;
     }
   }
-} 
+}
 
 
 
