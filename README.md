@@ -12,7 +12,7 @@ The Asymptote vector graphics language can generate V3D content and optionally e
 To display a local v3d-enabled PDF file `file.pdf` within an HTML file `index.html`, add to the HTML header (between <HEAD> and </HEAD>):
 
 ```
-<script defer src= "https://vectorgraphics.github.io/pdfv3dReader/dist/transform.js"> </script>
+<script defer src= "https://vectorgraphics.github.io/pdfv3dReader/dist/transform.js"></script>
 ```
 
 and add
