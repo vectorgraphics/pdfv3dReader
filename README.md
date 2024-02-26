@@ -23,7 +23,7 @@ or if you have multiple query strings, it might look more like this
 ***
 **NOTE FOR FUTURE DEVELOPMENT**
 ***
-webpacks worker script requires manually updating transform.js with the generated pdf.worker workerScript tag (Do this ONLY if a  new worker is made).
+npx webpack build requires manually updating reader.js to fix the generated pdf.worker URL (Do this ONLY if a  new worker is made).
 
 
 

@@ -105139,7 +105139,11 @@ module.exports = pdfjs;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = function Worker_fn() {
-  return new Worker(__webpack_require__.p + "https://vectorgraphics.github.io/pdfv3dReader/dist/pdf.worker.6e464fc4e89902936cb8.js");
+    let script = document.getElementById("workerScript");
+
+    let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
+    let workerBlobUrl = URL.createObjectURL(workerBlob);
+    return new Worker(workerBlobUrl);
 }
 
 
