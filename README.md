@@ -9,7 +9,7 @@ The specification for the V3D format is here:
 The Asymptote vector graphics language can generate V3D content and optionally embed it within a PDF file:
 - https://asymptote.sourceforge.io/
 
-To display a local v3d-enabled PDF file `file.pdf` within an HTML file `index.html`, add to the HTML header (between <HEAD> and </HEAD>):
+To display a local v3d-enabled PDF file `file.pdf` within an HTML file `index.html`, add to the HTML header (between `<HEAD>` and `</HEAD>`):
 
 ```
 <script defer src= "https://vectorgraphics.github.io/pdfv3dReader/dist/transform.js"></script>
