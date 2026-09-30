@@ -14347,7 +14347,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -14361,17 +14361,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
@@ -14384,7 +14384,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 			}
 /******/ 		})();
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/node module decorator */
 /******/ 	(() => {
 /******/ 		__webpack_require__.nmd = (module) => {
@@ -14393,7 +14393,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 			return module;
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
@@ -14460,6 +14460,9 @@ var __webpack_exports__ = {};
 
     let v3dheadertypes_vibrateTime=19;
     // REAL  Shift-mode vibrate time (milliseconds)
+
+    let v3dheadertypes_imageName=20;
+    // STRING  IBL environment map identifier (relative path or bare name)
 
 ;// CONCATENATED MODULE: ./src/v3dtypes.js
 //V3D types
@@ -14713,8 +14716,22 @@ class V3DReader {
         document.asy.shiftHoldDistance = this.unpack_double();
       } else if (header_type == v3dheadertypes_shiftWaitTime) {
         document.asy.shiftWaitTime = this.unpack_double();
+
       } else if (header_type == v3dheadertypes_vibrateTime) {
         document.asy.vibrateTime = this.unpack_double();
+      } else if (header_type == v3dheadertypes_imageName) {
+        // Read uint64 string length (two 4-byte unsigned ints)
+        let hi = this.unpack_unsigned_int();
+        let lo = this.unpack_unsigned_int();
+        let strLen = (hi * 4294967296) + lo; // uint64
+        // Read the string bytes
+        let raw = this.file.slice(this.bytesRead, this.bytesRead + strLen);
+        let strBytes = new Uint8Array(raw);
+        let decoder = new TextDecoder("utf-8");
+        document.asy.image = decoder.decode(strBytes);
+        // Advance to 4-byte word boundary: totalBytes = ceil(strLen/4)*4
+        let totalBytes = Math.ceil(strLen / 4) * 4;
+        this.bytesRead += totalBytes;
       } else {
         for (let j = 0; j < block_count; j++) {
           this.unpack_unsigned_int();
@@ -14730,6 +14747,7 @@ class V3DReader {
     patch(controlpoints, CenterIndex, MaterialIndex);
   }
 
+
   process_bezierpatch_color() {
     let controlpoints = this.unpack_triple_n(16);
 
@@ -14738,8 +14756,7 @@ class V3DReader {
 
     let colors = this.unpack_rgba_float_n(4);
 
-    for (let i = 0; i < 10; i++)
-      patch(controlpoints, CenterIndex, MaterialIndex, colors);
+    patch(controlpoints, CenterIndex, MaterialIndex, colors);
   }
 
   process_beziertriangle() {
@@ -14865,7 +14882,11 @@ class V3DReader {
     let shininess = result[0];
     let metallic = result[1];
     let fresnel0 = result[2];
-    material(diffuse, emissive, specular, shininess, metallic, fresnel0);
+    let lightOn = 1.0;
+    if (this.file_ver >= 2) {
+      lightOn = this.unpack_float();
+    }
+    material(diffuse, emissive, specular, shininess, metallic, fresnel0, lightOn);
   }
 
   process_centers() {
@@ -15034,8 +15055,9 @@ function load_asy_gl() {
     let asy_gl = document.createElement("script");
     asy_gl.type = "text/javascript";
 
+
     asy_gl.src =
-      "https://vectorgraphics.github.io/asymptote/base/webgl/asygl-1.02.js";
+      "https://vectorgraphics.github.io/asymptote/base/webgl/asygl-1.03.js";
 
     asy_gl.onload = function () {
       resolve();

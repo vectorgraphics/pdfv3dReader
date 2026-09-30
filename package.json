@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack && node -e \"const fs=require('fs');let s=fs.readFileSync('dist/reader.js','utf8');s=s.replace(/module\\.exports = function Worker_fn\\(\\) \\{[^}]*\\}/, 'module.exports = function Worker_fn() {\\n  let script = document.getElementById(\\\"workerScript\\\");\\n  let workerBlob = new Blob([script.innerHTML], { type: \\\"text/javascript\\\" });\\n  let workerBlobUrl = URL.createObjectURL(workerBlob);\\n  return new Worker(workerBlobUrl);\\n}');fs.writeFileSync('dist/reader.js',s);console.log('Worker_fn patched')\""
   },
   "keywords": [],
   "author": "",

@@ -216,8 +216,22 @@ export class V3DReader {
         document.asy.shiftHoldDistance = this.unpack_double();
       } else if (header_type == v3dheadertypes.v3dheadertypes_shiftWaitTime) {
         document.asy.shiftWaitTime = this.unpack_double();
+
       } else if (header_type == v3dheadertypes.v3dheadertypes_vibrateTime) {
         document.asy.vibrateTime = this.unpack_double();
+      } else if (header_type == v3dheadertypes.v3dheadertypes_imageName) {
+        // Read uint64 string length (two 4-byte unsigned ints)
+        let hi = this.unpack_unsigned_int();
+        let lo = this.unpack_unsigned_int();
+        let strLen = (hi * 4294967296) + lo; // uint64
+        // Read the string bytes
+        let raw = this.file.slice(this.bytesRead, this.bytesRead + strLen);
+        let strBytes = new Uint8Array(raw);
+        let decoder = new TextDecoder("utf-8");
+        document.asy.image = decoder.decode(strBytes);
+        // Advance to 4-byte word boundary: totalBytes = ceil(strLen/4)*4
+        let totalBytes = Math.ceil(strLen / 4) * 4;
+        this.bytesRead += totalBytes;
       } else {
         for (let j = 0; j < block_count; j++) {
           this.unpack_unsigned_int();
@@ -233,6 +247,7 @@ export class V3DReader {
     patch(controlpoints, CenterIndex, MaterialIndex);
   }
 
+
   process_bezierpatch_color() {
     let controlpoints = this.unpack_triple_n(16);
 
@@ -241,8 +256,7 @@ export class V3DReader {
 
     let colors = this.unpack_rgba_float_n(4);
 
-    for (let i = 0; i < 10; i++)
-      patch(controlpoints, CenterIndex, MaterialIndex, colors);
+    patch(controlpoints, CenterIndex, MaterialIndex, colors);
   }
 
   process_beziertriangle() {
@@ -368,7 +382,11 @@ export class V3DReader {
     let shininess = result[0];
     let metallic = result[1];
     let fresnel0 = result[2];
-    material(diffuse, emissive, specular, shininess, metallic, fresnel0);
+    let lightOn = 1.0;
+    if (this.file_ver >= 2) {
+      lightOn = this.unpack_float();
+    }
+    material(diffuse, emissive, specular, shininess, metallic, fresnel0, lightOn);
   }
 
   process_centers() {

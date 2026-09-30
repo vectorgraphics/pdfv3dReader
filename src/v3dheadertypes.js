@@ -57,3 +57,6 @@
 
     export let v3dheadertypes_vibrateTime=19;
     // REAL  Shift-mode vibrate time (milliseconds)
+
+    export let v3dheadertypes_imageName=20;
+    // STRING  IBL environment map identifier (relative path or bare name)

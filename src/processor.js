@@ -1,5 +1,5 @@
 // This is the pdf processor
-// TODO  once more than one visibe page it messes up 
+// TODO  once more than one visibe page it messes up
 // Set minimize to true in webpack config
 
 
@@ -59,6 +59,7 @@ export function setScale(newScale) {
 export function getScale() {
   return scale;
 }
+
 
 function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   let ref = new Ref(pageRef.num, pageRef.gen);
@@ -347,6 +348,7 @@ export function renderPage(i, containerDiv, textLayerDiv) {
         canvasContext: context,
         viewport: viewport,
       };
+
       let renderTask = page.render(renderContext);
       renderTask.promise.then(function () {
         renderV3DFiles(page.ref, coreDocument, containerDiv, i);

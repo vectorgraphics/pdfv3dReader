@@ -7,8 +7,9 @@ function load_asy_gl() {
     let asy_gl = document.createElement("script");
     asy_gl.type = "text/javascript";
 
+
     asy_gl.src =
-      "https://vectorgraphics.github.io/asymptote/base/webgl/asygl-1.02.js";
+      "https://vectorgraphics.github.io/asymptote/base/webgl/asygl-1.03.js";
 
     asy_gl.onload = function () {
       resolve();

@@ -58203,7 +58203,7 @@ const getSerifFonts = (0, _core_utils.getLookupTableFactory)(function (t) {
   t.Sylfaen = true;
   t.Times = true;
   t.Trajan = true;
-  t["Trinité"] = true;
+  t["Trinite"] = true;
   t["Trump Mediaeval"] = true;
   t.Utopia = true;
   t["Vale Type"] = true;
@@ -95036,8 +95036,8 @@ const DEFAULT_L10N_STRINGS = {
   document_properties_page_size_name_a4: "A4",
   document_properties_page_size_name_letter: "Letter",
   document_properties_page_size_name_legal: "Legal",
-  document_properties_page_size_dimension_string: "{{width}} × {{height}} {{unit}} ({{orientation}})",
-  document_properties_page_size_dimension_name_string: "{{width}} × {{height}} {{unit}} ({{name}}, {{orientation}})",
+  document_properties_page_size_dimension_string: "{{width}} * {{height}} {{unit}} ({{orientation}})",
+  document_properties_page_size_dimension_name_string: "{{width}} * {{height}} {{unit}} ({{name}}, {{orientation}})",
   document_properties_linearized_yes: "Yes",
   document_properties_linearized_no: "No",
   print_progress_percent: "{{progress}}%",
@@ -95065,7 +95065,7 @@ const DEFAULT_L10N_STRINGS = {
   page_scale_auto: "Automatic Zoom",
   page_scale_actual: "Actual Size",
   page_scale_percent: "{{scale}}%",
-  loading: "Loading…",
+  loading: "Loading...",
   loading_error: "An error occurred while loading the PDF.",
   invalid_file_error: "Invalid or corrupted PDF file.",
   missing_file_error: "Missing PDF file.",
@@ -96807,8 +96807,8 @@ const DEFAULT_L10N_STRINGS = {
   document_properties_page_size_name_a4: "A4",
   document_properties_page_size_name_letter: "Letter",
   document_properties_page_size_name_legal: "Legal",
-  document_properties_page_size_dimension_string: "{{width}} × {{height}} {{unit}} ({{orientation}})",
-  document_properties_page_size_dimension_name_string: "{{width}} × {{height}} {{unit}} ({{name}}, {{orientation}})",
+  document_properties_page_size_dimension_string: "{{width}} * {{height}} {{unit}} ({{orientation}})",
+  document_properties_page_size_dimension_name_string: "{{width}} * {{height}} {{unit}} ({{name}}, {{orientation}})",
   document_properties_linearized_yes: "Yes",
   document_properties_linearized_no: "No",
   print_progress_percent: "{{progress}}%",
@@ -96836,7 +96836,7 @@ const DEFAULT_L10N_STRINGS = {
   page_scale_auto: "Automatic Zoom",
   page_scale_actual: "Actual Size",
   page_scale_percent: "{{scale}}%",
-  loading: "Loading…",
+  loading: "Loading...",
   loading_error: "An error occurred while loading the PDF.",
   invalid_file_error: "Invalid or corrupted PDF file.",
   missing_file_error: "Missing PDF file.",
@@ -105139,11 +105139,10 @@ module.exports = pdfjs;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = function Worker_fn() {
-    let script = document.getElementById("workerScript");
-
-    let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
-    let workerBlobUrl = URL.createObjectURL(workerBlob);
-    return new Worker(workerBlobUrl);
+  let script = document.getElementById("workerScript");
+  let workerBlob = new Blob([script.innerHTML], { type: "text/javascript" });
+  let workerBlobUrl = URL.createObjectURL(workerBlob);
+  return new Worker(workerBlobUrl);
 }
 
 
@@ -105351,6 +105350,7 @@ function setScale(newScale) {
 function getScale() {
   return scale;
 }
+
 
 function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
   let ref = new primitives.Ref(pageRef.num, pageRef.gen);
@@ -105639,6 +105639,7 @@ function renderPage(i, containerDiv, textLayerDiv) {
         canvasContext: context,
         viewport: viewport,
       };
+
       let renderTask = page.render(renderContext);
       renderTask.promise.then(function () {
         renderV3DFiles(page.ref, coreDocument, containerDiv, i);
