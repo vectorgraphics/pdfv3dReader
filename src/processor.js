@@ -123,6 +123,18 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
     iframe.textContent = "Loading or Browser does not support iframes";
     div.appendChild(iframe);
 
+    // Load the TinyEXR wasm decoder in the head. It defines the global Module
+    // that asygl uses via Module.EXRLoader to decode .exr environment maps for
+    // image-based lighting. Head scripts run before body scripts, so Module is
+    // defined before process.js calls webGLStart. Its companion tinyexr.wasm is
+    // fetched from the same directory.
+    let tinyexrScript = document.createElement("script");
+    tinyexrScript.setAttribute(
+      "src",
+      "https://vectorgraphics.gitlab.io/asymptote/ibl/tinyexr.js"
+    );
+    doc.head.appendChild(tinyexrScript);
+
     doc.body.appendChild(asyCanvas);
     doc.body.appendChild(v3dScript);
     doc.body.appendChild(script);

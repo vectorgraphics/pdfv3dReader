@@ -14347,7 +14347,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/
+/******/ 	
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -14361,17 +14361,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
-/******/
+/******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
+/******/ 	
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
-/******/
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
+/******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
@@ -14384,7 +14384,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 			}
 /******/ 		})();
 /******/ 	})();
-/******/
+/******/ 	
 /******/ 	/* webpack/runtime/node module decorator */
 /******/ 	(() => {
 /******/ 		__webpack_require__.nmd = (module) => {
@@ -14393,7 +14393,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 			return module;
 /******/ 		};
 /******/ 	})();
-/******/
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
@@ -14521,6 +14521,11 @@ let Transform = (/* unused pure expression or super */ null && ([
 
 let webgl2 = false;
 let ibl = false;
+
+// Base URL of the precomputed IBL environment-map library. Must match the
+// Asymptote "imageURL" setting default. The trailing slash is required: asygl
+// builds URLs as imageURL + "refl.exr" and imageURL + image + "/<file>".
+const IBL_IMAGE_URL = "https://vectorgraphics.gitlab.io/asymptote/ibl/";
 //---  Set up done
 
 class V3DReader {
@@ -14728,10 +14733,18 @@ class V3DReader {
         let raw = this.file.slice(this.bytesRead, this.bytesRead + strLen);
         let strBytes = new Uint8Array(raw);
         let decoder = new TextDecoder("utf-8");
-        document.asy.image = decoder.decode(strBytes);
+        let image = decoder.decode(strBytes);
         // Advance to 4-byte word boundary: totalBytes = ceil(strLen/4)*4
         let totalBytes = Math.ceil(strLen / 4) * 4;
         this.bytesRead += totalBytes;
+        // The v3d file stores only the image *name*; the base URL comes from
+        // the Asymptote "imageURL" setting (not written into the file). Point
+        // asygl at the shared precomputed library and switch on IBL.
+        if (image) {
+          document.asy.image = image;
+          document.asy.imageURL = IBL_IMAGE_URL;
+          document.asy.ibl = true;
+        }
       } else {
         for (let j = 0; j < block_count; j++) {
           this.unpack_unsigned_int();

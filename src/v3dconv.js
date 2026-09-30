@@ -21,6 +21,11 @@ let Transform = [
 
 let webgl2 = false;
 let ibl = false;
+
+// Base URL of the precomputed IBL environment-map library. Must match the
+// Asymptote "imageURL" setting default. The trailing slash is required: asygl
+// builds URLs as imageURL + "refl.exr" and imageURL + image + "/<file>".
+const IBL_IMAGE_URL = "https://vectorgraphics.gitlab.io/asymptote/ibl/";
 //---  Set up done
 
 export class V3DReader {
@@ -228,10 +233,18 @@ export class V3DReader {
         let raw = this.file.slice(this.bytesRead, this.bytesRead + strLen);
         let strBytes = new Uint8Array(raw);
         let decoder = new TextDecoder("utf-8");
-        document.asy.image = decoder.decode(strBytes);
+        let image = decoder.decode(strBytes);
         // Advance to 4-byte word boundary: totalBytes = ceil(strLen/4)*4
         let totalBytes = Math.ceil(strLen / 4) * 4;
         this.bytesRead += totalBytes;
+        // The v3d file stores only the image *name*; the base URL comes from
+        // the Asymptote "imageURL" setting (not written into the file). Point
+        // asygl at the shared precomputed library and switch on IBL.
+        if (image) {
+          document.asy.image = image;
+          document.asy.imageURL = IBL_IMAGE_URL;
+          document.asy.ibl = true;
+        }
       } else {
         for (let j = 0; j < block_count; j++) {
           this.unpack_unsigned_int();

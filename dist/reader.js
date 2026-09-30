@@ -16139,7 +16139,7 @@ class PDFFetchStreamRangeReader {
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/
+/******/ 	
 /******/ 	// The require function
 /******/ 	function __w_pdfjs_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -16153,14 +16153,14 @@ class PDFFetchStreamRangeReader {
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/
+/******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __w_pdfjs_require__);
-/******/
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
+/******/ 	
 /************************************************************************/
 var __nested_webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
@@ -58203,7 +58203,7 @@ const getSerifFonts = (0, _core_utils.getLookupTableFactory)(function (t) {
   t.Sylfaen = true;
   t.Times = true;
   t.Trajan = true;
-  t["Trinite"] = true;
+  t["Trinité"] = true;
   t["Trump Mediaeval"] = true;
   t.Utopia = true;
   t["Vale Type"] = true;
@@ -95036,8 +95036,8 @@ const DEFAULT_L10N_STRINGS = {
   document_properties_page_size_name_a4: "A4",
   document_properties_page_size_name_letter: "Letter",
   document_properties_page_size_name_legal: "Legal",
-  document_properties_page_size_dimension_string: "{{width}} * {{height}} {{unit}} ({{orientation}})",
-  document_properties_page_size_dimension_name_string: "{{width}} * {{height}} {{unit}} ({{name}}, {{orientation}})",
+  document_properties_page_size_dimension_string: "{{width}} × {{height}} {{unit}} ({{orientation}})",
+  document_properties_page_size_dimension_name_string: "{{width}} × {{height}} {{unit}} ({{name}}, {{orientation}})",
   document_properties_linearized_yes: "Yes",
   document_properties_linearized_no: "No",
   print_progress_percent: "{{progress}}%",
@@ -95065,7 +95065,7 @@ const DEFAULT_L10N_STRINGS = {
   page_scale_auto: "Automatic Zoom",
   page_scale_actual: "Actual Size",
   page_scale_percent: "{{scale}}%",
-  loading: "Loading...",
+  loading: "Loading…",
   loading_error: "An error occurred while loading the PDF.",
   invalid_file_error: "Invalid or corrupted PDF file.",
   missing_file_error: "Missing PDF file.",
@@ -96807,8 +96807,8 @@ const DEFAULT_L10N_STRINGS = {
   document_properties_page_size_name_a4: "A4",
   document_properties_page_size_name_letter: "Letter",
   document_properties_page_size_name_legal: "Legal",
-  document_properties_page_size_dimension_string: "{{width}} * {{height}} {{unit}} ({{orientation}})",
-  document_properties_page_size_dimension_name_string: "{{width}} * {{height}} {{unit}} ({{name}}, {{orientation}})",
+  document_properties_page_size_dimension_string: "{{width}} × {{height}} {{unit}} ({{orientation}})",
+  document_properties_page_size_dimension_name_string: "{{width}} × {{height}} {{unit}} ({{name}}, {{orientation}})",
   document_properties_linearized_yes: "Yes",
   document_properties_linearized_no: "No",
   print_progress_percent: "{{progress}}%",
@@ -96836,7 +96836,7 @@ const DEFAULT_L10N_STRINGS = {
   page_scale_auto: "Automatic Zoom",
   page_scale_actual: "Actual Size",
   page_scale_percent: "{{scale}}%",
-  loading: "Loading...",
+  loading: "Loading…",
   loading_error: "An error occurred while loading the PDF.",
   invalid_file_error: "Invalid or corrupted PDF file.",
   missing_file_error: "Missing PDF file.",
@@ -104887,7 +104887,7 @@ exports.GenericScripting = GenericScripting;
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/
+/******/ 	
 /******/ 	// The require function
 /******/ 	function __w_pdfjs_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -104901,14 +104901,14 @@ exports.GenericScripting = GenericScripting;
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/
+/******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __w_pdfjs_require__);
-/******/
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
+/******/ 	
 /************************************************************************/
 var __nested_webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
@@ -105236,7 +105236,7 @@ module.exports = function Worker_fn() {
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/
+/******/ 	
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -105250,20 +105250,20 @@ module.exports = function Worker_fn() {
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/
+/******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
+/******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
 /******/ 		__webpack_require__.p = "";
 /******/ 	})();
-/******/
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
@@ -105413,6 +105413,18 @@ function renderV3DFiles(pageRef, PDFDocument, div, pageNum) {
     iframe.style.right = right.toString() + "px";
     iframe.textContent = "Loading or Browser does not support iframes";
     div.appendChild(iframe);
+
+    // Load the TinyEXR wasm decoder in the head. It defines the global Module
+    // that asygl uses via Module.EXRLoader to decode .exr environment maps for
+    // image-based lighting. Head scripts run before body scripts, so Module is
+    // defined before process.js calls webGLStart. Its companion tinyexr.wasm is
+    // fetched from the same directory.
+    let tinyexrScript = document.createElement("script");
+    tinyexrScript.setAttribute(
+      "src",
+      "https://vectorgraphics.gitlab.io/asymptote/ibl/tinyexr.js"
+    );
+    doc.head.appendChild(tinyexrScript);
 
     doc.body.appendChild(asyCanvas);
     doc.body.appendChild(v3dScript);
@@ -105937,7 +105949,7 @@ function makeDropDown(outline, container, dropdown) {
 
 
 for (let i = 0; i < optionButtons.length; i++) {
-  //Add the active tag
+  //Add the active tag 
   optionButtons.item(i).onclick = function () {
     //Make all buttons inactive
     for (let j = 0; j < optionButtons.length; j++) {
@@ -105967,7 +105979,7 @@ for (let i = 0; i < optionButtons.length; i++) {
       </div>`;
     }
   }
-}
+} 
 
 
 
