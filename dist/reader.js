@@ -105617,6 +105617,21 @@ function getOutlineItem(item) {
 
 }
 
+function pageHasV3D(page, PDFDocument) {
+  let ref = new primitives.Ref(page.ref.num, page.ref.gen);
+  let rawPage = PDFDocument.xref.fetch(ref);
+  let annotationRef = rawPage._map.Annots;
+  if (!annotationRef) return false;
+  for (let j = 0; j < annotationRef.length; j++) {
+    let annotation = PDFDocument.xref.fetch(annotationRef[j]);
+    if (annotation._map.Subtype?.name != "RichMedia") continue;
+    let mediaContent = PDFDocument.xref.fetch(annotation._map.RichMediaContent);
+    let fileName = mediaContent._map.Assets._map.Names[0];
+    if (fileName.endsWith(".v3d") || fileName.endsWith(".V3D")) return true;
+  }
+  return false;
+}
+
 function renderPage(i, containerDiv, textLayerDiv) {
   let loadPage = pdf.getPage(i);
   loadPage.then(
@@ -105651,6 +105666,13 @@ function renderPage(i, containerDiv, textLayerDiv) {
         canvasContext: context,
         viewport: viewport,
       };
+
+      // If the page contains a v3d file, suppress the preview image
+      // by replacing drawImage with a null operation during render.
+      let hasV3D = pageHasV3D(page, coreDocument);
+      if (hasV3D) {
+        context.drawImage = function() {};
+      }
 
       let renderTask = page.render(renderContext);
       renderTask.promise.then(function () {
